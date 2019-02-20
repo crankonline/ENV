@@ -1,0 +1,269 @@
+.form
+    {
+        font-family: Calibri, Tahoma, Arial;
+
+        margin: 15px 0px 15px 0px;
+
+        position: relative;
+
+        text-align: left;
+
+        z-index: 1;
+    }
+
+.form .view-section
+    {
+        background: #fff;
+
+        border-bottom: 3px solid #777;
+
+        display: none;
+
+        position: absolute;
+
+        left: 0px;
+        right: 0px;
+
+        z-index: 5px;
+    }
+
+.form:hover .view-section
+    {
+        display: block;
+    }
+
+.form .caption
+    {
+        background: #55AAFF;
+
+        color: #fff;
+
+        font-size: 16px;
+
+        margin: 5px 0px 1px 0px;
+
+        padding: 15px;
+
+        text-transform: uppercase;
+    }
+
+.form .field
+    {
+        background: rgba(0, 50, 127, 0.15);
+
+        margin: 1px 0px;
+
+        padding: 5px 15px 5px 15px;
+    }
+
+.form .field:hover
+    {
+        background: rgba(0, 50, 250, 0.25);
+    }
+
+.form .field pre
+    {
+        background: #eee;
+
+        border: 1px solid #133195;
+
+        display: block;
+
+        max-height: 600px;
+
+        padding: 15px;
+
+        font-size: 14px;
+
+        overflow: scroll;
+    }
+
+.form .field > input[type="text"],
+.form .field > input[type="date"],
+.form .field > input[type="time"],
+.form .field > input[type="datetime-local"],
+.form .field > input[type="password"],
+.form .field > select,
+.form .field > textarea
+    {
+        background: #fff;
+
+        border: none;
+
+        color: #000;
+
+        font-size: 16px;
+
+        min-width: 215px;
+
+        outline: none;
+
+        padding: 10px;
+    }
+
+.form .field > .wide
+    {
+        display: block;
+
+        width: 100%;
+    }
+
+.form .field > textarea
+    {
+        display: block;
+
+        resize: none;
+
+        width: 100%;
+
+        height: 100px;
+    }
+
+.form .field > label,
+.form .field > .text
+    {
+        color: #133195;
+
+        display: inline-block;
+
+        font-size: 16px;
+    }
+
+.form .field > label
+    {
+        padding: 5px 0px 5px 0px;
+    }
+
+.form .field > .text
+    {
+        padding: 10px 0px 10px 0px;
+    }
+
+.form .field > label.fixed,
+.form .field > .text.fixed
+    {
+        width: 165px;
+    }
+
+.form .field > label.complex
+    {
+        display: inline;
+
+        white-space: normal;
+    }
+
+.form .field > label.padded
+    {
+        padding: 5px 0px 10px 0px;
+    }
+
+.form .field > label.complex > .important
+    {
+        font-weight: bold;
+    }
+
+.form .field > label > .required
+    {
+        color: #d90000;
+    }
+
+.form .field > .hint
+    {
+        color: #9e9e9e;
+
+        font-size: 16px;
+
+        margin-left: 25px;
+    }
+
+.form .field:hover > .hint
+    {
+        color: #133195;
+    }
+
+.form .field > .validation-error
+    {
+        color: #000;
+
+        text-decoration: underline;
+    }
+
+.form .field.buttons
+    {
+        padding: 5px;
+
+        text-align: center;
+    }
+
+.form .field.columned
+    {
+        text-align: center;
+
+        white-space: nowrap;
+    }
+
+.form .field.columned > .column
+    {
+        display: inline-block;
+
+        margin: 0px 10px 0px 10px;
+
+        text-align: left;
+
+        vertical-align: top;
+    }
+
+.button,
+.form .field .button
+    {
+        background: #4096ee;
+        border: 1px solid #05f;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        display: inline-block;
+
+        font-size: 16px;
+
+        min-width: 125px;
+
+        outline: none;
+
+        padding: 10px;
+
+        text-align: center;
+        text-decoration: none;
+    }
+
+.button:hover,
+.form .field .button:hover
+    {
+        background: #7abcff;
+        border: 1px solid #05f;
+
+        color: #fff;
+    }
+
+.button.single
+    {
+        margin: 5px 10px 15px 10px;
+    }
+
+span.stateful
+    {
+        display: inline-block;
+
+        font-size: 16px;
+    }
+
+span.stateful.expired
+    {
+        color: #d90000;
+    }
+
+span.stateful.actual
+    {
+        color: #008d00;
+    }

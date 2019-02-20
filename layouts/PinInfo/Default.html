@@ -1,0 +1,81 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_PIN_INFO; ?>" />
+    <div class="caption">Параметры поиска</div>
+
+    <div class="field">
+        <label for="pin" class="fixed">ПИН:</label>
+        <input type="text" name="pin" id="pin" placeholder="введите ПИН" value="<?php echo $cPin === null ? '' : htmlspecialchars($cPin); ?>">
+        <span class="hint">Реквизит для поиска</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($cPin === null): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($data)): ?>
+    <div class="empty-resultset">Cведения отсутствуют.</div>
+<?php else: ?>
+<div class="form">
+    <div class="caption">Информация по ПИН</div>
+
+    <div class="field">
+        <span class="text fixed">ПИН:</span>
+        <span class="text"><?php echo htmlspecialchars($data->Pin); ?></span>
+    </div>
+    <div class="field">
+        <span class="text fixed">ФИО:</span>
+        <span class="text"><?php echo htmlspecialchars($data->Name); ?></span>
+    </div>
+    <div class="field">
+        <span class="text fixed">Пол:</span>
+        <span class="text"><?php
+            switch(substr($data->Pin, 0, 1)):
+                case '1':
+                    echo 'Женщина';
+                break;
+
+                case '2':
+                    echo 'Мужчина';
+                break;
+
+                default:
+                    echo 'Не определено';
+                break;
+            endswitch;
+        ?></span>
+    </div>
+    <div class="field">
+        <span class="text fixed">Дата рождения:</span>
+        <span class="text"><?php
+            $date = @\DateTime::createFromFormat('dmY', substr($data->Pin, 1, 8));
+
+            echo $date ? $date->format('d.m.Y') : '-';
+        ?></span>
+    </div>
+    <?php if($date): ?>
+    <div class="field">
+        <span class="text fixed">Возраст (в годах):</span>
+        <span class="text"><?php
+            $age = (new \DateTime())->diff($date);
+
+            echo $age->format('%Y');
+        ?></span>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

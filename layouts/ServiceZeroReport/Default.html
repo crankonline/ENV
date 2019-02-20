@@ -1,0 +1,131 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_SERVICE_ZERO_REPORT; ?>" />
+    <div class="caption">Просмотр протокола отправки</div>
+
+    <div class="field">
+        <label for="inn" class="fixed">ИНН:</label>
+        <input type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
+        <span class="hint">10 или 14 цифр</span>
+    </div>
+
+    <div class="field">
+        <label for="uid" class="fixed">UID:</label>
+        <input type="text" name="uid" id="uid" maxlength="23" style="width: 350px" placeholder="введите UID" value="<?php echo isset($_GET['uid']) ? htmlspecialchars($_GET['uid']) : '' ?>">
+        <span class="hint">23 цифры</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($users)): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($uid)):?>
+    <table class="data client">
+        <caption>Примечание</caption>
+        <tr>
+            <td class="center" style="background: #FFC362">&nbsp;</th>
+            <td class="center">Существуют ранее отправленные отчеты</th>
+            <td class="center" style="background: #FFAFA4">&nbsp;</th>
+            <td class="center">Ошибки при списании средств</th>
+        </tr>
+    </table>
+    <table class="data client">
+        <caption>Подписчики</caption>
+        <tr>
+            <th class="center">#:</th>
+            <th class="center">ИНН:</th>
+            <th class="center">Наименование:</th>
+            <th class="center">Ссылка</th>
+        </tr>
+
+    <?php foreach($users as $index => &$user): ?>
+            <tr class="<?php if(!is_null($user['protocol'])) echo strstr($user['protocol'], "Отчет") ? 'notice' : 'error'?>">
+                <td class="center"><?php
+                    echo $index + 1;
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($user['inn']);
+                ?></td>
+                <td><?php
+                    echo htmlspecialchars($user['name']);
+                ?></td>
+                <td class="center">
+                    <a href="index.php?view=<?php echo $this::AK_SERVICE_ZERO_REPORT; ?>&uid=<?php echo $user['uid']; ?>">Просмотр</a>
+                </td>
+            </tr>
+    <?php endforeach; ?>
+    </table>
+<?php elseif($forms):?>
+    <table class="data form">
+        <caption>Подключенные формы</caption>
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Cекция:</th>
+            <th class="center">Форма:</th>
+            <th class="center">Описание:</th>
+            <th class="center">Код</th>
+        </tr>
+        <?php foreach($forms as $index => &$form): ?>
+            <tr>
+                <td class="center"><?php
+                    echo $index + 1;
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($form['section']);
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($form['name']);
+                ?></td>
+                <td><?php
+                    echo htmlspecialchars($form['description']);
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($form['code']);
+                ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif ?>
+<?php if(isset($protocol)): ?>
+    <table class="data protocol">
+        <caption>Протокол</caption>
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Код формы:</th>
+            <th class="center">Состояние:</th>
+            <th class="center">Дата и время:</th>
+        </tr>
+        <?php foreach($protocol as $index => &$p):?>
+            <tr>
+                <td class="center"><?php
+                    echo $index + 1;
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($p['form']);
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($p['protocol']);
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($p['date-time']);
+                ?></td>
+            </tr>
+        <?php endforeach;?>
+    </table>
+<?php endif; ?>
+
+

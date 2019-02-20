@@ -1,0 +1,122 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(isset($result, $status)): ?>
+    <div class="<?php echo $result ? 'success' : 'failure'; ?>">
+        <?php echo $status; ?>
+    </div>
+<?php endif; ?>
+
+<form class="form" action="index.php?view=profile&action=changePassword" method="POST">
+    <div class="caption">Замена пароля</div>
+
+    <div class="field padded">
+        <span class="text fixed">Cостояние пароля:</span>
+        <?php if($user['is-password-expired']): ?>
+        <span class="stateful expired">пароль <b>устарел</b>. Для продолжения работы <u>замените пароль</u>.</span>
+        <?php else: ?>
+        <span class="stateful actual">пароль <b>актуален</b></span>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="password" class="fixed">Пароль <span class="required">*</span>:</label>
+        <input type="password" name="password" id="password" placeholder="введите пароль" required>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['password'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="confirmation" class="fixed">Подтверждение <span class="required">*</span>:</label>
+        <input type="password" name="confirmation" id="confirmation" placeholder="введите пароль еще раз" required>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['confirmation'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Заменить" />
+    </div>
+</form>
+
+<form class="form" action="index.php?view=profile&action=changeModule" method="POST">
+    <div class="caption">Cтартовый модуль</div>
+
+    <div class="field">
+        <label for="module-id" class="fixed">Модуль:</label>
+        <select name="module-id" id="module-id">
+            <option value="">(по умолчанию)</option>
+            <?php foreach($moduleGroups as $group => &$modules): ?>
+            <optgroup label="<?php echo htmlspecialchars($group); ?>">
+                <?php foreach($modules as &$module): ?>
+                <option value="<?php echo $module['id']; ?>"<?php echo $module['id'] == $user['module-id'] ? ' selected' : ''; ?>><?php
+                    echo htmlspecialchars($module['name']);
+                ?></div>
+                <?php endforeach; ?>
+            </optgroup>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Cтартовый модуль при входе в систему</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Установить" />
+    </div>
+</form>
+
+<div class="form">
+    <div class="caption">Учетная запись</div>
+
+    <div class="field">
+        <span class="text fixed">Роль:</span>
+        <span class="text"><?php echo htmlspecialchars($user['user-role-name']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Логин:</span>
+        <span class="text"><?php echo htmlspecialchars($user['login']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Фамилия:</span>
+        <span class="text"><?php echo htmlspecialchars($user['surname']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Имя:</span>
+        <span class="text"><?php echo htmlspecialchars($user['name']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Отчество:</span>
+        <span class="text"><?php echo htmlspecialchars($user['middle-name']) ?: '-'; ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Телефон(ы):</span>
+        <span class="text"><?php echo htmlspecialchars($user['phone']) ?: '-'; ?></span>
+    </div>
+</div>
+
+<?php if($visits): ?>
+<div class="stripes-caption">
+    <span class="col-ip">IP-адрес визита</span>
+    <span class="col-stamp">Дата и время визита</span>
+</div>
+
+<?php foreach($visits as &$visit): ?>
+<div class="stripe">
+    <span class="col-ip"><?php echo $visit['ip-address']; ?></span>
+    <span class="col-stamp"><?php echo $visit['date-time']; ?></span>
+</div>
+<?php endforeach; ?>
+<?php endif; ?>

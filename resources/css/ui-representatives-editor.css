@@ -1,0 +1,30 @@
+.columns
+    {
+        display: table;
+
+        width: 100%;
+    }
+
+.columns > div
+    {
+        display: table-cell;
+
+        vertical-align: top;
+
+        width: 50%;
+    }
+
+.columns .form
+    {
+        margin: 0px !important;
+    }
+
+.columns > .col-companies
+    {
+        padding: 0px 5px 0px 0px;
+    }
+
+.columns > .col-similars
+    {
+        padding: 0px 0px 0px 5px;
+    }

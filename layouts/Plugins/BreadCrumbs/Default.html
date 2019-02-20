@@ -1,0 +1,8 @@
+<?php foreach($crumbs as $index => &$crumb): ?>
+    <a href="<?php echo $crumb['href']; ?>" class="<?php echo $crumb['type']; ?>"><?php
+        echo htmlspecialchars($crumb['text']);
+    ?></a>
+    <?php if($index !== $count): ?>
+    &gt;
+    <?php endif; ?>
+<?php endforeach; ?>

@@ -1,0 +1,15 @@
+.col-ip
+    {
+        width: 50%;
+    }
+
+.col-stamp
+    {
+        width: 50%;
+    }
+
+.col-ip,
+.col-stamp
+    {
+        text-align: center;
+    }

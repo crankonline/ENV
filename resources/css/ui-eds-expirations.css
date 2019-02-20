@@ -1,0 +1,96 @@
+body .layout .content .interface
+    {
+        text-align: center;
+    }
+
+body .layout .content .form .field label.fixed
+    {
+        width: 100px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        margin-bottom: 25px;
+
+        width: 100%;
+    }
+
+table.data caption
+    {
+        font-size: 18px;
+        font-weight: bold;
+
+        margin: 10px;
+        padding: 10px;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+
+        padding: 10px;
+
+        text-align: center;
+
+        white-space: nowrap;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+table.data tr.active td
+    {
+        background: #d6ffd4;
+    }
+
+table.data tr.active:hover td
+    {
+        background: #bfe3bd !important;
+    }
+
+table.data tr.inactive td
+    {
+        background: #ffcbcc;
+    }
+
+table.data tr.inactive:hover td
+    {
+        background: #ffb5b6 !important;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }

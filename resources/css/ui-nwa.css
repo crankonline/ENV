@@ -1,0 +1,77 @@
+body .layout .content .interface
+    {
+        text-align: center;
+    }
+
+ul
+    {
+        margin: 0px;
+
+        padding: 0px 0px 0px 25px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        margin-bottom: 25px;
+
+        width: 100%;
+    }
+
+table.data caption
+    {
+        font-size: 18px;
+        font-weight: bold;
+
+        margin: 10px;
+        padding: 10px;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }
+
+table.data.requisites td
+    {
+        width: 600px;
+    }

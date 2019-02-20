@@ -1,0 +1,63 @@
+body .layout .content .form .field label.fixed
+    {
+        width: 85px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        margin-bottom: 25px;
+
+        width: 100%;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+
+        text-align: center;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+table.data tr:nth-child(odd) td
+    {
+        background: #eee;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }

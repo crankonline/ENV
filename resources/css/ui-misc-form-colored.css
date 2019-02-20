@@ -1,0 +1,136 @@
+.form .field pre
+    {
+        background: #eee;
+
+        border: 1px solid #133195;
+
+        display: block;
+
+        max-height: 600px;
+
+        padding: 15px;
+
+        overflow: scroll;
+    }
+
+.form .field a
+    {
+        color: #133195;
+
+        text-decoration: none;
+    }
+
+.form .field a:hover
+    {
+        color: #000;
+
+        text-decoration: underline;
+    }
+
+.form.successful .caption
+    {
+        background: #5A0;
+    }
+
+.form.successful .field
+    {
+        background: #d6ffd4;
+    }
+
+.form.successful .field:hover
+    {
+        background: #bfe3bd;
+    }
+
+.form.successful .field pre
+    {
+        border: 1px solid #5A0;
+    }
+
+.form.failed .caption
+    {
+        background: #A00;
+    }
+
+.form.failed .field
+    {
+        background: #ffcbcc;
+    }
+
+.form.failed .field:hover
+    {
+        background: #ffb5b6;
+    }
+
+.form.failed .field pre
+    {
+        border: 1px solid #A00;
+    }
+
+.form.successful .field .text,
+.form.failed .field .text
+    {
+        color: #000;
+    }
+
+.form.successful .field .button
+    {
+        background: #79DA81;
+        border: 1px solid #5A0;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        display: inline-block;
+
+        font-size: 16px;
+
+        min-width: 125px;
+
+        outline: none;
+
+        padding: 10px;
+
+        text-align: center;
+        text-decoration: none;
+    }
+
+.form.successful .field .button:hover
+    {
+        background: #63C700;
+        border: 1px solid #5A0;
+
+        color: #000;
+    }
+
+.form.failed .field .button
+    {
+        background: #D00000;
+        border: 1px solid #A00;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        display: inline-block;
+
+        font-size: 16px;
+
+        min-width: 125px;
+
+        outline: none;
+
+        padding: 10px;
+
+        text-align: center;
+        text-decoration: none;
+    }
+
+.form.failed .field .button:hover
+    {
+        background: #EF8181;
+        border: 1px solid #A00;
+
+        color: #000;
+    }

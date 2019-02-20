@@ -1,0 +1,144 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_EDS_EXPIRATIONS; ?>" />
+    <div class="caption">Параметры просмотра</div>
+
+    <div class="field">
+        <label for="mode" class="fixed">Режим:</label>
+        <select name="mode" id="mode">
+            <?php foreach($modes as $mode): ?>
+            <option value="<?php echo $mode['id']; ?>"<?php echo $mode['id'] == $cMode ? ' selected' : ''; ?>><?php
+                echo htmlspecialchars($mode['name']);
+            ?></option>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Доступные варианции данных</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Просмотр" />
+    </div>
+
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if($certificates): ?>
+    <?php
+        $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+        $canAccessSochi      = $this->isPermitted($this::AK_SOCHI);
+
+        $colspan = $canAccessRequisites + $canAccessSochi;
+    ?>
+    <table class="data">
+    <?php
+        switch($cMode):
+            case $this::MODE_EXPIRED: ?>
+            <tr>
+                <th>#</th>
+                <th>ИНН</th>
+                <?php if($colspan): ?>
+                <th colspan="<?php echo $colspan; ?>">Ссылки:</th>
+                <?php endif; ?>
+                <th>ФИО</th>
+                <th>Роль</th>
+                <th>Дата истечения срока действия</th>
+            </tr>
+            <?php
+                foreach($certificates as $index => $certificate):
+
+                    if(isset($statuses[$certificate->Inn])):
+                        $class = $statuses[$certificate->Inn] ? 'active' : 'inactive';
+                    else:
+                        $class = 'default';
+                    endif;
+            ?>
+            <tr class="<?php echo $class; ?>">
+                <td class="center"><?php
+                    echo $index + 1;
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($certificate->Inn);
+                ?></td>
+                <?php if($canAccessRequisites): ?>
+                <td class="center">
+                    <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">Реквизиты</a>
+                </td>
+                <?php endif; ?>
+                <?php if($canAccessSochi): ?>
+                <td class="center">
+                    <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">СОчИ</a>
+                </td>
+                <?php endif; ?>
+                <td class="center"><?php
+                    echo htmlspecialchars($certificate->Name);
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($certificate->Role);
+                ?></td>
+                <td class="center"><?php
+                    echo date('d.m.Y H:i:s', strtotime($certificate->ExpireDate));
+                ?></td>
+            </tr>
+        <?php endforeach; ?>
+        <?php break; ?>
+    <?php case $this::MODE_EXPIRING_WEEK: ?>
+    <?php case $this::MODE_EXPIRING_MONTH: ?>
+            <tr>
+                <th>#</th>
+                <th>ИНН</th>
+                <?php if($colspan): ?>
+                <th colspan="<?php echo $colspan; ?>">Ссылки:</th>
+                <?php endif; ?>
+                <th>Роль</th>
+                <th>Cостояние сертификата</th>
+                <th>Дата истечения срока действия</th>
+            </tr>
+            <?php
+                foreach($certificates as $index => $certificate):
+
+                    if(isset($statuses[$certificate->Inn])):
+                        $class = $statuses[$certificate->Inn] ? 'active' : 'inactive';
+                    else:
+                        $class = 'default';
+                    endif;
+            ?>
+            <tr class="<?php echo $class; ?>">
+                <td class="center"><?php
+                    echo $index + 1;
+                ?></td>
+                <td class="center"><?php
+                    echo htmlspecialchars($certificate->Inn);
+                ?></td>
+                <?php if($canAccessRequisites): ?>
+                <td class="center">
+                    <a href="index.php?view=requisites&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">Реквизиты</a>
+                </td>
+                <?php endif; ?>
+                <?php if($canAccessSochi): ?>
+                <td class="center">
+                    <a href="index.php?view=sochi&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">СОчИ</a>
+                </td>
+                <?php endif; ?>
+                <td class="center"><?php
+                    echo $this->roleCodeToString($certificate->Role);
+                ?></td>
+                <td class="center"><?php
+                    echo $certificate->Status ? 'Действующий' : 'Отозванный';
+                ?></td>
+                <td class="center"><?php
+                    echo date('d.m.Y H:i:s', strtotime($certificate->ExpireDateTime));
+                ?></td>
+            </tr>
+            <?php endforeach; ?>
+        <?php break; ?>
+    <?php endswitch; ?>
+    </table>
+<?php else: ?>
+    <div class="empty-resultset">Записей не найдено.</div>
+<?php endif; ?>

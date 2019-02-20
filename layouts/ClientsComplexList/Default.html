@@ -1,0 +1,76 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($data)): ?>
+    <div class="empty-resultset">Данные отсутствуют.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<table class="data">
+    <tr>
+        <th>#</th>
+        <th>Серия и номер паспорта</th>
+        <th>ФИО</th>
+        <th>Корневая организация</th>
+        <th>Подключенные организации</th>
+    </tr>
+    <?php
+        $isRequisites = $this->isPermitted($this::AK_REQUISITES);
+        $isSochi      = $this->isPermitted($this::AK_SOCHI);
+
+        foreach($data as $index => &$row):
+    ?>
+    <tr>
+        <td class="center"><?php
+            echo $index + 1;
+        ?></td>
+        <td class="center"><?php
+            echo htmlspecialchars(
+                $row['passport-series'] . ' ' . $row['passport-number']
+            );
+        ?></td>
+        <td class="center"><?php
+            echo htmlspecialchars($row['representative-name']);
+        ?></td>
+        <td class="center">
+            <?php if($row['company-root']): ?>
+                <?php echo $row['company-root']; ?>
+                <br>
+                <?php if($isRequisites): ?>
+                    <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $row['company-root']; ?>" target="_blank">Реквизиты</a>
+                <?php endif; ?>
+                <?php if($isSochi): ?>
+                    <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $row['company-root']; ?>" target="_blank">СОчИ</a>
+                <?php endif; ?>
+            <?php else: ?>
+                -
+            <?php endif; ?>
+        </td>
+        <td class="center">
+            <?php
+                if($row['company-bindings']):
+                    $bindings = explode(',', $row['company-bindings']);
+            ?>
+                Всего: <b><?php echo count($bindings); ?></b>
+                <br>
+                <?php foreach($bindings as $binding): ?>
+                    <?php echo $binding; ?>
+                    <?php if($isRequisites): ?>
+                        <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $binding; ?>" target="_blank">Реквизиты</a>
+                    <?php endif; ?>
+                    <?php if($isSochi): ?>
+                        <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $binding; ?>" target="_blank">СОчИ</a>
+                    <?php endif; ?>
+                    <br>
+                <?php endforeach; ?>
+            <?php else: ?>
+                -
+            <?php endif; ?>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+</table>

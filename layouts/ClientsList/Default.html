@@ -1,0 +1,98 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<div class="floating" id="divSticky">
+    <table class="data">
+        <tr>
+            <th rowspan="2" class="w50">#</th>
+            <th rowspan="2" class="w150">ИНН</th>
+            <th rowspan="2" class="w100">Дата регистрации</th>
+            <th rowspan="2" class="w-fit">Компания</th>
+            <th colspan="2">Руководитель</th>
+            <th colspan="2">Бухгалтер</th>
+            <th rowspan="2" class="w50">#</th>
+        </tr>
+        <tr>
+            <th class="w150">ФИО</th>
+            <th class="w75">Паспорт</th>
+            <th class="w150">ФИО</th>
+            <th class="w75">Паспорт</th>
+        </tr>
+    </table>
+</div>
+
+<table class="data">
+    <?php
+        $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+
+        foreach($clients as $index => $client):
+
+            if($client['usage-status-activity'] === null):
+                $class = 'default';
+            else:
+                $class = $client['usage-status-activity'] ? 'active' : 'inactive';
+            endif;
+    ?>
+    <tr class="<?php echo $class; ?>">
+        <td class="center w50"><?php
+            echo $index + 1;
+        ?></td>
+            <td class="center w150">
+            <?php if($canAccessRequisites): ?>
+                <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo urlencode($client['inn']); ?>" target="_blank"><?php
+                    echo htmlspecialchars($client['inn']);
+                ?></a>
+            <?php else: ?>
+                <?php echo htmlspecialchars($client['inn']); ?>
+            <?php endif; ?>
+        </td>
+        <td class="center w100"><?php
+            echo str_replace(' ', '<br>', $client['register-stamp']);
+        ?></td>
+        <td class="w-fit"><?php
+            echo htmlspecialchars($client['name']);
+        ?></td>
+        <td class="center w150"><?php
+            echo htmlspecialchars($client['chief-name']);
+        ?></td>
+        <td class="center w75"><?php
+            echo
+                htmlspecialchars($client['chief-passport-series']),
+                '<br>',
+                htmlspecialchars($client['chief-passport-number']);
+        ?></td>
+        <td class="center w150"><?php
+            echo htmlspecialchars($client['accountant-name']);
+        ?></td>
+        <td class="center w75"><?php
+            echo
+                htmlspecialchars($client['accountant-passport-series']),
+                '<br>',
+                htmlspecialchars($client['accountant-passport-number']);
+        ?></td>
+        <td class="center w50"><?php
+            echo $index + 1;
+        ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+
+<script type="text/javascript">
+(function(w, d){
+
+    var divSticky = d.getElementById('divSticky'),
+        scrollHandlerFn = function(){
+            divSticky.style.top = w.scrollY + 'px';
+        },
+        loadHandlerFn = function(){
+            w.onscroll = scrollHandlerFn;
+        };
+
+    w.onload = loadHandlerFn;
+
+})(window, document);
+</script>

@@ -1,0 +1,49 @@
+<?php if($this->isPermitted($this::AK_REGISTER_USER_ROLE)): ?>
+    <a class="button single" href="index.php?view=<?php echo $this::AK_REGISTER_USER_ROLE; ?>">Новая роль учетных записей</a>
+<?php endif; ?>
+
+<?php if(isset($error)): ?>
+    <div class="failure"><?php echo $error; ?></div>
+<?php endif; ?>
+
+<?php if(empty($roles)): ?>
+    <div class="empty-resultset">Роли учетных записей отсутствуют.</div>
+<?php
+    else:
+        $canAccessModifyUserRole  = $this->isPermitted($this::AK_MODIFY_USER_ROLE);
+        $canAccessRoleUserMembers = $this->isPermitted($this::AK_USER_ROLE_MEMBERS);
+
+        $canAccessActions = $canAccessModifyUserRole + $canAccessRoleUserMembers;
+?>
+    <div class="stripes-caption">
+        <span class="col-number">№</span>
+        <span class="col-name">Наименование</span>
+        <span class="col-users-count">Учетные записи</span>
+        <?php if($canAccessActions): ?>
+            <span class="col-action">Действия</span>
+        <?php endif; ?>
+    </div>
+    <?php foreach($roles as $index => &$role): ?>
+        <div class="stripe">
+            <span class="col-number"><?php
+                echo $index + 1;
+            ?></span>
+            <span class="col-name"><?php
+                echo htmlspecialchars($role['name']);
+            ?></span>
+            <span class="col-users-count"><?php
+                echo htmlspecialchars($role['users-count']);
+            ?></span>
+            <?php if($canAccessActions): ?>
+                <span class="col-action">
+                    <?php if($canAccessModifyUserRole): ?>
+                        <a href="index.php?view=<?php echo $this::AK_MODIFY_USER_ROLE ?>&id=<?php echo $role['id']; ?>">Изменить</a>
+                    <?php endif; ?>
+                    <?php if($canAccessRoleUserMembers): ?>
+                        <a href="index.php?view=<?php echo $this::AK_USER_ROLE_MEMBERS ?>&id=<?php echo $role['id']; ?>">Участники</a>
+                    <?php endif; ?>
+                </span>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>

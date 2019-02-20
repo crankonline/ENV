@@ -1,0 +1,115 @@
+<form class="form" action="index.php?view=<?php echo $this::AK_COUNTRY_PASSPORTS; ?>" method="POST">
+    <div class="caption">Параметры поиска</div>
+
+    <div class="field">
+        <label for="surname" class="fixed">Фамилия:</label>
+        <input type="text" name="surname" id="surname" placeholder="Укажите фамилию" value="<?php echo empty($_POST['surname']) ? '' : htmlspecialchars($_POST['surname']); ?>">
+        <span class="hint">Фамилия или её часть для поиска</span>
+    </div>
+
+    <div class="field">
+        <label for="name" class="fixed">Имя:</label>
+        <input type="text" name="name" id="name" placeholder="Укажите имя" value="<?php echo empty($_POST['name']) ? '' : htmlspecialchars($_POST['name']); ?>">
+        <span class="hint">Имя или его часть для поиска</span>
+    </div>
+
+    <div class="field">
+        <label for="middle-name" class="fixed">Отчество:</label>
+        <input type="text" name="middle-name" id="middle-name" placeholder="Укажите отчество" value="<?php echo empty($_POST['middle-name']) ? '' : htmlspecialchars($_POST['middle-name']); ?>">
+        <span class="hint">Отчество или его часть для поиска</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($passports)): ?>
+    <?php if(empty($_POST)): ?>
+        <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php else: ?>
+        <div class="empty-resultset">По запросу ничего не найдено.</div>
+    <?php endif; ?>
+<?php else: ?>
+    <table class="data">
+        <tr>
+            <th class="w50">#</th>
+            <th class="w100">ПИН</th>
+            <th>ФИО</th>
+            <th class="w100">Дата рождения</th>
+            <th class="w50">Серия</th>
+            <th class="w75">Номер</th>
+            <th class="w100">Дата выдачи</th>
+            <th class="w100">Дата истечения</th>
+            <th class="w100">Орган выдачи</th>
+        </tr>
+        <?php
+            $isPinInfo = $this->isPermitted($this::AK_PIN_INFO);
+
+            foreach($passports as $index => $passport):
+
+                $tmp = array_reverse(explode('-', $passport['document_issuedate']));
+                $passport['document_issuedate'] = implode('.', $tmp);
+
+                $tmp = array_reverse(explode('-', $passport['document_expiredate']));
+                $passport['document_expiredate'] = implode('.', $tmp);
+        ?>
+        <tr>
+            <td class="center"><?php
+                echo $index + 1;
+            ?></td>
+            <td class="center">
+                <?php if($isPinInfo): ?>
+                    <a href="index.php?view=<?php echo $this::AK_PIN_INFO; ?>&pin=<?php echo urlencode($passport['person_idnp']); ?>" target="_blank"><?php
+                        echo htmlspecialchars($passport['person_idnp']);
+                    ?></a>
+                <?php else: ?>
+                    <?php echo htmlspecialchars($passport['person_idnp']); ?>
+                <?php endif; ?>
+            </td>
+            <td class="capitalize"><?php
+                $temp = [];
+
+                if($passport['person_lastname_kyr']):
+                    $temp[] = $passport['person_lastname_kyr'];
+                endif;
+
+                if($passport['person_firstname_kyr']):
+                    $temp[] = $passport['person_firstname_kyr'];
+                endif;
+
+                if($passport['person_patronymic_kyr']):
+                    $temp[] = $passport['person_patronymic_kyr'];
+                endif;
+
+                echo htmlspecialchars(implode(' ', $temp));
+            ?></td>
+            <td class="center"><?php
+                echo htmlspecialchars($passport['person_birthdate']);
+            ?></td>
+            <td class="center"><?php
+                echo htmlspecialchars($passport['document_series']);
+            ?></td>
+            <td class="center"><?php
+                echo htmlspecialchars($passport['document_number']);
+            ?></td>
+            <td class="center"><?php
+                echo htmlspecialchars($passport['document_issuedate']);
+            ?></td>
+            <td class="center"><?php
+                echo htmlspecialchars($passport['document_expiredate']);
+            ?></td>
+            <td><?php
+                echo htmlspecialchars($passport['document_authority']);
+            ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>

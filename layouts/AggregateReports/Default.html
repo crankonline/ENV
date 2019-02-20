@@ -1,0 +1,183 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<div class="floating" id="divSticky">
+
+    <div class="filters">
+        <a href="javascript: void(0)" class="button">Фильтры</a>
+
+        <form action="index.php?view=<?php echo $this::AK_AGGREGATE_REPORTS; ?>" method="POST">
+            <table class="layout">
+                <tr>
+                    <th>Виды деятельности</th>
+                    <th>Организационно-правовые формы</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="scroller">
+                        <?php foreach($activities as &$activity): ?>
+                            <label>
+                                <?php if(in_array($activity['id'], $cActivities)): ?>
+                                    <input type="checkbox" name="activities[]" value="<?php echo $activity['id']; ?>" checked />
+                                <?php else: ?>
+                                    <input type="checkbox" name="activities[]" value="<?php echo $activity['id']; ?>" />
+                                <?php endif; ?>
+                                <?php echo htmlspecialchars($activity['gked']); ?>
+                                -
+                                <?php echo htmlspecialchars($activity['name']); ?>
+                                (<b><?php echo $activity['clients-count']; ?></b> кл.)
+                            </label>
+                        <?php endforeach; ?>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="scroller">
+                        <?php foreach($legalForms as &$legalForm): ?>
+                            <label>
+                                <?php if(in_array($legalForm['id'], $cLegalForms)): ?>
+                                    <input type="checkbox" name="legal-forms[]" value="<?php echo $legalForm['id']; ?>" checked />
+                                <?php else: ?>
+                                    <input type="checkbox" name="legal-forms[]" value="<?php echo $legalForm['id']; ?>" />
+                                <?php endif; ?>
+
+                                <?php echo htmlspecialchars($legalForm['name']); ?>
+                                (<b><?php echo $legalForm['clients-count']; ?></b> кл.)
+                            </label>
+                        <?php endforeach; ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Формы отчетности</th>
+                    <th>Период</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="scroller">
+                        <?php foreach($forms as &$form): ?>
+                            <label>
+                                <?php if(in_array($form['id'], $cForms)): ?>
+                                    <input type="checkbox" name="forms[]" value="<?php echo $form['id']; ?>" checked />
+                                <?php else: ?>
+                                    <input type="checkbox" name="forms[]" value="<?php echo $form['id']; ?>" />
+                                <?php endif; ?>
+                                <?php echo htmlspecialchars($form['name']); ?>
+                            </label>
+                        <?php endforeach; ?>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="scroller">
+                            <label>
+                                <span class="fixed">С</span> <input type="date" name="from" value="<?php echo $cPeriodFrom; ?>">
+                            </label>
+                            <label>
+                                <span class="fixed">По</span> <input type="date" name="to" value="<?php echo $cPeriodTo; ?>">
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <input type="submit" class="button" value="Просмотр">
+        </form>
+    </div>
+
+    <?php if(!(empty($targetForms) || empty($users))): ?>
+    <table class="data">
+        <tr>
+            <th class="w50">#</th>
+            <th class="w300">ИНН / Наименование</th>
+            <?php foreach($targetForms as $form): ?>
+                <th class="w150"><?php
+                    echo htmlspecialchars($form['name']);
+                ?></th>
+            <?php endforeach; ?>
+        </tr>
+    </table>
+    <?php endif; ?>
+
+</div>
+<?php if(empty($users)): ?>
+    <br>
+    <?php if($_POST): ?>
+        <div class="empty-resultset">Не найдено пользователей с указанными параметрами.</div>
+    <?php else: ?>
+        <div class="empty-resultset">Укажите параметры просмотра в меню "фильтры".</div>
+    <?php endif; ?>
+<?php else: ?>
+    <table class="data">
+        <?php
+            $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+            $canAccessSochi      = $this->isPermitted($this::AK_SOCHI);
+
+            foreach($users as $number => $user):
+        ?>
+        <tr>
+            <td class="w50 center"><?php
+                echo $number + 1;
+            ?></td>
+            <td class="w300"><?php
+                if($canAccessRequisites):
+            ?><a href="index.php?view=<?php echo $this::AK_REQUISITES ?>&inn=<?php echo $user['inn']; ?>" target="_blank"><?php
+                    echo htmlspecialchars($user['inn']);
+                ?></a>
+                <?php else: ?>
+                    <?php echo htmlspecialchars($user['inn']); ?>
+                <?php endif; ?>
+
+                <?php echo htmlspecialchars($user['name']); ?>
+            </td>
+            <?php
+                foreach($targetForms as $form):
+                    $report = isset($reports["{$user['uid']}-{$form['id']}"])
+                        ? $reports["{$user['uid']}-{$form['id']}"]
+                        : null;
+
+                    if($report):
+            ?>
+                <td class="w150 center hint">
+                    <?php if($canAccessSochi): ?>
+                        <a href="index.php?view=<?php echo $this::AK_SOCHI ?>&inn=<?php echo $user['inn']; ?>" target="_blank"><?php
+                            foreach($report as $period => $count):
+                                echo '<span>', $period, ': ', (int)$count, '</span>' . PHP_EOL;
+                            endforeach;
+                        ?></a>
+                    <?php else: ?>
+                        <?php
+                            foreach($report as $period => $count):
+                                echo '<span>', $period, ': ', (int)$count, '</span>' . PHP_EOL;
+                            endforeach;
+                        ?>
+                    <?php endif; ?>
+                </td>
+                <?php else: ?>
+                <td class="w150"></td>
+            <?php
+                    endif;
+
+                endforeach;
+            ?>
+        </tr>
+    <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+<script type="text/javascript">
+(function(w, d){
+
+    var divSticky = d.getElementById('divSticky'),
+        scrollHandlerFn = function(){
+            divSticky.style.top = w.scrollY + 'px';
+        },
+        loadHandlerFn = function(){
+            w.onscroll = scrollHandlerFn;
+        };
+
+    w.onload = loadHandlerFn;
+
+})(window, document);
+</script>

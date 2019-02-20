@@ -1,0 +1,217 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(isset($result, $status)): ?>
+    <div class="<?php echo $result ? 'success' : 'failure'; ?>">
+        <?php echo $status; ?>
+    </div>
+<?php endif; ?>
+
+<form class="form" action="index.php" method="GET">
+
+    <div class="caption">Поиск по паспортым данным</div>
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>" />
+
+    <div class="field">
+        <label for="sSeries" class="fixed">Cерия <span class="required">*</span>:</label>
+        <input type="text" name="series" id="sSeries" maxlength="10" value="<?php echo $cSeries ? htmlspecialchars($cSeries) : null; ?>" placeholder="введите серию" required>
+        <span class="hint">Серия паспорта для поиска</span>
+    </div>
+
+    <div class="field">
+        <label for="sNumber" class="fixed">Номер <span class="required">*</span>:</label>
+        <input type="text" name="number" id="sNumber" maxlength="15" value="<?php echo $cNumber ? htmlspecialchars($cNumber) : null; ?>" placeholder="введите номер" required>
+        <span class="hint">Номер паспорта для поиска</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if(empty($cRepresentative)): ?>
+    <div class="empty-resultset">
+        <?php if(isset($cRepresentative)): ?>
+            Данных не найдено.
+        <?php else: ?>
+            Укажите данные для поиска.
+        <?php endif; ?>
+    </div>
+<?php else: ?>
+    <form class="form" action="index.php?<?php echo $_SERVER['QUERY_STRING']; ?>" method="POST">
+
+        <div class="caption">Данные представителя</div>
+
+        <input type="hidden" name="passport-id" value="<?php echo $cRepresentative['passport-id'] ?>">
+        <input type="hidden" name="representative-id" value="<?php echo $cRepresentative['representative-id'] ?>">
+
+        <div class="field">
+            <label for="eSeries" class="fixed">Cерия <span class="required">*</span>:</label>
+            <input type="text" name="passport-series" id="eSeries" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-series']); ?>" placeholder="Укажите серию паспорта" required>
+            <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знак "-".</span>
+            <?php if(isset($validations, $validations['passport-series'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['passport-series'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eNumber" class="fixed">Номер <span class="required">*</span>:</label>
+            <input type="text" name="passport-number" id="eNumber" maxlength="15" value="<?php echo htmlspecialchars($cRepresentative['passport-number']); ?>" placeholder="Укажите номер паспорта" required>
+            <span class="hint">Номер паспорта, 15 символов: латиница, цифры или знак "-".</span>
+            <?php if(isset($validations, $validations['passport-number'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['passport-number'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eIssuingAuthority" class="fixed">Орган выдачи <span class="required">*</span>:</label>
+            <input type="text" name="passport-issuing-authority" id="eIssuingAuthority" maxlength="255" value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-authority']); ?>" placeholder="Укажите орган выдачи паспорта" required>
+            <span class="hint">Орган выдачи паспорта, 255 символов максимум.</span>
+            <?php if(isset($validations, $validations['passport-issuing-authority'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['passport-issuing-authority'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eIssuingDate" class="fixed">Дата выдачи <span class="required">*</span>:</label>
+            <input type="text" name="passport-issuing-date" id="eIssuingDate" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-date']); ?>" placeholder="ДД.ММ.ГГГГ" required>
+            <span class="hint">Дата выдачи паспорта, 10 символов максимум.</span>
+            <?php if(isset($validations, $validations['passport-issuing-date'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['passport-issuing-date'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eRepresentativeSurname" class="fixed">Фамилия <span class="required">*</span>:</label>
+            <input type="text" name="representative-surname" id="eRepresentativeSurname" maxlength="25" value="<?php echo htmlspecialchars($cRepresentative['representative-surname']); ?>" placeholder="Укажите фамилию" required>
+            <span class="hint">Фамилия представителя, 25 символов максимум.</span>
+            <?php if(isset($validations, $validations['representative-surname'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['representative-surname'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eRepresentativeName" class="fixed">Имя <span class="required">*</span>:</label>
+            <input type="text" name="representative-name" id="eRepresentativeName" maxlength="20" value="<?php echo htmlspecialchars($cRepresentative['representative-name']); ?>" placeholder="Укажите имя" required>
+            <span class="hint">Имя представителя, 20 символов максимум.</span>
+            <?php if(isset($validations, $validations['representative-name'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['representative-name'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <label for="eRepresentativeMiddleName" class="fixed">Отчество:</label>
+            <input type="text" name="representative-middle-name" id="eRepresentativeMiddleName" maxlength="25" value="<?php echo htmlspecialchars($cRepresentative['representative-middle-name']); ?>" placeholder="Укажите отчество">
+            <span class="hint">Отчество представителя, 25 символов максимум.</span>
+            <?php if(isset($validations, $validations['representative-middle-name'])): ?>
+                <div class="validation-error"><?php
+                    echo $validations['representative-middle-name'];
+                ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field buttons">
+            <input type="submit" class="button" name="update" value="Изменить" />
+            <input type="submit" class="button" name="remove" value="Удалить" onclick="return window.confirm('Вы осознанно хотите УДАЛИТЬ паспортные данные, представителя и его участие во всех организациях?')" />
+        </div>
+
+    </form>
+
+    <div class="columns">
+        <div class="col-companies">
+            <div class="form">
+                <div class="caption">
+                    Cвязанные организации
+                    [ <b>Всего <?php echo $cRepresentative['company-count']; ?></b> ]
+                </div>
+
+                <?php
+                    if($cRepresentative['company-count']):
+                        $companies = explode(',', $cRepresentative['company-inns']);
+
+                        $isRequisites = $this->isPermitted($this::AK_REQUISITES);
+                        $isSochi      = $this->isPermitted($this::AK_SOCHI);
+
+                        foreach($companies as $company):
+                ?>
+                <div class="field">
+                    <span class="text">
+                        <?php echo $company; ?>
+                        <?php if($isRequisites): ?>
+                            <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $company; ?>" target="_blank">Реквизиты</a>
+                        <?php endif; ?>
+                        <?php if($isSochi): ?>
+                            <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $company; ?>" target="_blank">СОчИ</a>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <?php
+                        endforeach;
+                    else:
+                ?>
+                <div class="field">
+                    <span class="text">Перечень пуст</span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="col-similars">
+            <div class="form">
+                <div class="caption">Похожие представители</div>
+
+            <?php if(empty($similars)): ?>
+                <div class="field">
+                    <span class="text">Перечень пуст</span>
+                </div>
+            <?php else: ?>
+                <?php foreach($similars as $similar): ?>
+                <div class="field">
+                    <a class="text" href="index.php?view=<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>&series=<?php echo $similar['passport-series']; ?>&number=<?php echo $similar['passport-number']; ?>" target="_blank"><?php
+                        echo
+                            $similar['passport-series'],
+                            ' ',
+                            $similar['passport-number'];
+                    ?></a>
+                    <span class="text">
+                        <?php if(preg_match($this::REGEX_INVALID_PASSPORT, $similar['passport-series'])): ?>
+                            (криллица в серии)
+                        <?php elseif(preg_match($this::REGEX_INVALID_PASSPORT, $similar['passport-number'])): ?>
+                            (криллица в номере)
+                        <?php endif; ?>
+                    </span>
+                    <span class="text"><?php
+                        echo
+                            $similar['representative-surname'],
+                            ' ',
+                            $similar['representative-name'],
+                            ' ',
+                            $similar['representative-middle-name'],
+                            ' - ',
+                            '<b>', $similar['company-count'], '</b>',
+                            ' ',
+                            'орг.';
+                    ?></span>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endif; ?>

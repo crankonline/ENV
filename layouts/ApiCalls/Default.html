@@ -1,0 +1,259 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_API_CALLS; ?>" />
+    <div class="caption" style="margin: 0px">Параметры просмотра</div>
+
+    <div class="view-section">
+        <div class="field">
+            <label for="limit" class="fixed">Число строк:</label>
+            <input type="text" name="limit" id="limit" placeholder="введите ограничение" value="<?php echo $cLimit ? htmlspecialchars($cLimit) : null; ?>">
+            <span class="hint">Допустимое количество строк в результатах.</span>
+        </div>
+
+        <div class="field">
+            <label for="period-from" class="fixed">Период с:</label>
+            <input type="datetime-local" name="period-from" id="period-from" value="<?php echo $cPeriodFrom ? htmlspecialchars($cPeriodFrom) : null; ?>"/>
+            <label for="period-to">по:</label>
+            <input type="datetime-local" name="period-to" id="period-to" value="<?php echo $cPeriodTo ? htmlspecialchars($cPeriodTo) : null; ?>"/>
+            <span class="hint">Интервал времени, в который был осуществлен вызов.</span>
+        </div>
+
+        <div class="field">
+            <label for="subscriber" class="fixed">Подписчик:</label>
+            <select name="subscriber" id="subscriber">
+                <option value="">любой</option>
+                <?php foreach($subscribers as $subscriber): ?>
+                <option value="<?php echo $subscriber['id']; ?>"<?php echo $subscriber['id'] == $cSubscriber ? ' selected' : ''; ?>><?php
+                    echo htmlspecialchars($subscriber['name']);
+                ?></option>
+                <?php endforeach; ?>
+            </select>
+            <span class="hint">Подписчик, которым был осуществлен вызов.</span>
+        </div>
+
+        <div class="field">
+            <label for="service" class="fixed">Cлужба:</label>
+            <select name="service" id="service">
+                <option value="">любая</option>
+            </select>
+            <span class="hint">Cлужба, к которой адресован вызов.</span>
+        </div>
+
+        <div class="field">
+            <label for="method" class="fixed">Метод:</label>
+            <select name="method" id="method">
+                <option value="">любой</option>
+            </select>
+            <span class="hint">Метод службы, к которому адресован вызов.</span>
+        </div>
+
+        <div class="field">
+            <label for="result-type" class="fixed">Результат:</label>
+            <select name="result-type" id="result-type">
+                <option value="">любой</option>
+                <?php foreach($resultTypes as $resultType): ?>
+                <option value="<?php echo $resultType['id']; ?>"<?php echo $resultType['id'] == $cResultType ? ' selected' : ''; ?>><?php
+                    echo htmlspecialchars($resultType['name']);
+                ?></option>
+                <?php endforeach; ?>
+            </select>
+            <span class="hint">Результат осуществления вызова.</span>
+        </div>
+
+        <div class="field buttons" style="padding: 40px 0px">
+            <input type="submit" class="button" value="Просмотр" style="padding: 20px 50px" />
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+(function(w, d){
+
+    var map        = <?php echo json_encode($serviceMethods, JSON_UNESCAPED_UNICODE); ?>,
+        sltService = d.getElementById('service'),
+        curService = <?php echo json_encode($cService) ?>,
+        sltMethod  = d.getElementById('method'),
+        curMethod  = <?php echo json_encode($cMethod) ?>;
+
+    function purgeOptions(selectEl){
+        while(selectEl.lastChild.value){
+            selectEl.removeChild(selectEl.lastChild);
+        }
+    }
+
+    function fillServices(){
+        var sLen = map.length,
+            s, service,
+            option;
+
+        purgeOptions(sltService);
+
+        for(s = 0; service = map[s], s < sLen; s++){
+            option = d.createElement('option');
+
+            option.value     = service['id'];
+            option.innerHTML = service['name'];
+            option.selected  = (service['id'] == curService);
+
+            sltService.appendChild(option);
+        }
+    }
+
+    function getServiceById(id){
+        var sLen = map.length,
+            s, service;
+
+        for(s = 0; service = map[s], s < sLen; s++){
+            if(service.id == id){
+                return service;
+            }
+        }
+
+        return null;
+    }
+
+    function fillMethodByService(serviceId){
+        var service = getServiceById(sltService.value);
+
+        purgeOptions(sltMethod);
+
+        if(service){
+            var methods = service.methods,
+                mLen    = methods.length,
+                m, method;
+
+            for(m = 0; method = methods[m], m < mLen; m++){
+                option = d.createElement('option');
+
+                option.value     = method['id'];
+                option.innerHTML = method['name'];
+                option.selected  = (method['id'] == curMethod);
+
+                sltMethod.appendChild(option);
+            }
+        }
+    }
+
+    var sltServiceChangeHandlerFn = function(){
+            fillMethodByService(this.value);
+        },
+        loadHandlerFn = function(){
+            fillServices();
+
+            sltService.onchange = sltServiceChangeHandlerFn;
+
+            if(curService){
+                sltService.onchange();
+            }
+        };
+
+    w.onload = loadHandlerFn;
+
+})(window, document);
+</script>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($calls)): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php elseif(!$calls->rowCount()): ?>
+    <div class="empty-resultset">Вызовов не найдено.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<table class="data">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Старший вызов</th>
+            <th>Подписчик:</th>
+            <th>Обращение:</th>
+            <th>Дата и время:</th>
+            <th>Продолжительность:</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+        $canAccessDetails = $this->isPermitted($this::AK_API_CALL);
+
+        foreach($calls as $call):
+            if($call['is-success']):
+                $class = 'successful';
+            elseif($call['is-failure']):
+                $class = 'failed';
+            else:
+                $class = '';
+            endif;
+    ?>
+        <tr class="<?php echo $class; ?>">
+            <td class="center number">
+                <?php if($canAccessDetails): ?>
+                    <a href="index.php?view=<?php echo $this::AK_API_CALL; ?>&id=<?php echo $call['id']; ?>" target="_blank">
+                        #<?php echo $call['id']; ?>
+                    </a>
+                <?php else: ?>
+                    #<?php echo $call['id']; ?>
+                <?php endif; ?>
+            </td>
+            <td class="center number">
+                <?php if($canAccessDetails): ?>
+                    <?php if($call['parent-id']): ?>
+                        <a href="index.php?view=<?php echo $this::AK_API_CALL; ?>&id=<?php echo $call['parent-id']; ?>" target="_blank">
+                            #<?php echo $call['parent-id']; ?>
+                        </a>
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
+                <?php else: ?>
+                    <?php if($call['parent-id']): ?>
+                        #<?php echo $call['parent-id']; ?>
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
+            <td class="center"><?php
+                echo htmlspecialchars($call['subscriber']);
+            ?></td>
+            <td class="no-wrap">
+                <div class="call">
+                    <?php
+                        echo htmlspecialchars($call['service-method']);
+
+                        $args = empty($call['arguments'])
+                            ? null
+                            : explode($this::RESULTSET_ARGUMENTS_DELIMITER, $call['arguments']);
+
+                        if($args):
+                    ?>
+                    <div class="arguments">
+                        <?php foreach($args as $index => $arg): ?>
+                            <pre><?php
+                                echo htmlspecialchars($arg);
+                            ?></pre>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </td>
+            <td class="no-wrap center stamp"><?php
+                echo htmlspecialchars($call['stamp']);
+            ?></td>
+            <td class="no-wrap center stamp">
+                <?php if($call['duration']): ?>
+                    <?php echo htmlspecialchars($call['duration']); ?>
+                <?php else: ?>
+                    -
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

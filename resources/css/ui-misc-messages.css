@@ -1,0 +1,36 @@
+body .layout .content .success,
+body .layout .content .failure,
+body .layout .content .denied,
+body .layout .content .empty-resultset
+    {
+        font-family: Calibri, Tahoma, Arial;
+        font-size: 18px;
+
+        padding: 15px;
+
+        text-align: center;
+    }
+
+body .layout .content .failure
+    {
+        background-color: #ffb0b0;
+        border: 1px solid #e20000;
+
+        color: #000;
+    }
+
+body .layout .content .success
+    {
+        background-color: #aff1ba;
+        border: 1px solid #009719;
+
+        color: #000;
+    }
+
+body .layout .content .denied,
+body .layout .content .empty-resultset
+    {
+        border: 1px solid #133195;
+
+        color: #133195;
+    }

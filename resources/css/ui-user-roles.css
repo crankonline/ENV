@@ -1,0 +1,27 @@
+.col-number
+    {
+        min-width: 40px;
+        max-width: 40px;
+    }
+
+.col-name
+    {
+        width: 100%;
+    }
+
+.col-users-count
+    {
+        min-width: 250px;
+        max-width: 250px;
+    }
+
+.col-action
+    {
+        min-width: 250px;
+        max-width: 250px;
+    }
+
+.col-action a
+    {
+        color: inherit;
+    }

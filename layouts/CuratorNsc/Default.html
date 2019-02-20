@@ -1,0 +1,276 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_CURATOR_NSC; ?>" />
+    <div class="caption">Поиск документа</div>
+
+    <div class="field">
+        <label for="uin" class="fixed">UIN:</label>
+        <input type="text" name="uin" id="uin" style="width: 475px" maxlength="49" placeholder="введите UIN" value="<?php echo $cUin === null ? '' : htmlspecialchars($cUin); ?>">
+        <span class="hint">Уникальный межсистемный идентификатор документа, 49 цифр.</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(isset($result, $status)): ?>
+    <div class="<?php echo $result ? 'success' : 'failure'; ?>">
+        <?php echo $status; ?>
+    </div>
+<?php endif; ?>
+
+<?php if($cUin === null): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($report)): ?>
+    <div class="empty-resultset">Документ не найден.</div>
+<?php else: ?>
+    <div class="form">
+        <div class="caption">Данные о документе</div>
+
+        <div class="field">
+            <span class="text fixed">UIN:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['uin']);
+            ?></span>
+            <?php if($this->isPermitted($this::AK_UIN_PARSER)): ?>
+                <a href="index.php?view=<?php echo $this::AK_UIN_PARSER; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Информация по UIN</a>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Код К/П:</span>
+            <a href="http://<?php echo $this::DEPLOYMENT_ADDRESS; ?>/index.php?view=report&id=<?php echo $report['id']; ?>" class="text" target="_blank"><?php
+                echo htmlspecialchars($report['id']);
+            ?></a>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Форма:</span>
+            <span class="text"><?php
+                echo
+                    htmlspecialchars(
+                        sprintf(
+                            '%s (версия %d) - %s',
+                            $report['form-code'],
+                            $report['form-version-number'],
+                            $report['form-version-title']
+                        )
+                    );
+            ?></span>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Тип отчета:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['form-type-name']);
+            ?></span>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Период:</span>
+            <span class="text"><?php
+                $temp = [];
+
+                if($report['report-period-month']):
+                    $temp[] = $this->getMonthName($report['report-period-month']);
+                endif;
+
+                if($report['report-period-quarter']):
+                    $temp[] = $report['report-period-quarter'] . ' кв.';
+                endif;
+
+                if($report['report-period-year']):
+                    $temp[] = $report['report-period-year'] . ' г.';
+                endif;
+
+                echo htmlspecialchars(
+                    $temp ? implode(' ', $temp) : '-'
+                );
+            ?></span>
+        </div>
+    </div>
+
+    <div class="form">
+        <div class="caption">Данные об отправителе</div>
+
+        <div class="field">
+            <span class="text fixed">ИНН:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['payer-inn']);
+            ?></span>
+            <?php if($this->isPermitted($this::AK_REQUISITES)): ?>
+                <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $report['payer-inn']; ?>" target="_blank">Реквизиты</a>
+            <?php endif; ?>
+
+            <?php if($this->isPermitted($this::AK_SOCHI)): ?>
+                <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $report['payer-inn']; ?>" target="_blank">СОчИ</a>
+            <?php endif; ?>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Наименование:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['payer-name']);
+            ?></span>
+        </div>
+    </div>
+
+    <div class="form">
+        <div class="caption">Данные о доставке и адресате</div>
+
+        <div class="field">
+            <span class="text fixed">Оператор:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['report-supplier-name']);
+            ?></span>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Отправка:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['submition-date-time']);
+            ?></span>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Доставка:</span>
+            <span class="text"><?php
+                echo htmlspecialchars($report['import-date-time']);
+            ?></span>
+        </div>
+
+        <div class="field">
+            <span class="text fixed">Адресат:</span>
+            <span class="text"><?php
+                echo htmlspecialchars(
+                    $report['region-code'] . ' - ' . $report['region-name']
+                );
+            ?></span>
+        </div>
+    </div>
+
+    <?php if(empty($protocol)): ?>
+        <div class="empty-resultset">Протокол обработки пуст.</div>
+    <?php else: ?>
+        <table class="data">
+            <caption>Протокол обработки</caption>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Обработчик:</th>
+                    <th>Дата и время:</th>
+                    <th>Состояние отчета:</th>
+                    <th>Конечное состояние:</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    foreach($protocol as $index => &$record):
+                        switch($record['report-status-id']):
+                            case $this::REPORT_STATUS_ACCEPTED:
+                                $class = 'successful';
+                            break;
+
+                            case $this::REPORT_STATUS_DECLINED:
+                                $class = 'failed';
+                            break;
+
+                            default:
+                                $class = '';
+                            break;
+                        endswitch;
+                ?>
+                <tr class="<?php echo $class; ?>">
+                    <td class="center"><?php
+                        echo $index + 1;
+                    ?></td>
+                    <td><?php
+                        echo htmlspecialchars($record['trigger-description']);
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($record['date-time']);
+                    ?></td>
+                    <td class="center"><b><?php
+                        echo htmlspecialchars($record['report-status-name']);
+                    ?></b></td>
+                    <td class="center"><?php
+                        echo $record['is-finish'] ? 'Да' : 'Нет';
+                    ?></td>
+                </tr>
+                <tr class="<?php echo $class; ?>">
+                    <th class="center">Результат:</th>
+                    <td colspan="4">
+                        <pre><?php
+                            echo htmlspecialchars(
+                                print_r(
+                                    json_decode($record['result']),
+                                    true
+                                )
+                            );
+                        ?></pre>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <?php if($canClearProcessing): ?>
+        <form class="form center" action="index.php?<?php echo $_SERVER['QUERY_STRING'] ?>" method="POST">
+            <input type="submit" name="clear-processing" class="button" value="Очистить протокол">
+        </form>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if(empty($files)): ?>
+        <div class="empty-resultset">Соотносящиеся файлы отсутствуют.</div>
+    <?php else: ?>
+        <table class="data">
+            <caption>Файлы</caption>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Тип:</th>
+                    <th>Расположение:</th>
+                    <th>Размер (в байтах):</th>
+                    <th>MD5:</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    foreach($files as $index => &$file):
+                        $file['location'] = $this->fileMap[$file['report-file-type-id']];
+                ?>
+                <tr>
+                    <td class="center"><?php
+                        echo $index + 1;
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($file['report-file-type-name']);
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($file['location'] . $file['id']);
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($file['size']);
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($file['hash']);
+                    ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+<?php endif; ?>

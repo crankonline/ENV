@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DosTek group - Операционная среда</title>
+    <link rel="icon" href="resources/images/favicon.png" />
+    {plugin:css}
+    {plugin:js}
+</head>
+<body>
+<div class="header">
+    <div class="menu">
+        <a href="javascript:void(0)">Меню</a>
+        <div class="sheet">
+            <div class="system">
+                <div class="name">
+                    <a href="/"><b>DosTek</b> group</a>
+                </div>
+                <div class="profile">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Роль:</th>
+                                <td><?php
+                                    echo htmlspecialchars($user['user-role-name']);
+                                ?></td>
+                            </tr>
+                            <tr>
+                                <th>Логин:</th>
+                                <td><?php
+                                    echo htmlspecialchars($user['login']);
+                                ?></td>
+                            </tr>
+                            <tr>
+                                <th>Пользователь:</th>
+                                <td><?php
+                                    $temp = [];
+
+                                    if($user['surname']):
+                                        $temp[] = $user['surname'];
+                                    endif;
+
+                                    if($user['name']):
+                                        $temp[] = $user['name'];
+                                    endif;
+
+                                    if($user['middle-name']):
+                                        $temp[] = $user['middle-name'];
+                                    endif;
+
+                                    echo htmlspecialchars(implode(' ', $temp));
+                                ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="actions">
+                    <a href="index.php?view=profile">Профиль</a>
+                    <a href="logout.php">Выход</a>
+                </div>
+            </div>
+            <div class="navigation">
+                {plugin:menu}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layout">
+    <div class="title">
+        {plugin:title}
+    </div>
+    <div class="content">
+        {plugin:navigator}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35" viewBox="0 0 450 450" preserveAspectRatio="xMidYMid meet" version="1.1">
+    <defs>
+        <circle id="circle" cx="0" cy="0" r="20" fill="#4096ee" />
+    </defs>
+
+    <use xlink:href="#circle" transform="translate(228 221) scale(2.1)" />
+
+    <use xlink:href="#circle" transform="translate(213 135) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(258 139) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(296 165) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(315 207) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(311 251) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(285 288) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(244 307) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(198 303) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(161 277) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(142 236) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(146 192) scale(0.75)" />
+    <use xlink:href="#circle" transform="translate(172 155) scale(0.75)" />
+
+    <use xlink:href="#circle" transform="translate(205 90) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(252 90) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(296 106) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(331 136) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(355 176) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(363 222) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(355 267) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(331 307) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(296 337) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(252 352) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(205 352) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(161 336) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(126 307) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(103 266) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(95 222) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(102 176) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(126 136) scale(0.6)" />
+    <use xlink:href="#circle" transform="translate(161 106) scale(0.6)" />
+
+    <use xlink:href="#circle" transform="translate(258 55) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(313 75) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(359 113) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(388 164) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(398 221) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(388 278) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(359 330) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(313 368) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(258 388) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(199 388) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(143 368) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(98 330) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(69 278) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(58 221) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(69 164) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(98 113) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(143 75) scale(0.5)" />
+    <use xlink:href="#circle" transform="translate(199 55) scale(0.5)" />
+
+    <use xlink:href="#circle" transform="translate(262 30) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(326 53) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(378 97) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(413 155) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(424 222) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(412 288) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(379 347) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(327 391) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(262 414) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(194 414) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(130 391) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(78 347) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(45 288) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(32 222) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(44 155) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(79 97) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(131 53) scale(0.3)" />
+    <use xlink:href="#circle" transform="translate(194 30) scale(0.3)" />
+</svg>

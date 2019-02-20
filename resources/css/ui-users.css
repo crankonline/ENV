@@ -1,0 +1,54 @@
+.col-number
+    {
+        min-width: 40px;
+        max-width: 40px;
+    }
+
+.col-login,
+.col-role
+    {
+        min-width: 250px;
+        max-width: 250px;
+    }
+
+.col-name
+    {
+        width: 100%;
+    }
+
+.col-status
+    {
+        min-width: 135px;
+        max-width: 135px;
+    }
+
+.col-status > div.active
+    {
+        color: #3bb281;
+    }
+
+.col-status > div.blocked
+    {
+        color: #e47282;
+    }
+
+.col-action
+    {
+        min-width: 100px;
+        max-width: 100px;
+    }
+
+.col-number,
+.col-login,
+.col-role,
+.col-name,
+.col-status,
+.col-action
+    {
+        text-align: center;
+    }
+
+.stripe > .col-action
+    {
+        text-decoration: underline;
+    }

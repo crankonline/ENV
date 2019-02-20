@@ -1,0 +1,97 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php elseif(empty($call)): ?>
+    <div class="empty-resultset">Вызов не найден.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<div class="form">
+    <div class="caption">Общие сведения</div>
+
+    <div class="field">
+        <span class="text fixed">Идентификатор:</span>
+        <span class="text">#<?php echo $call['id']; ?></span>
+    </div>
+
+    <?php if($call['parent-id']): ?>
+    <div class="field">
+        <span class="text fixed">Cтарший вызов:</span>
+        <span class="text">
+            <a href="index.php?view=<?php echo $this::AK_API_CALL; ?>&id=<?php echo $call['parent-id']; ?>">#<?php
+                echo $call['parent-id'];
+            ?></a>
+        </span>
+    </div>
+    <?php endif; ?>
+
+    <div class="field">
+        <span class="text fixed">Подписчик:</span>
+        <span class="text"><?php echo htmlspecialchars($call['subscriber']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Обращение:</span>
+        <span class="text"><?php echo htmlspecialchars($call['service-method']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Дата и время:</span>
+        <span class="text"><?php echo htmlspecialchars($call['stamp']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Длительность:</span>
+        <span class="text"><?php echo htmlspecialchars($call['duration']) ?: '-'; ?></span>
+    </div>
+</div>
+
+<?php if($arguments): ?>
+<div class="form">
+    <div class="caption">Аргументы</div>
+
+    <?php foreach($arguments as $index => &$arg): ?>
+    <div class="field">
+        <span class="text">Порядковый номер: <?php echo $index; ?></span>
+        <pre><?php echo htmlspecialchars($arg['value']); ?></pre>
+    </div>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<?php if($call['is-success']): ?>
+<div class="form successful">
+    <div class="caption">Результат</div>
+
+    <div class="field">
+        <span class="text fixed">Дата и время:</span>
+        <span class="text"><?php echo htmlspecialchars($call['result-stamp']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Значение:</span>
+        <pre><?php echo htmlspecialchars($call['result-value']); ?></pre>
+    </div>
+</div>
+<?php elseif($call['is-failure']): ?>
+<div class="form failed">
+    <div class="caption">Ошибка</div>
+
+    <div class="field">
+        <span class="text fixed">Дата и время:</span>
+        <span class="text"><?php echo htmlspecialchars($call['exception-stamp']); ?></span>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Код:</span>
+        <pre><?php echo htmlspecialchars($call['exception-code']); ?></pre>
+    </div>
+
+    <div class="field">
+        <span class="text fixed">Cообщение:</span>
+        <pre><?php echo htmlspecialchars($call['exception-message']); ?></pre>
+    </div>
+</div>
+<?php endif; ?>

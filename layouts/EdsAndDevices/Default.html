@@ -1,0 +1,304 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_EDS_AND_DEVICES; ?>" />
+    <div class="caption">Просмотр устройств и ЭЦП</div>
+
+    <div class="field">
+        <label for="inn" class="fixed">ИНН:</label>
+        <input type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
+        <span class="hint">10 или 14 цифр</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($requisites)): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php
+$common = $requisites->common;
+$sf     = $requisites->sf;
+$sti    = $requisites->sti;
+$nsc    = $requisites->nsc;
+
+echo
+    '<table class="data requisites">',
+        '<caption>Информация об устройствах и ЭЦП</caption>';
+
+if($common){
+    $bank             = $common->bank;
+    $representatives  = $common->representatives;
+
+    echo
+        '<tr>',
+            '<th colspan="2">ИНН:</th>',
+            '<td>',
+                $common->inn;
+
+    if($this->isPermitted($this::AK_REQUISITES)):
+        echo " <a href=\"index.php?view=requisites&inn={$common->inn}\" target=\"_blank\">Реквизиты</a>";
+    endif;
+
+    if($this->isPermitted($this::AK_SOCHI)):
+        echo " <a href=\"index.php?view=sochi&inn={$common->inn}\" target=\"_blank\">СОчИ</a>";
+    endif;
+
+    if($this->isPermitted($this::AK_SEO)):
+        echo " <a href=\"index.php?view=seo&inn={$common->inn}\" target=\"_blank\">SEO</a>";
+    endif;
+
+    echo
+            '</td>',
+        '</tr>',
+        '<tr>',
+            '<th colspan="2">Наименование:</th>',
+            '<td>', $common->name, '</td>',
+        '</tr>',
+        '<tr>',
+            '<th colspan="2">Полное наименование:</th>',
+            '<td>', $common->fullName, '</td>',
+        '</tr>';
+
+        if($bank){
+            echo
+                '<tr>',
+                    '<th rowspan="4" class="center">Банковские данные</th>',
+                    '<th>БИК:</th>',
+                    '<td>', $bank->id, '</td>',
+                '</tr>',
+                '<tr>',
+                    '<th>Наименование:</th>',
+                    '<td>', $bank->name, '</td>',
+                '</tr>',
+                '<tr>',
+                    '<th>Адрес:</th>',
+                    '<td>', $bank->address, '</td>',
+                '</tr>',
+                '<tr>',
+                    '<th>Расчетный счет:</th>',
+                    '<td>', $common->bankAccount, '</td>',
+                '</tr>';
+        }
+
+        $roleWhiteList = [
+            $this::ROLES_CHIEF,
+            $this::ROLES_ACCOUNTANT,
+            $this::ROLES_CONSULTING,
+            $this::ROLES_ROOT
+        ];
+
+        foreach($representatives as $rep){
+            $person        = $rep->person;
+            $roles         = $rep->roles;
+            $edsUsageModel = $rep->edsUsageModel;
+
+            $isChief = false;
+
+            $tmp = [];
+
+            foreach($roles as $role){
+                if(in_array($role->id, $roleWhiteList)){
+                    $tmp[] = $role->name;
+                }
+            }
+
+            if(!$tmp){
+                continue;
+            }
+
+            $tmp = implode('<br>+<br>', $tmp);
+
+            echo
+                '<tr>',
+                    '<th colspan="3" class="center">',
+                        str_replace(',', '', $tmp),
+                    '</th>',
+                '</tr>';
+
+            if($person){
+                $tmp = array_filter([
+                    $person->surname,
+                    $person->name,
+                    $person->middleName
+                ]);
+
+                echo
+                    '<tr>',
+                        '<th colspan="2">Фамилия, Имя и Отчество:</th>',
+                        '<td>', implode(' ', $tmp), '</td>',
+                    '</tr>';
+            }
+
+            if($edsUsageModel){
+                echo
+                    '<tr>',
+                        '<th colspan="2">Модель использования ЭЦП:</th>',
+                        '<td>', $edsUsageModel->name, '</td>',
+                    '</tr>';
+
+                if($rep->deviceSerial){
+                    echo
+                        '<tr>',
+                            '<th colspan="2">Серийный номер устройства:</th>',
+                            '<td>', $rep->deviceSerial, '</td>',
+                        '</tr>';
+                }
+            }
+        }
+}
+
+echo '</table>';
+
+if($bindings !== null){
+
+    $person   = $bindings->person;
+    $root     = $bindings->root;
+    $bindings = $bindings->bindings;
+
+    echo
+        '<br>',
+        '<table class="data requisites">',
+            '<caption>Комплексное ЭЦП / Консалтинг</caption>',
+            '<tr>',
+                '<th>Пользователь:</th>',
+                '<td>',
+                    $person->surname,
+                    ' ',
+                    $person->name,
+                    ' ',
+                    $person->middleName,
+                '</td>',
+            '</tr>',
+            '<tr>',
+                '<th colspan="2" class="center">Корневая компания:</th>',
+            '</tr>';
+
+    if($root){
+        echo
+            '<tr>',
+                '<th>ИНН:</th>',
+                '<td>',
+                    $root->inn,
+                '</td>',
+            '</tr>',
+            '<tr>',
+                '<th>Наименование:</th>',
+                '<td>',
+                    $root->name,
+                '</td>',
+            '</tr>';
+    } else {
+        echo
+            '<tr>',
+                '<td colspan="2">Не задана</td>',
+            '</tr>';
+    }
+
+    echo
+        '<tr>',
+            '<th colspan="2" class="center">Обслуживаемые компании:</th>',
+        '</tr>';
+
+    foreach ($bindings as $index => $binding) {
+        echo
+            '<tr>',
+                '<td class="center">',
+                    $binding->inn,
+                '</td>',
+                '<td>',
+                    $binding->name,
+                '</td>',
+            '</tr>';
+    }
+
+    echo '</table>';
+}
+
+if($certificates){
+    echo
+        '<table class="data pki">',
+            '<caption>PKI</caption>',
+            '<tr>',
+                '<th>Организация</th>',
+                '<th>ИНН</th>',
+                '<th>ФИО</th>',
+                '<th>Паспорт</th>',
+                '<th>Роль</th>',
+                '<th>Серийный номер</th>',
+                '<th>Дата выдачи</th>',
+                '<th>Дата окончания</th>',
+                '<th>СОчИ</th>',
+                '<th>СОС</th>',
+            '</tr>';
+
+    foreach($certificates as $index => $certificate){
+        $start  = strtotime($certificate->DateStart);
+        $finish = strtotime($certificate->DateFinish);
+
+        $isActive = (
+            ($finish >= time())
+            &&
+            $certificate->SystemIsAvailable
+            &&
+            $certificate->SystemIsAccessible
+        );
+
+        $class = $isActive ? 'active' : 'expired';
+
+        $certificate->DateStart  = date('d.m.Y H:i:s', $start);
+        $certificate->DateFinish = date('d.m.Y H:i:s', $finish);
+
+        echo
+            "<tr class=\"{$class}\">",
+                '<td>', htmlspecialchars($certificate->OrgName), '</td>',
+                '<td>', htmlspecialchars($certificate->Inn), '</td>',
+                '<td class="center">', htmlspecialchars($certificate->Owner), '</td>',
+                '<td class="center">',
+                    htmlspecialchars($certificate->Passport->Series),
+                    '<br>',
+                    htmlspecialchars($certificate->Passport->Number),
+                '</td>',
+                '<td class="center">', $certificate->Title, '</td>',
+                '<td class="center">', $certificate->CertNumber, '</td>',
+                '<td class="center no-wrap">',
+                    str_replace(' ', '<br>', $certificate->DateStart),
+                '</td>',
+                '<td class="center no-wrap">',
+                    str_replace(' ', '<br>', $certificate->DateFinish),
+                '</td>',
+                '<td class="center">',
+                    $certificate->SystemIsAvailable ? 'Да' : 'Нет',
+                '</td>',
+                '<td class="center">',
+                    $certificate->SystemIsAccessible ? 'Да' : 'Нет',
+                '</td>',
+            '</tr>';
+
+        if(!$isActive && $certificate->StatusMessage){
+            echo
+                "<tr class=\"{$class}\">",
+                    '<td class="center" colspan="10">',
+                        htmlspecialchars($certificate->StatusMessage),
+                    '</td>',
+                '</tr>';
+        }
+    }
+
+    echo
+        '</table>';
+} else {
+    echo '<div class="empty-resultset">В PKI сведений не найдено</div>';
+}
+?>

@@ -1,0 +1,307 @@
+body .layout .content .interface
+    {
+        text-align: center;
+    }
+
+body .layout .content .form .field label.fixed
+    {
+        width: 60px;
+    }
+
+ul
+    {
+        margin: 0px;
+
+        padding: 0px 0px 0px 25px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        margin-bottom: 25px;
+
+        width: 100%;
+    }
+
+table.data caption
+    {
+        font-size: 18px;
+        font-weight: bold;
+
+        margin: 10px;
+        padding: 10px;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }
+
+table.data.stateful tr.green td
+    {
+        background: #d6ffd4;
+    }
+
+table.data.stateful tr.green:hover td
+    {
+        background: #bfe3bd !important;
+    }
+
+table.data.stateful tr.yellow td
+    {
+        background: #ffe5b0;
+    }
+
+table.data.stateful tr.yellow:hover td
+    {
+        background: #ffdbb7 !important;
+    }
+
+table.data.stateful tr.red td
+    {
+        background: #ffcbcc;
+    }
+
+table.data.stateful tr.red:hover td
+    {
+        background: #ffb5b6 !important;
+    }
+
+table.data.vertical th
+    {
+        width: 300px;
+
+        white-space: nowrap;
+    }
+
+table.data.horizontal th
+    {
+        text-align: center;
+
+        padding: 10px;
+    }
+
+table.data th.section
+    {
+        text-align: center;
+    }
+
+.description div
+    {
+        font-weight: bold;
+
+        text-align: center;
+    }
+
+.description pre
+    {
+        margin: 0px;
+
+        padding: 5px;
+    }
+
+.processing-buttons
+    {
+        background: rgba(0, 0, 0, 0.25);
+
+        display: block;
+
+        position: fixed;
+
+        top: 40%;
+        right: 0px;
+
+        padding: 3px 5px;
+
+        width: 175px;
+
+        z-index: 15;
+    }
+
+.processing-buttons button,
+.processing-form .buttons button
+    {
+        font-weight: bold;
+
+        margin: 2px 0px;
+
+        outline: none;
+
+        padding: 10px 5px;
+    }
+
+.processing-buttons button
+    {
+        width: 100%;
+    }
+
+.processing-form .buttons button
+    {
+        width: 150px;
+    }
+
+.processing-buttons button.good,
+.processing-form .buttons button.proceed
+    {
+        border: 1px solid #060;
+
+        background: #AFA;
+
+        color: #060;
+    }
+
+.processing-buttons button.good:hover,
+.processing-form .buttons button.proceed:hover
+    {
+        border: 1px solid #090;
+
+        background: #0A0;
+
+        color: #fff;
+    }
+
+.processing-buttons button.bad,
+.processing-form .buttons button.cancel
+    {
+        border: 1px solid #600;
+
+        background: #FFD3D3;
+
+        color: #600;
+    }
+
+.processing-buttons button.bad:hover,
+.processing-form .buttons button.cancel:hover
+    {
+        border: 1px solid #900;
+
+        background: #A00;
+
+        color: #fff;
+    }
+
+.processing-form
+    {
+        background: rgba(0, 0, 0, 0.35);
+
+        display: table;
+
+        position: fixed;
+
+        top: 0px;
+        left: 0px;
+
+        height: 100%;
+        width: 100%;
+
+        z-index: 25;
+    }
+
+.processing-form.hidden
+    {
+        display: none;
+    }
+
+.processing-form .layout
+    {
+        display: table-cell;
+
+        text-align: center;
+
+        vertical-align: middle;
+    }
+
+.processing-form .layout .content
+    {
+        background: #eee;
+
+        border: 1px solid #ccc;
+
+        display: inline-block;
+
+        padding: 10px 25px;
+
+        width: 600px;
+
+        z-index: 50;
+    }
+
+.processing-form .layout .content .title
+    {
+        font-weight: bold;
+
+        margin: 15px 0px;
+
+        text-align: center;
+    }
+
+.processing-form .layout .content textarea
+    {
+        border: 1px solid #ccc;
+
+        height: 200px;
+
+        outline: none;
+
+        padding: 10px;
+
+        resize: none;
+
+        width: 100%;
+    }
+
+.processing-form .layout .content textarea.hidden
+    {
+        display: none;
+    }
+
+.processing-form .layout .content textarea:focus
+    {
+        border: 1px solid #999;
+    }
+
+.processing-form .layout .content .buttons
+    {
+        margin: 15px 0px;
+
+        text-align: center;
+    }

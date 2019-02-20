@@ -1,0 +1,9 @@
+body .layout .content .interface
+    {
+        text-align: center;
+    }
+
+body .layout .content .form .field label.fixed
+    {
+        width: 60px;
+    }

@@ -1,0 +1,84 @@
+body > .layout > .content > .stripe.complete
+    {
+        background: #d6ffd4;
+    }
+
+body > .layout > .content > .stripe.complete:hover
+    {
+        background: #bfe3bd !important;
+    }
+
+body > .layout > .content > .stripe.rejected
+    {
+        background: #ffcbcc;
+    }
+
+body > .layout > .content > .stripe.rejected:hover
+    {
+        background: #ffb5b6 !important;
+    }
+
+.col-inn
+    {
+        min-width: 150px;
+        max-width: 150px;
+    }
+
+.col-name
+    {
+        width: 100%;
+
+        max-width: 550px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+.col-date-time
+    {
+        min-width: 125px;
+        max-width: 125px;
+    }
+
+.col-age
+    {
+        min-width: 160px;
+        max-width: 160px;
+    }
+
+.col-status
+    {
+        min-width: 140px;
+        max-width: 140px;
+    }
+
+.col-action
+    {
+        min-width: 120px;
+        max-width: 120px;
+    }
+
+.col-name,
+.col-date-time,
+.col-age,
+.col-status,
+.col-action
+    {
+        text-align: center;
+    }
+
+.stripe .col-action
+    {
+        text-decoration: underline;
+    }
+
+.stripe.complete .col-status
+    {
+        color: #0A0;
+    }
+
+.stripe.rejected .col-status
+    {
+        color: #A00;
+    }

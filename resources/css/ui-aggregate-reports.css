@@ -1,0 +1,215 @@
+body > .layout > .content
+    {
+        margin-top: 110px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        width: 100%;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }
+
+table.data th
+    {
+        text-align: center;
+    }
+
+table.data tr td
+    {
+        white-space: pre-line;
+    }
+
+table.data tr td span
+    {
+        display: inline-block;
+
+        white-space: nowrap;
+    }
+
+.floating
+    {
+        background: #fff;
+
+        min-width: 100%;
+
+        padding: 50px 15px 0px 15px;
+
+        position: absolute;
+
+        top: 0px;
+        left: 0px;
+    }
+
+.floating .filters
+    {
+        position: relative;
+
+        display: inline-block;
+
+        margin-bottom: 10px;
+    }
+
+.floating .filters form
+    {
+        background: #fff;
+
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+
+        display: none;
+
+        max-width: 1200px;
+
+        padding: 0px 0px 5px 0px;
+    }
+
+.floating .filters:hover form
+    {
+        display: block;
+
+        padding: 10px;
+    }
+
+.floating .filters form .layout
+    {
+        border-collapse: collapse;
+
+        margin: 0px 0px 10px 0px;
+
+        width: 100%;
+    }
+
+.floating .filters form .layout th,
+.floating .filters form .layout td
+    {
+        border: 1px solid #ddd;
+    }
+
+.floating .filters form .layout th
+    {
+        background: #efefef;
+
+        padding: 5px;
+    }
+
+.floating .filters form .layout td
+    {
+        text-align: left;
+
+        vertical-align: top;
+
+        width: 50%;
+    }
+
+.floating .filters form .layout .scroller
+    {
+        min-height: 150px;
+        max-height: 150px;
+
+        overflow-y: scroll;
+    }
+
+.floating .filters form .layout .scroller label
+    {
+        display: block;
+
+        padding: 5px;
+
+        margin: 1px;
+    }
+
+.floating .filters form .layout .scroller label:hover
+    {
+        background: #eee;
+    }
+
+.floating .filters form .layout .scroller label span.fixed
+    {
+        display: inline-block;
+
+        width: 50px;
+    }
+
+.w50
+    {
+        min-width: 50px;
+        max-width: 50px;
+    }
+
+.w75
+    {
+        min-width: 75px;
+        max-width: 75px;
+    }
+
+.w150
+    {
+        min-width: 150px;
+        max-width: 150px;
+    }
+
+.w300
+    {
+        min-width: 300px;
+        max-width: 300px;
+    }
+
+.hint
+    {
+        background: #8eb2ff !important;
+    }
+
+.hint a
+    {
+        color: #fff;
+
+        text-decoration: none;
+    }
+
+.hint a:hover
+    {
+        text-decoration: underline;
+    }

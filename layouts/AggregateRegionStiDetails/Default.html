@@ -1,0 +1,69 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<table class="data">
+    <caption>УГНС</caption>
+    <tr>
+        <th>Код</th>
+        <td><?php
+            echo htmlspecialchars($region['region-id']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Наименование</th>
+        <td><?php
+            echo htmlspecialchars($region['region-name']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Количество клиентов</th>
+        <td><?php
+            echo htmlspecialchars($region['clients-count']);
+        ?></td>
+    </tr>
+</table>
+
+<?php if(empty($clients)): ?>
+    <div class="empty-resultset">Клиентов, причисленных к данному УГНС, не найдено.</div>
+<?php else: ?>
+    <?php
+        $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+        $canAccessSochi      = $this->isPermitted($this::AK_SOCHI);
+
+        $colspan = $canAccessRequisites + $canAccessSochi;
+    ?>
+    <table class="data">
+        <caption>Клиенты</caption>
+        <tr>
+            <th>ИНН</th>
+            <?php if($colspan): ?>
+            <th colspan="<?php echo $colspan; ?>">Ссылки:</th>
+            <?php endif; ?>
+            <th>Наименование</th>
+        </tr>
+        <?php foreach($clients as &$client): ?>
+        <tr>
+            <td class="center"><?php
+                echo htmlspecialchars($client['inn']);
+            ?></td>
+            <?php if($canAccessRequisites): ?>
+            <td class="center">
+                <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo urlencode($client['inn']); ?>" target="_blank">Реквизиты</a>
+            </td>
+            <?php endif; ?>
+            <?php if($canAccessSochi): ?>
+            <td class="center">
+                <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo urlencode($client['inn']); ?>" target="_blank">СОчИ</a>
+            </td>
+            <?php endif; ?>
+            <td><?php
+                echo htmlspecialchars($client['name']);
+            ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </table>
+<?php endif; ?>

@@ -1,0 +1,276 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_NWA; ?>" />
+    <div class="caption">Параметры поиска</div>
+
+    <div class="field">
+        <label for="type" class="fixed">Тип:</label>
+        <select id="type" name="type">
+            <option disabled>-- выберите тип --</option>
+            <?php foreach($types as $code => $name): ?>
+            <option value="<?php echo $code; ?>"<?php echo $code == $cType ? ' selected' : ''; ?>><?php
+                echo htmlspecialchars($name);
+            ?></option>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Тип поискового реквизита</span>
+    </div>
+
+    <div class="field">
+        <label for="value" class="fixed">Реквизит:</label>
+        <input type="text" name="value" id="value" placeholder="введите реквизит" value="<?php echo $cValue === null ? '' : htmlspecialchars($cValue); ?>">
+        <span class="hint">Реквизит для поиска</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($cValue === null): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if($errors['sf']): ?>
+    <?php foreach($errors['sf'] as $error): ?>
+    <div class="failure"><b>Социальный Фонд:</b> <?php echo $error; ?></div>
+    <?php endforeach; ?>
+<?php elseif(empty($sfData)): ?>
+    <div class="empty-resultset"><b>Социальный Фонд:</b> Данные не найдены.</div>
+<?php else: ?>
+    <?php foreach ($sfData as $payer): ?>
+        <table class="data">
+            <caption>Социальный Фонд</caption>
+            <tr>
+                <th>Код РУСФ:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->DepartmentCode);
+                ?></td>
+            </tr>
+            <tr>
+                <th>ИНН:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->INN);
+                ?></td>
+            </tr>
+            <tr>
+                <th>ОКПО:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->OKPO);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Рег. номер:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->PayerId);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Наименование:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->PayerName);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Состояние:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->PayerState);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Уникальный номер СФ:</th>
+                <td><?php
+                    echo htmlspecialchars($payer->RecordId);
+                ?></td>
+            </tr>
+        </table>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if($errors['mj']): ?>
+    <?php foreach($errors['mj'] as $error): ?>
+    <br>
+    <div class="failure"><b>МЮ:</b> <?php echo $error; ?></div>
+    <?php endforeach; ?>
+<?php elseif(empty($mjData)): ?>
+    <br>
+    <div class="empty-resultset"><b>МЮ:</b> Данные не найдены.</div>
+<?php else: ?>
+    <table class="data">
+        <caption>
+            <a href="<?php echo $this::URL_MJ; ?>">Министерство Юстиции</a>
+        </caption>
+        <tr>
+            <th class="center no-wrap">#</th>
+            <th class="center no-wrap">Наименование:</th>
+            <th class="center no-wrap">Рег. номер:</th>
+            <th class="center no-wrap">Статус:</th>
+            <th class="center no-wrap">ИНН:</th>
+            <th class="center no-wrap">ОКПО:</th>
+            <th class="center no-wrap">Дата:</th>
+            <th class="center no-wrap">Действие:</th>
+        </tr>
+        <?php
+            foreach($mjData as $row):
+                echo '<tr>';
+
+                foreach($row as $cell => $value):
+                    switch ($cell):
+                        case 0:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                            echo
+                                '<td class="center no-wrap">',
+                                    htmlspecialchars($value),
+                                '</td>';
+                        break;
+
+                        case 1:
+                            echo
+                                '<td>', htmlspecialchars($value), '</td>';
+                        break;
+
+                        case 7:
+                            echo
+                                '<td class="center">',
+                                    "<a href=\"{$value}\" target=\"_blank\">Просмотр</a>",
+                                '</td>';
+                        break;
+                    endswitch;
+                endforeach;
+
+                echo '</tr>';
+            endforeach;
+        ?>
+<?php endif; ?>
+
+<?php if($errors['nsc']): ?>
+    <?php foreach($errors['nsc'] as $error): ?>
+    <br>
+    <div class="failure"><b>НСК:</b> <?php echo $error; ?></div>
+    <?php endforeach; ?>
+<?php elseif(empty($nscData)): ?>
+    <br>
+    <div class="empty-resultset"><b>НСК:</b> Данные не найдены.</div>
+<?php else: ?>
+    <?php foreach ($nscData as $row): ?>
+        <table class="data">
+            <caption>НСК / ЕГРСЕ</caption>
+            <tr>
+                <th>ОКПО:</th>
+                <td><?php echo htmlspecialchars($row['okpo']); ?></td>
+            </tr>
+            <tr>
+                <th>ИНН:</th>
+                <td><?php echo htmlspecialchars($row['inn']); ?></td>
+            </tr>
+            <tr>
+                <th>Наименование:</th>
+                <td><?php echo htmlspecialchars($row['fullname']); ?></td>
+            </tr>
+            <tr>
+                <th>СОАТЕ:</th>
+                <td><?php echo htmlspecialchars($row['soate']); ?></td>
+            </tr>
+            <tr>
+                <th>Юридический адрес:</th>
+                <td><?php echo htmlspecialchars($row['juristicAddress']); ?></td>
+            </tr>
+            <tr>
+                <th>Физический адрес:</th>
+                <td><?php echo htmlspecialchars($row['physicalAddress']); ?></td>
+            </tr>
+            <tr>
+                <th>ГКЭД-2:</th>
+                <td><?php echo htmlspecialchars($row['gked2']); ?></td>
+            </tr>
+            <tr>
+                <th>Вид деятельности по ГКЭД-2:</th>
+                <td><?php echo htmlspecialchars($row['gked2Name']); ?></td>
+            </tr>
+            <tr>
+                <th>ГКЭД-3:</th>
+                <td><?php echo htmlspecialchars($row['gked3']); ?></td>
+            </tr>
+            <tr>
+                <th>Вид деятельности по ГКЭД-3:</th>
+                <td><?php echo htmlspecialchars($row['gked3Name']); ?></td>
+            </tr>
+            <tr>
+                <th>ФИО руководителя:</th>
+                <td><?php echo htmlspecialchars($row['chief']); ?></td>
+            </tr>
+            <tr>
+                <th>Рабочий телефон:</th>
+                <td><?php echo htmlspecialchars($row['phone']); ?></td>
+            </tr>
+            <tr>
+                <th>Район:</th>
+                <td><?php echo htmlspecialchars($row['region']); ?></td>
+            </tr>
+            <tr>
+                <th>Организационно-правовая форма:</th>
+                <td><?php echo htmlspecialchars($row['legalForm']); ?></td>
+            </tr>
+            <tr>
+                <th>Форма собственности:</th>
+                <td><?php echo htmlspecialchars($row['ownershipForm']); ?></td>
+            </tr>
+            <tr>
+                <th>Cектор экономики:</th>
+                <td><?php echo htmlspecialchars($row['ecoSector']); ?></td>
+            </tr>
+        </table>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if($errors['sti']): ?>
+    <?php foreach($errors['sti'] as $error): ?>
+    <br>
+    <div class="failure"><b>ГНС:</b> <?php echo $error; ?></div>
+    <?php endforeach; ?>
+<?php elseif(empty($stiData)): ?>
+    <br>
+    <div class="empty-resultset"><b>ГНС:</b> Данные не найдены.</div>
+<?php else: ?>
+    <table class="data">
+        <caption>ГНС / KITIS</caption>
+        <?php foreach($stiData as $index => $row): ?>
+            <tr>
+                <th><?php
+                    switch($index):
+                        case 0:
+                            echo 'ИНН';
+                        break;
+
+                        case 1:
+                            echo 'Район ГНС';
+                        break;
+
+                        case 2:
+                            echo 'Наименование';
+                        break;
+
+                        case 3:
+                            echo 'Адрес';
+                        break;
+
+                        case 4:
+                            echo 'Руководитель';
+                        break;
+
+                        default:
+                            echo '-';
+                        break;
+                    endswitch;
+                ?></th>
+                <td><?php echo htmlspecialchars($row); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+<?php endif; ?>

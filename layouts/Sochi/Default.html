@@ -1,0 +1,394 @@
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="<?php echo $this::AK_SOCHI; ?>" />
+    <div class="caption">Просмотр профиля СОчИ</div>
+
+    <div class="field">
+        <label for="inn" class="fixed">ИНН:</label>
+        <input type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
+        <span class="hint">10 или 14 цифр</span>
+    </div>
+
+    <div class="field">
+        <label for="uid" class="fixed">UID:</label>
+        <input type="text" name="uid" id="uid" maxlength="23" style="width: 350px" placeholder="введите UID" value="<?php echo isset($_GET['uid']) ? htmlspecialchars($_GET['uid']) : '' ?>">
+        <span class="hint">23 цифры</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($user)): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<table class="data requisites">
+    <caption>Реквизиты</caption>
+    <tr>
+        <th>Идентификатор:</th>
+        <td>
+            <?php echo $user['uid']; ?>
+            <?php if($this->isPermitted($this::AK_UID_PARSER)): ?>
+                <a href="index.php?view=<?php echo $this::AK_UID_PARSER; ?>&uid=<?php echo $user['uid']; ?>" target="_blank">Информация по UID</a>
+            <?php endif; ?>
+        </td>
+    </tr>
+    <tr>
+        <th>ИНН:</th>
+        <td>
+            <?php echo $user['inn']; ?>
+            <?php if($this->isPermitted($this::AK_REQUISITES)): ?>
+                <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $user['inn']; ?>" target="_blank">Реквизиты</a>
+            <?php endif; ?>
+
+            <?php if($this->isPermitted($this::AK_SEO)): ?>
+                <a href="index.php?view=<?php echo $this::AK_SEO; ?>&inn=<?php echo $user['inn']; ?>" target="_blank">SEO</a>
+            <?php endif; ?>
+        </td>
+    </tr>
+    <tr>
+        <th>Наименование:</th>
+        <td><?php echo htmlspecialchars($user['name']); ?></td>
+    </tr>
+    <tr>
+        <th>ОКПО:</th>
+        <td><?php echo $user['okpo']; ?></td>
+    </tr>
+</table>
+
+<div class="tabs" id="divTabs">
+    <div class="captions">
+        <a href="javascript:void(0)">Взаиморасчеты</a>
+        <a href="javascript:void(0)">Отчетность СФ</a>
+        <a href="javascript:void(0)">Отчетность ГНС</a>
+        <a href="javascript:void(0)">Отчетность НСК</a>
+    </div>
+
+    <div class="sheets">
+        <div>
+            <h2>Cумма на счете: <?php echo $balance; ?> сом</h2>
+
+            <table class="data billing">
+                <caption>Начисления</caption>
+                <tr>
+                    <th class="center">Источник:</th>
+                    <th class="center">Дата и время:</th>
+                    <th class="center">Сумма:</th>
+                </tr>
+            <?php foreach($accruals as &$accrual): ?>
+                    <tr>
+                        <td class="center"><?php echo $accrual['name']; ?></td>
+                        <td class="center"><?php echo $accrual['date-time']; ?></td>
+                        <td class="center"><?php echo $accrual['amount']; ?></td>
+                    </tr>
+            <?php endforeach; ?>
+            </table>
+
+
+            <table class="data billing">
+                <caption>Cписания</caption>
+                <tr>
+                    <th class="center">Служба:</th>
+                    <th class="center">Услуга:</th>
+                    <th class="center">Код:</th>
+                    <th class="center">Дата и время:</th>
+                    <th class="center">Сумма:</th>
+                </tr>
+            <?php foreach($bills as &$bill): ?>
+                    <tr>
+                        <td class="center"><?php echo $bill['subscriber']; ?></td>
+                        <td><?php echo $bill['service']; ?></td>
+                        <td class="center no-wrap"><?php echo htmlspecialchars($bill['code']); ?></td>
+                        <td class="center no-wrap"><?php echo $bill['date-time']; ?></td>
+                        <td class="center no-wrap"><?php echo $bill['amount']; ?></td>
+                    </tr>
+            <?php endforeach; ?>
+            </table>
+        </div>
+
+        <div>
+            <table class="data reports">
+                <tr>
+                    <th class="center">UIN:</th>
+                    <th class="center no-wrap">Дата отправки:</th>
+                    <th class="center no-wrap">Период:</th>
+                    <th class="center no-wrap">Состояние:</th>
+                </tr>
+            <?php
+                $uinRegEx        = '/^\d{49,49}$/';
+                $isUinParser     = $this->isPermitted($this::AK_UIN_PARSER);
+                $isCuratorAccess = $this->isPermitted($this::AK_CURATOR_SF);
+
+                foreach($sfReports as &$report):
+                    $period = '';
+
+                    if($report['period-month']):
+                        $period .= $this->getMonthName($report['period-month']) . ', ';
+                    endif;
+
+                    if($report['period-year']):
+                        $period .= $report['period-year'] . ' год';
+                    endif;
+
+                    switch($report['status-id']):
+                        case 8:
+                        case 3:
+                            $class = ' declined';
+                        break;
+
+                        case 4:
+                            $class = ' accepted';
+                        break;
+
+                        default:
+                            $class = '';
+                        break;
+                    endswitch;
+
+                    $isParsableUin = preg_match($uinRegEx, $report['uin']);
+            ?>
+                <tr class="<?php echo $class; ?>">
+                    <td class="center">
+                        <?php echo htmlspecialchars($report['uin']); ?>
+                        <br>
+                        <?php if($isParsableUin): ?>
+                            <?php if($isUinParser): ?>
+                                <a href="index.php?view=<?php echo $this::AK_UIN_PARSER; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Информация по UIN</a>
+                            <?php endif; ?>
+                            <?php if($isCuratorAccess): ?>
+                                <a href="index.php?view=<?php echo $this::AK_CURATOR_STI; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Кураторское приложение</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td class="center no-wrap"><?php
+                        echo $report['input-date-time'];
+                    ?></td>
+                    <td class="center no-wrap"><?php
+                        echo $period;
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($report['status']);
+                    ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </table>
+        </div>
+
+        <div>
+            <table class="data reports">
+                <tr>
+                    <th class="center no-wrap">UIN:</th>
+                    <th class="center no-wrap">Форма:</th>
+                    <th class="center no-wrap">Тип:</th>
+                    <th class="center">Район:</th>
+                    <th class="center no-wrap">Дата отправки:</th>
+                    <th class="center">Период:</th>
+                    <th class="center">Состояние:</th>
+                </tr>
+
+            <?php
+                $isCuratorAccess = $this->isPermitted($this::AK_CURATOR_STI);
+
+                foreach($stiReports as &$report):
+                    $period = '';
+
+                    if($report['period-month']):
+                        $period .= $this->getMonthName($report['period-month']) . ', ';
+                    endif;
+
+                    if($report['period-quarter']):
+                        $period .= $report['period-quarter'] . ' квартал, ';
+                    endif;
+
+                    if($report['period-year']):
+                        $period .= $report['period-year'] . ' год';
+                    endif;
+
+                    switch($report['status-id']):
+                        case 8:
+                        case 3:
+                            $class = ' declined';
+                        break;
+
+                        case 4:
+                            $class = ' accepted';
+                        break;
+
+                        default:
+                            $class = '';
+                        break;
+                    endswitch;
+
+                    $isParsableUin = preg_match($uinRegEx, $report['uin']);
+            ?>
+                    <tr class="<?php echo $class; ?>">
+                        <td class="center">
+                            <?php echo htmlspecialchars($report['uin']); ?>
+                            <?php if($isParsableUin): ?>
+                                <br>
+                                <?php if($isUinParser): ?>
+                                    <a href="index.php?view=<?php echo $this::AK_UIN_PARSER; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Информация по UIN</a>
+                                <?php endif; ?>
+                                <?php if($isCuratorAccess): ?>
+                                    <a href="index.php?view=<?php echo $this::AK_CURATOR_STI; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Кураторское приложение</a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </td>
+                        <td class="center no-wrap"><?php
+                            echo htmlspecialchars($report['form']);
+                        ?></td>
+                        <td class="center no-wrap"><?php
+                            echo htmlspecialchars($report['type']);
+                        ?></td>
+                        <td class="center no-wrap"><?php
+                            echo
+                                htmlspecialchars($report['region-code']),
+                                '<br>',
+                                htmlspecialchars($report['region-name']);
+                        ?></td>
+                        <td class="center no-wrap"><?php
+                            echo str_replace(' ', '<br>', $report['input-date-time']);
+                        ?></td>
+                        <td class="center"><?php
+                            echo $period;
+                        ?></td>
+                        <td class="center"><?php
+                            echo htmlspecialchars($report['status']);
+                        ?></td>
+                    </tr>
+            <?php endforeach; ?>
+            </table>
+        </div>
+
+        <div>
+            <table class="data reports">
+                <tr>
+                    <th class="center">UIN:</th>
+                    <th class="center no-wrap">Форма:</th>
+                    <th class="center">Дата отправки:</th>
+                    <th class="center">Период:</th>
+                    <th class="center">Состояние:</th>
+                </tr>
+            <?php
+                $isCuratorAccess = $this->isPermitted($this::AK_CURATOR_SF);
+
+                foreach($nscReports as &$report):
+                    $period = '';
+
+                    if($report['period-month']):
+                        $period .= $this->getMonthName($report['period-month']) . ', ';
+                    endif;
+
+                    if($report['period-quarter']):
+                        $period .= $report['period-quarter'] . ' квартал, ';
+                    endif;
+
+                    if($report['period-year']):
+                        $period .= $report['period-year'] . ' год';
+                    endif;
+
+                    switch($report['status-id']):
+                        case 8:
+                        case 3:
+                            $class = ' declined';
+                        break;
+
+                        case 4:
+                            $class = ' accepted';
+                        break;
+
+                        default:
+                            $class = '';
+                        break;
+                    endswitch;
+
+                    $isParsableUin = preg_match($uinRegEx, $report['uin']);
+            ?>
+                <tr class="<?php echo $class; ?>">
+                    <td class="center">
+                        <?php echo htmlspecialchars($report['uin']); ?>
+                        <br>
+                        <?php if($isParsableUin): ?>
+                            <?php if($isUinParser): ?>
+                                <a href="index.php?view=<?php echo $this::AK_UIN_PARSER; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Информация по UIN</a>
+                            <?php endif; ?>
+                            <?php if($isCuratorAccess): ?>
+                                <a href="index.php?view=<?php echo $this::AK_CURATOR_NSC; ?>&uin=<?php echo $report['uin']; ?>" target="_blank">Кураторское приложение</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td class="center no-wrap"><?php
+                        echo htmlspecialchars($report['form']);
+                    ?></td>
+                    <td class="center no-wrap"><?php
+                            echo str_replace(' ', '<br>', $report['input-date-time']);
+                    ?></td>
+                    <td class="center"><?php
+                        echo $period;
+                    ?></td>
+                    <td class="center"><?php
+                        echo htmlspecialchars($report['status']);
+                    ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+(function(w, d){
+
+    var elements = {},
+        clickFn  = function(e){
+            var nodes = elements.captions.children,
+                index = [].indexOf.call(nodes, this),
+                node;
+
+            this.classList.add('current');
+
+            for(n = 0, nLen = nodes.length; node = nodes[n], n < nLen; n++){
+                if(node != this){
+                    node.classList.remove('current');
+                }
+            }
+
+            nodes = elements.sheets.children;
+
+            for(n = 0, nLen = nodes.length; node = nodes[n], n < nLen; n++){
+                if(node != this){
+                    node.classList[ n == index ? 'add' : 'remove' ]('current');
+                }
+            }
+        },
+        initFn = function(){
+            elements.tabs     = d.getElementById('divTabs'),
+            elements.captions = elements.tabs.children[0],
+            elements.sheets   = elements.tabs.children[1];
+
+            var nodes = elements.captions.children,
+                nLen  = nodes.length,
+                n, node;
+
+            for(n = 0; node = nodes[n], n < nLen; n++){
+                node.addEventListener('click', clickFn);
+            }
+
+            nodes[0].dispatchEvent(new Event('click'));
+        };
+
+    w.addEventListener('load', initFn);
+
+})(window, document);
+</script>

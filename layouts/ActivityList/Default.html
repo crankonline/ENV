@@ -1,0 +1,41 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($data)): ?>
+    <div class="empty-resultset">Данные отсутствуют.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php $canAccessDetails = $this->isPermitted($this::AK_AGGREGATE_ACTIVITY_DETAILS); ?>
+<table class="data">
+    <tr>
+        <th>ГКЭД</th>
+        <th>Вид деятельности</th>
+        <?php if($canAccessDetails): ?>
+        <th>Количество клиентов</th>
+        <?php endif; ?>
+    </tr>
+    <?php foreach($data as &$row): ?>
+    <tr>
+        <td class="right"><?php
+            echo htmlspecialchars($row['gked']);
+        ?></td>
+        <td class="pre-wrap"><?php
+            echo
+                $row['level'] ? str_repeat('    ', $row['level']) : '',
+                htmlspecialchars($row['name']);
+        ?></td>
+        <?php if($canAccessDetails): ?>
+        <td class="center">
+            <a href="index.php?view=<?php echo $this::AK_AGGREGATE_ACTIVITY_DETAILS; ?>&id=<?php echo $row['id'] ?>" target="_blank"><?php
+                echo $row['clients-count'];
+            ?></a>
+        </td>
+        <?php endif; ?>
+    </tr>
+<?php endforeach; ?>
+</table>

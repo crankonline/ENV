@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DosTek group - Операционная среда</title>
+    <link rel="icon" href="resources/images/favicon.png" />
+    {plugin:css}
+</head>
+<body>
+<div class="header">
+    <div class="logo">
+        <b>DosTek</b> group
+    </div>
+    <div class="system">
+        <b>ENV</b> / Операционная среда
+    </div>
+</div>
+<table class="layout">
+    <tbody>
+        <tr>
+            <td class="box">
+                <form action="/" method="POST" class="login-box">
+                    <input type="text" id="txtLogin" name="login" class="login" placeholder="Логин" autofocus="true" />
+                    +
+                    <input type="password" id="txtPassword" name="password" class="password" placeholder="Пароль" />
+                    =
+                    <input type="submit" class="button" value="вход"><?php
+                        if(isset($message)):
+                    ?><br><div class="failure"><?php echo htmlspecialchars($message); ?></div><?php
+                        endif;
+                    ?>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

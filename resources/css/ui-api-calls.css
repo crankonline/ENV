@@ -1,0 +1,179 @@
+body .layout .content .interface
+    {
+        text-align: center;
+    }
+
+body .layout .content .form .field label.fixed
+    {
+        width: 140px;
+    }
+
+ul
+    {
+        margin: 0px;
+
+        padding: 0px 0px 0px 25px;
+    }
+
+table.data
+    {
+        border-collapse: collapse;
+
+        display: table;
+
+        font-size: 14px;
+
+        margin-bottom: 25px;
+
+        width: 100%;
+    }
+
+table.data caption
+    {
+        font-size: 18px;
+        font-weight: bold;
+
+        margin: 10px;
+        padding: 10px;
+    }
+
+table.data th,
+table.data td
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        text-align: left;
+    }
+
+table.data th
+    {
+        background: #ddd;
+
+        font-weight: bold;
+
+        text-align: center;
+
+        padding: 10px;
+    }
+
+table.data tr:hover th
+    {
+        background: #eee !important;
+    }
+
+table.data tr:hover td
+    {
+        background: #95beff !important;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }
+
+table.data tr.successful td
+    {
+        background: #d6ffd4;
+    }
+
+table.data tr.successful:hover td
+    {
+        background: #bfe3bd !important;
+    }
+
+table.data tr.failed td
+    {
+        background: #ffcbcc;
+    }
+
+table.data tr.failed:hover td
+    {
+        background: #ffb5b6 !important;
+    }
+
+.number
+    {
+        min-width: 100px;
+        width: 100px;
+    }
+
+.stamp
+    {
+        min-width: 220px;
+        width: 220px;
+    }
+
+table.data td a
+    {
+        color: #133195;
+
+        text-decoration: none;
+    }
+
+table.data td a:hover
+    {
+        text-decoration: underline;
+    }
+
+table.data tr.successful td a
+    {
+        color: #5A0;
+    }
+
+table.data tr.failed td a
+    {
+        color: #A00;
+    }
+
+table.data tr td div.call
+    {
+        background: inherit;
+
+        position: relative;
+    }
+
+table.data tr td div.call div.arguments
+    {
+        background: #fff;
+        border: 1px solid #ccc;
+
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+
+        display: none;
+
+        position: absolute;
+
+        top: 100%;
+        left: 0px;
+
+        max-width: 800px;
+
+        z-index: 5;
+    }
+
+table.data tr:hover td div.call div.arguments
+    {
+        display: block;
+    }
+
+table.data tr td div.call div.arguments pre
+    {
+        background: inherit;
+        border: 1px solid #ccc;
+
+        padding: 5px;
+        margin: 5px;
+
+        max-height: 300px;
+
+        overflow: auto;
+    }

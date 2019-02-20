@@ -1,0 +1,94 @@
+div.paginator
+    {
+        text-align: center;
+    }
+
+div.paginator .pages,
+div.paginator .jump
+    {
+        display: inline-block;
+
+        margin: 15px 0px 0px 0px;
+
+        white-space: nowrap;
+    }
+
+div.paginator .pages a
+    {
+        background: rgba(0, 50, 127, 0.15);
+
+        display: inline-block;
+
+        color: #133195;
+
+        padding: 10px 15px 10px 15px;
+
+        font-size: 16px;
+
+        text-decoration: none;
+    }
+
+div.paginator .pages a.current,
+div.paginator .pages a:hover
+    {
+        background: rgba(0, 50, 250, 0.25);
+    }
+
+div.paginator .jump .page
+    {
+        background: #fff;
+        border: 1px solid #133195;
+
+        color: #000;
+
+        font-size: 16px;
+
+        outline: none;
+
+        padding: 10px;
+
+        margin: 0px 0px 10px 0px;
+
+        text-align: center;
+
+        width: 90px;
+    }
+
+div.paginator .jump .button
+    {
+        background: #4096ee;
+        border: 1px solid #05f;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        display: inline-block;
+
+        font-size: 16px;
+
+        min-width: 125px;
+
+        outline: none;
+
+        padding: 10px;
+
+        text-align: center;
+        text-decoration: none;
+    }
+
+div.paginator .jump .button:hover
+    {
+        background: #7abcff;
+        border: 1px solid #05f;
+
+        color: #fff;
+    }
+
+div.paginator .jump .button:active
+    {
+        background: #7abcff;
+        border: 1px solid #05f;
+
+        color: #fff;
+    }

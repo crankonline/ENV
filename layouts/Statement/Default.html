@@ -1,0 +1,624 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(isset($result, $status)): ?>
+    <div class="<?php echo $result ? 'success' : 'failure'; ?>"><?php
+        echo $status;
+    ?></div>
+<?php endif; ?>
+
+<?php if(!empty($actions)): ?>
+    <div class="processing-buttons" id="divProcess">
+        <?php foreach ($actionsMap as $action => $description): ?>
+            <?php if(in_array($action, $actions)): ?>
+                <button type="button" class="<?php echo $description['class']; ?>" role="<?php echo $action; ?>"><?php echo $description['button']; ?></button>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+
+    <?php $url = 'index.php?' . http_build_query($_GET); ?>
+    <form action="<?php echo $url; ?>" method="POST" class="processing-form hidden" id="frmProcessing">
+        <div class="layout">
+            <div class="content">
+                <input type="hidden" name="action" id="hdnAction" />
+                <div class="title" id="divActionTitle"></div>
+                <textarea class="description" id="txtarDescription" name="description" placeholder="Укажите комментарий, просьбу или причину..."></textarea>
+                <div class="buttons">
+                    <button type="submit" id="btnSubmit" class="proceed"></button>
+                    <button type="button" id="btnCancel" class="cancel">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+(function(w, d){
+    var actions  = <?php echo json_encode($actionsMap, JSON_UNESCAPED_UNICODE); ?>,
+        targets  = [
+            'divProcess',
+            'frmProcessing',
+            'divActionTitle',
+            'hdnAction',
+            'txtarDescription',
+            'btnSubmit',
+            'btnCancel'
+        ],
+        elements = null;
+
+    function grepElements(){
+        var tLen = targets.length,
+            t, target;
+
+        elements = {};
+
+        for(t = 0; target = targets[t], t < tLen; t++){
+            elements[target] = d.getElementById(target);
+        }
+    }
+
+    var btnClickHandlerFn = function(){
+        var action      = this.getAttribute('role'),
+            description = actions[action];
+
+        elements.divActionTitle.innerHTML = description.title;
+        elements.hdnAction.value          = action;
+        elements.btnSubmit.innerHTML      = description.button;
+
+        if(action == 'act-remove'){
+            elements.txtarDescription.classList.add('hidden');
+        } else {
+            elements.txtarDescription.classList.remove('hidden');
+        }
+
+        elements.frmProcessing.reset();
+
+        elements.frmProcessing.classList.remove('hidden');
+    };
+
+    var btnCancelClickHandlerFn = function(){
+        elements.frmProcessing.classList.add('hidden');
+    };
+
+    var wndLoadHandlerFn = function(){
+        !elements && grepElements();
+
+        var buttons = elements.divProcess.getElementsByTagName('button'),
+            bLen    = buttons.length,
+            b, button;
+
+        for(b = 0; button = buttons[b], b < bLen; b++){
+            button.onclick = btnClickHandlerFn;
+        }
+
+        elements.btnCancel.onclick = btnCancelClickHandlerFn;
+    };
+
+    w.onload = wndLoadHandlerFn;
+
+})(window, document);
+    </script>
+<?php endif; ?>
+
+<table class="data vertical">
+    <caption>Сведения о заявке:<cpation>
+    <tr>
+        <th>ИНН:</th>
+        <td><?php
+            echo htmlspecialchars($statement['inn']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Дата и время:</th>
+        <td><?php
+            echo htmlspecialchars($statement['stamp']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Возраст:</th>
+        <td><?php
+            echo htmlspecialchars($statement['age']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Ключевая фраза:</th>
+        <td><?php
+            echo htmlspecialchars($statement['password']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Текущее состояние:</th>
+        <td><?php
+            echo htmlspecialchars($statement['status-name']);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Счет на оплату:</th>
+        <td><a href="index.php?view=<?php echo $this::AK_STATEMENT; ?>&id=<?php echo $statement['id']; ?>&invoice=1" target="_blank">Просмотр</a></td>
+    </tr>
+</table>
+
+<?php if(!empty($statuses)): ?>
+<table class="data horizontal stateful">
+    <caption>Состояния:<cpation>
+    <tr>
+        <th>Наименование:</th>
+        <th>Дата и время:</th>
+        <th>Прошло времени:</th>
+        <th>Оператор:</th>
+    </tr>
+    <?php foreach($statuses as &$status): ?>
+    <tr class="<?php echo $status['class']; ?>">
+        <td class="center"><?php
+            echo htmlspecialchars($status['name']);
+        ?></td>
+        <td class="center"><?php
+            echo htmlspecialchars($status['stamp']);
+        ?></td>
+        <td class="center"><?php
+            echo htmlspecialchars($status['age']);
+        ?></td>
+        <td class="center"><?php
+            echo htmlspecialchars($status['operator'] ?: '-');
+        ?></td>
+    </tr>
+        <?php if($status['description']): ?>
+        <tr class="<?php echo $status['class']; ?>">
+            <td colspan="4" class="description">
+                <pre><?php echo htmlspecialchars($status['description']); ?></pre>
+            </td>
+        </tr>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</table>
+<?php endif; ?>
+
+<?php if($abilities[$this::PMS_VIEW_PAYMENTS] && !empty($payment)): ?>
+<table class="data">
+    <caption>Предоплата:<cpation>
+    <tr>
+        <th class="center">Оператор:</th>
+        <td>
+            <?php echo $payment['dealer-name']; ?>
+            (<b><?php echo htmlspecialchars($payment['dealer-login']); ?></b>)
+        </td>
+    </tr>
+    <tr>
+        <th class="center">Дата и время:</th>
+        <td><?php
+            echo htmlspecialchars($payment['date-time']);
+        ?></td>
+    </tr>
+    <tr>
+        <th class="center">Категория:</th>
+        <th class="center">Сумма:</th>
+    </tr>
+    <?php if(empty($payment['items'])): ?>
+    <tr>
+        <td class="center" colspan="2">Позиций не найдено.</th>
+    </tr>
+    <?php else: ?>
+        <?php
+            $total = 0;
+
+            foreach($payment['items'] as &$paymentItem):
+
+                $total += $paymentItem['sum'];
+        ?>
+        <tr>
+            <td><?php
+                echo htmlspecialchars($paymentItem['payment-category-name']);
+            ?></td>
+            <td class="center"><?php
+                echo number_format($paymentItem['sum'], 2, '.', ' ');
+            ?></td>
+        </tr>
+        <?php endforeach; ?>
+        <tr>
+            <th class="center">ИТОГО:</th>
+            <td class="center"><b><?php
+                echo number_format($total, 2, '.', ' ');
+            ?></b></td>
+        </tr>
+    <?php endif; ?>
+</table>
+<?php endif; ?>
+
+<?php if($abilities[$this::PMS_VIEW_FILES] && !empty($files)): ?>
+<table class="data horizontal">
+    <caption>Прикрепленные файлы:<cpation>
+    <tr>
+        <th>#</th>
+        <th>Тип:</th>
+    </tr>
+    <?php foreach($files as $index => &$file): ?>
+    <tr>
+        <td class="center"><?php
+            echo $index + 1;
+        ?></td>
+        <?php
+            $query = $_GET;
+            $query['action'] = 'getFile';
+            $query['file']   = $file['store-file-id'];
+
+            $url = 'index.php?' . http_build_query($query);
+        ?>
+        <td><a href="<?php echo $url; ?>" target="_blank"><?php
+            echo htmlspecialchars($file['file-type-name']);
+        ?></a></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+<?php endif; ?>
+
+<table class="data vertical">
+    <caption>Заявка:</caption>
+    <?php if(!empty($json->main)): ?>
+    <tr>
+        <th colspan="2" class="section">Основные сведения</th>
+    </tr>
+    <tr>
+        <th>ИНН:</th>
+        <td><?php
+            echo htmlspecialchars($json->main->inn);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Наименование:</th>
+        <td><?php
+            echo htmlspecialchars($json->main->name);
+        ?></td>
+    </tr>
+    <tr>
+        <th>ОКПО:</th>
+        <td><?php
+            echo htmlspecialchars($json->main->okpo);
+        ?></td>
+    </tr>
+        <?php if(!empty($json->main->minjust)): ?>
+        <tr>
+            <th>Рег. номер Министерства Юстиции:</th>
+            <td><?php
+                echo htmlspecialchars($json->main->minjust);
+            ?></td>
+        </tr>
+        <?php endif; ?>
+    <tr>
+        <th>Регистрационный номер СФ КР:</th>
+        <td><?php
+            echo htmlspecialchars($json->main->sf);
+        ?></td>
+    </tr>
+        <?php if(isset($json->main->gked)): ?>
+        <tr>
+            <th>ГКЭД:</th>
+            <td><?php
+                echo htmlspecialchars($json->main->gked->id);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Вид деятельности:</th>
+            <td><?php
+                echo htmlspecialchars($json->main->gked->name);
+            ?></td>
+        </tr>
+        <?php endif; ?>
+    <tr>
+        <th>Форма собственности:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->main->ownerform)
+                    ? $json->main->ownerform->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <tr>
+        <th>Организационно-правовая форма:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->main->legalform)
+                    ? $json->main->legalform->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <tr>
+        <th>Гражданско-правовой статус:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->main->civilstatus)
+                    ? $json->main->civilstatus->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+        <?php if(!empty($json->main->capitalform)): ?>
+        <tr>
+            <th>Форма участия в капитале:</th>
+            <td><?php
+                echo htmlspecialchars(
+                    is_object($json->main->capitalform)
+                        ? $json->main->capitalform->name
+                        : '(отсутствует в справочнике)'
+                );
+            ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if(!empty($json->main->manageform)): ?>
+        <tr>
+            <th>Форма управления:</th>
+            <td><?php
+                echo htmlspecialchars(
+                    is_object($json->main->manageform)
+                        ? $json->main->manageform->name
+                        : '(отсутствует в справочнике)'
+                );
+            ?></td>
+        </tr>
+        <?php endif; ?>
+    <?php endif; ?>
+    <?php if(!empty($json->contacts)): ?>
+    <tr>
+        <th colspan="2" class="section">Контакты</th>
+    </tr>
+    <tr>
+        <th>Адрес электронной почты:</th>
+        <td><?php
+            echo htmlspecialchars($json->contacts->email);
+        ?></td>
+    </tr>
+    <?php
+            $addresses = [];
+
+            if(!empty($json->contacts->juristic_address)):
+                $addresses['Юридический адрес'] = $json->contacts->juristic_address;
+            endif;
+
+            if(!empty($json->contacts->real_address)):
+                $addresses['Фактический адрес'] = $json->contacts->real_address;
+            endif;
+
+            foreach($addresses as $type => $address):
+    ?>
+        <tr>
+            <th colspan="2" class="section"><?php echo $type; ?></th>
+        </tr>
+        <tr>
+            <th>Индекс:</th>
+            <td><?php
+                echo htmlspecialchars($address->post_index);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Область:</th>
+            <td><?php
+                echo empty($address->region)
+                    ? '-'
+                    : htmlspecialchars($address->region);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Район:</th>
+            <td><?php
+                echo empty($address->district)
+                    ? '-'
+                    : htmlspecialchars($address->district);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Населенный пункт:</th>
+            <td><?php
+                echo htmlspecialchars($address->settlement);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Улица / Микрорайон:</th>
+            <td><?php
+                echo htmlspecialchars($address->street);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Дом / Строение:</th>
+            <td><?php
+                echo htmlspecialchars($address->building);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Квартира / Офис:</th>
+            <td><?php
+                echo empty($address->apartment)
+                    ? '-'
+                    : htmlspecialchars($address->apartment);
+            ?></td>
+        </tr>
+    <?php
+            endforeach;
+
+        endif;
+    ?>
+    <?php if(!empty($json->bank)): ?>
+    <tr>
+        <th colspan="2" class="section">Банковские реквизиты</th>
+    </tr>
+    <tr>
+        <th>БИК:</th>
+        <td><?php
+            echo htmlspecialchars($json->bank->bic);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Наименование банка:</th>
+        <td><?php
+            echo htmlspecialchars($json->bank->bankname);
+        ?></td>
+    </tr>
+    <tr>
+        <th>Расчетный счет:</th>
+        <td><?php
+            echo htmlspecialchars($json->bank->account);
+        ?></td>
+    </tr>
+    <?php endif; ?>
+    <?php
+        if(!empty($json->person)):
+
+            $persons = [];
+
+            if(!empty($json->person->chief)):
+                $persons['Данные руководителя'] = $json->person->chief;
+            endif;
+
+            if(!empty($json->person->accountant)):
+                $persons['Данные бухгалтера'] = $json->person->accountant;
+            endif;
+
+            foreach($persons as $type => $person):
+    ?>
+        <tr>
+            <th colspan="2" class="section"><?php echo $type; ?></th>
+        </tr>
+        <?php if(!empty($person->passport_data)): ?>
+            <tr>
+                <th>Серия паспорта:</th>
+                <td><?php
+                    echo htmlspecialchars($person->passport_data->series);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Номер паспорта:</th>
+                <td><?php
+                    echo htmlspecialchars($person->passport_data->number);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Дата выдачи паспорта:</th>
+                <td><?php
+                    echo htmlspecialchars($person->passport_data->issue_date);
+                ?></td>
+            </tr>
+            <tr>
+                <th>Орган выдачи паспорта:</th>
+                <td><?php
+                    echo htmlspecialchars($person->passport_data->issue_place);
+                ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if(!empty($person->citizen)): ?>
+            <tr>
+                <th>Гражданство:</th>
+                <td><?php
+                    echo htmlspecialchars($person->citizen);
+                ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if(!empty($person->position)): ?>
+            <tr>
+                <th>Должность:</th>
+                <td><?php
+                    echo htmlspecialchars(
+                        is_object($person->position)
+                            ? $person->position->name
+                            : '(отсутствует в справочнике)'
+                    );
+                ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if(!empty($person->basis)): ?>
+            <tr>
+                <th>Документ-основание:</th>
+                <td><?php
+                    echo htmlspecialchars(
+                        is_object($person->basis)
+                            ? $person->basis->name
+                            : '(отсутствует в справочнике)'
+                    );
+                ?></td>
+            </tr>
+        <?php endif; ?>
+        <tr>
+            <th>Фамилия:</th>
+            <td><?php
+                echo htmlspecialchars($person->surname);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Имя:</th>
+            <td><?php
+                echo htmlspecialchars($person->name);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Отчество:</th>
+            <td><?php
+                echo htmlspecialchars($person->fathername);
+            ?></td>
+        </tr>
+        <tr>
+            <th>Телефон:</th>
+            <td><?php
+                echo htmlspecialchars($person->phone);
+            ?></td>
+        </tr>
+        <?php if($abilities[$this::PMS_VIEW_PINS]): ?>
+        <tr>
+            <th>PIN-код:</th>
+            <td><?php
+                echo htmlspecialchars($person->pin);
+            ?></td>
+        </tr>
+        <?php endif; ?>
+    <?php
+            endforeach;
+
+        endif;
+    ?>
+    <?php if(!empty($json->reporting)): ?>
+    <tr>
+        <th colspan="2" class="section">Данные об отчетности</th>
+    </tr>
+    <tr>
+        <th>Тариф СФ КР:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->reporting->sftariff)
+                    ? $json->reporting->sftariff->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <tr>
+        <th>Район СФ КР:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->reporting->sfregion)
+                    ? $json->reporting->sfregion->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <tr>
+        <th>Основной район ГНС КР:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->reporting->stiregion)
+                    ? $json->reporting->stiregion->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <tr>
+        <th>Район представления отчетов для ГНС КР:</th>
+        <td><?php
+            echo htmlspecialchars(
+                is_object($json->reporting->stiapplyingregion)
+                    ? $json->reporting->stiapplyingregion->name
+                    : '(отсутствует в справочнике)'
+            );
+        ?></td>
+    </tr>
+    <?php endif; ?>
+</table>

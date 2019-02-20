@@ -1,0 +1,158 @@
+<form class="form" action="index.php" method="GET">
+    <input type="hidden" name="view" value="<?php echo $this::AK_PKI_SEARCH; ?>" />
+    <div class="caption">Просмотр данных о сертификатах ЭЦП в PKI</div>
+
+    <div class="field">
+        <label for="value" class="fixed">Данные:</label>
+        <input type="text" name="value" id="value" style="width: 350px" placeholder="введите данные" value="<?php echo isset($cValue) ? htmlspecialchars($cValue) : '' ?>">
+        <span class="hint">ИНН или серийный номер сертификата</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+</form>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(empty($cValue)): ?>
+    <div class="empty-resultset">Введите данные для поиска.</div>
+    <?php return; ?>
+<?php endif; ?>
+<?php
+if($certificates):
+    $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+    $canAccessSochi      = $this->isPermitted($this::AK_SOCHI);
+
+    foreach($certificates as $index => $certificate):
+        $start  = strtotime($certificate->DateStart);
+        $finish = strtotime($certificate->DateFinish);
+
+        $isInvalidSeries = !preg_match(
+            '/^[A-Z0-9\-]+$/',
+            $certificate->Passport->Series
+        );
+
+        $isInvalidNumber = !preg_match(
+            '/^[A-Z0-9\-]+$/',
+            $certificate->Passport->Number
+        );
+
+        $isActive = (($finish >= time()) && $certificate->SystemIsAccessible);
+
+        if($isInvalidSeries || $isInvalidNumber):
+            $temp = [];
+
+            if($isInvalidSeries):
+                $temp[] = 'серии';
+            endif;
+
+            if($isInvalidNumber):
+                $temp[] = 'номере';
+            endif;
+
+            $invalidPassport = 'недопустимые символы в ' . implode(' и ', $temp);
+        else:
+            $invalidPassport = null;
+        endif;
+
+        $class = $isActive ? 'active' : 'expired';
+
+        $certificate->DateStart  = date('d.m.Y H:i:s', $start);
+        $certificate->DateFinish = date('d.m.Y H:i:s', $finish);
+
+        $isTariff = (
+            isset($certificate->TarifEDS)
+            &&
+            is_object($certificate->TarifEDS)
+        );
+?>
+            <div class="pki-certificate <?php echo $class; ?>">
+                <div class="header">
+                    <span class="w150 center">
+                        <b>ИНН:</b><br>
+                        <?php echo htmlspecialchars($certificate->Inn); ?>
+                        <?php if($canAccessRequisites): ?>
+                            <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">Реквизиты</a>
+                        <?php endif; ?>
+                        <?php if($canAccessSochi): ?>
+                            <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo urlencode($certificate->Inn); ?>" target="_blank">СОчИ</a>
+                        <?php endif; ?>
+                    </span>
+                    <span class="w300 center">
+                        <b>Серийный номер:</b><br>
+                        <?php echo htmlspecialchars($certificate->CertNumber); ?>
+                    </span>
+                    <span class="w75 center">
+                        <b>СОС:</b><br>
+                        <?php echo $certificate->SystemIsAccessible ? 'Да' : 'Нет'; ?>
+                    </span>
+                    <span class="w200 center">
+                        <b>Роль:</b><br>
+                        <?php echo htmlspecialchars($certificate->Title); ?>
+                    </span>
+                    <span class="w200 center">
+                        <b>УЦ:</b><br>
+                        <?php echo htmlspecialchars($certificate->CA); ?>
+                    </span>
+                    <span class="w200 center">
+                        <b>Паспорт:</b><br>
+                        <?php
+                            echo
+                                htmlspecialchars(
+                                    $certificate->Passport->Series
+                                    . ' ' .
+                                    $certificate->Passport->Number
+                                );
+
+                            if($invalidPassport):
+                        ?>
+                            <br>
+                            <u><?php echo $invalidPassport; ?></u>
+                        <?php endif; ?>
+                    </span>
+                    <span class="w-fit">
+                        <b>ФИО владельца:</b><br>
+                        <?php echo htmlspecialchars($certificate->Owner); ?>
+                    </span>
+                </div>
+                <div class="details">
+                    <span>
+                        <b>Организация:</b>
+                        <?php echo htmlspecialchars($certificate->OrgName); ?>
+                    </span>
+                    <span>
+                        <b>Дата выдачи:</b>
+                        <?php echo htmlspecialchars($certificate->DateStart); ?>
+                    </span>
+                    <span>
+                        <b>Дата окончания:</b>
+                        <?php echo htmlspecialchars($certificate->DateFinish); ?>
+                    </span>
+
+                    <?php if($isTariff): ?>
+                        <span>
+                            <b>Тип тарифа:</b>
+                            <?php echo htmlspecialchars($certificate->TarifEDS->TarifType); ?>
+                        </span>
+                        <span>
+                            <b>Тариф:</b>
+                            <?php echo htmlspecialchars($certificate->TarifEDS->Tarif); ?>
+                        </span>
+                    <?php endif; ?>
+
+                    <span>
+                        <b>Сообщение о состоянии:</b>
+                        <?php echo htmlspecialchars($certificate->StatusMessage); ?>
+                    </span>
+                </div>
+            </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div class="empty-resultset">В PKI сведений не найдено</div>
+<?php endif; ?>

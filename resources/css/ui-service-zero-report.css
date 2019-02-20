@@ -1,0 +1,15 @@
+table.data tr.error td {
+    background: #FFAFA4;
+}
+
+table.data tr.error:hover td {
+    background: #FF6666 !important;
+}
+
+table.data tr.notice td {
+    background: #FFC362;
+}
+
+table.data tr.notice:hover td {
+    background: #FF9933 !important;
+}

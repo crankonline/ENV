@@ -1,0 +1,38 @@
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(!isset($data)): ?>
+    <div class="empty-resultset">Данные отсутствуют.</div>
+    <?php return; ?>
+<?php endif; ?>
+
+<table class="data">
+    <tr>
+        <th>УГНС</th>
+        <th>Количество клиентов</th>
+    </tr>
+    <?php
+        $canAccessDetails = $this->isPermitted($this::AK_AGGREGATE_REGION_STI_DETAILS);
+
+        foreach($data as &$row):
+    ?>
+    <tr>
+        <td><?php
+            echo htmlspecialchars($row['region-id'] . ' - ' . $row['region-name']);
+        ?></td>
+        <td class="center">
+            <?php if($canAccessDetails): ?>
+                <a href="index.php?view=<?php echo $this::AK_AGGREGATE_REGION_STI_DETAILS; ?>&id=<?php echo $row['region-id'] ?>" target="_blank"><?php
+                    echo $row['clients-count'];
+                ?></a>
+            <?php else: ?>
+                <?php echo $row['clients-count']; ?>
+            <?php endif; ?>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>

@@ -1,0 +1,118 @@
+<?php if($this->isPermitted($this::AK_USERS)): ?>
+    <a class="button single" href="index.php?view=<?php echo $this::AK_USERS; ?>">Вернуться к списку учетных записей</a>
+<?php endif; ?>
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+    <div class="failure"><?php echo $error; ?></div>
+    <?php endforeach; ?>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if(isset($result, $status)): ?>
+    <div class="<?php echo $result ? 'success' : 'failure'; ?>">
+        <?php echo $status; ?>
+    </div>
+<?php endif; ?>
+
+<form class="form" action="index.php?view=<?php echo $this::AK_REGISTER_USER; ?>&action=register" method="POST">
+
+    <div class="caption">Учетная запись</div>
+
+    <div class="field">
+        <label for="login" class="fixed">Логин <span class="required">*</span>:</label>
+        <input type="text" name="login" id="login" maxlength="30" value="<?php echo isset($_POST['login']) ? htmlspecialchars($_POST['login']) : ''; ?>" placeholder="введите логин" required>
+        <span class="hint">не более 30 знаков - символы A-Z, цифры, знаки "_" и "-"</span>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['login'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="user-role-id" class="fixed">Роль <span class="required">*</span>:</label>
+        <select name="user-role-id" id="user-role-id" required>
+            <?php foreach($roles as $role): ?>
+            <option value="<?php echo $role['id']; ?>"><?php
+                echo htmlspecialchars($role['name']);
+            ?></option>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Роль учетной записи в системе</span>
+        <?php if(isset($validations['user-role-id'])): ?>
+            <?php foreach($validations['user-role-id'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="password" class="fixed">Пароль <span class="required">*</span>:</label>
+        <input type="password" name="password" id="password" placeholder="введите пароль" required>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['password'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="confirmation" class="fixed">Подтверждение <span class="required">*</span>:</label>
+        <input type="password" name="confirmation" id="confirmation" placeholder="введите пароль еще раз" required>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['confirmation'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="surname" class="fixed">Фамилия <span class="required">*</span>:</label>
+        <input type="text" name="surname" id="surname" maxlength="25" value="<?php echo isset($_POST['surname']) ? htmlspecialchars($_POST['surname']) : ''; ?>" placeholder="введите фамилию" required>
+        <span class="hint">не более 25 знаков</span>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['surname'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="name" class="fixed">Имя <span class="required">*</span>:</label>
+        <input type="text" name="name" id="name" maxlength="20" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" placeholder="введите имя" required>
+        <span class="hint">не более 20 знаков</span>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['name'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="name" class="fixed">Отчество:</label>
+        <input type="text" name="middle-name" id="middle-name" maxlength="25" value="<?php echo isset($_POST['middle-name']) ? htmlspecialchars($_POST['middle-name']) : ''; ?>" placeholder="введите отчество">
+        <span class="hint">не более 25 знаков</span>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['middle-name'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="phone" class="fixed">Телефон(ы):</label>
+        <input type="text" name="phone" id="phone" maxlength="255" value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>" placeholder="введите телефон(ы)">
+        <span class="hint">не более 255 знаков - цифр и разделителей</span>
+        <?php if(isset($validations)): ?>
+            <?php foreach($validations['phone'] as $error): ?>
+            <div class="validation-error"><?php echo $error; ?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Зарегистрировать" />
+    </div>
+
+</form>

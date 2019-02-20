@@ -1,0 +1,139 @@
+body
+    {
+        padding-bottom: 190px;
+    }
+
+.center
+    {
+        text-align: center !important;
+    }
+
+.no-wrap
+    {
+        white-space: nowrap;
+    }
+
+div.pki-certificate
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        margin: 0px 0px 1px 0px;
+
+        position: relative;
+
+        text-align: left;
+    }
+
+div.pki-certificate.active
+    {
+        border: 1px solid #58c17b;
+
+        background: #d6ffd4;
+    }
+
+div.pki-certificate.active:hover
+    {
+        background: #a1e399;
+    }
+
+div.pki-certificate.expired
+    {
+        border: 1px solid #df6e70;
+
+        background: #ffcbcc;
+    }
+
+div.pki-certificate.expired:hover
+    {
+        background: #ffb5b6;
+    }
+
+div.pki-certificate > div.header
+    {
+        display: table;
+
+        padding: 5px;
+
+        width: 100%;
+
+        z-index: 15;
+    }
+
+div.pki-certificate > div.header > span
+    {
+        display: table-cell;
+
+        vertical-align: middle;
+    }
+
+div.pki-certificate > div.header > span.w75
+    {
+        min-width: 75px;
+        max-width: 75px;
+
+        width: 75px;
+    }
+
+div.pki-certificate > div.header > span.w150
+    {
+        min-width: 150px;
+        max-width: 150px;
+
+        width: 150px;
+    }
+
+div.pki-certificate > div.header > span.w200
+    {
+        min-width: 200px;
+        max-width: 200px;
+
+        width: 200px;
+    }
+
+div.pki-certificate > div.header > span.w300
+    {
+        min-width: 300px;
+        max-width: 300px;
+
+        width: 300px;
+    }
+
+div.pki-certificate > div.header > span.w-fit
+    {
+        width: auto;
+    }
+
+div.pki-certificate > div.details
+    {
+        border: inherit;
+        border-top: none;
+
+        background: inherit;
+
+        display: none;
+
+        top: 100%;
+        right: 25px;
+
+        left: 455px;
+
+        position: absolute;
+
+        z-index: 50;
+    }
+
+div.pki-certificate:hover > div.details
+    {
+        display: block;
+
+        padding: 5px;
+    }
+
+div.pki-certificate:hover > div.details > span
+    {
+        display: block;
+
+        padding: 5px;
+    }

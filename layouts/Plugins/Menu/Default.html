@@ -1,0 +1,28 @@
+<?php
+    if($groups):
+
+        foreach($groups as $name => &$modules):
+?>
+        <div class="group">
+            <div class="name"><?php
+                echo htmlspecialchars($name);
+            ?></div>
+            <div class="modules">
+            <?php foreach($modules as &$module): ?>
+                <?php if($module['access-key'] == $currentAccessKey): ?>
+                <a href="index.php?view=<?php echo urlencode($module['access-key']); ?>" class="current"><?php
+                    echo htmlspecialchars($module['name']);
+                ?></a>
+                <?php else: ?>
+                <a href="index.php?view=<?php echo urlencode($module['access-key']); ?>"><?php
+                    echo htmlspecialchars($module['name']);
+                ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            </div>
+        </div>
+<?php
+        endforeach;
+
+    endif;
+?>
