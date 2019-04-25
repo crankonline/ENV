@@ -24,54 +24,54 @@ ini_set('soap.wsdl_cache_enabled', 0);
 Connections::configure(
     'Environment',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=Environment;options='--client_encoding=UTF8'",
-        'user'     => 'env',
-        'password' => '423b963ae9726b3592990a17ac6878b7'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=Env;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Requisites',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=RequisitesDosTek;options='--client_encoding=UTF8'",
-        'user'     => 'req_dtg',
-        'password' => '1b374a3a433f4937f4ee1286a4431ac9'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=RequisitesDosTek;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Reregister',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=Reregister;options='--client_encoding=UTF8'",
-        'user'     => 'reg',
-        'password' => '5426800880f1312202e62d04ff944bfa'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=Reregister;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Api',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=Api;options='--client_encoding=UTF8'",
-        'user'     => 'api',
-        'password' => 'cca4479c48f28435c09e59b7482ad380'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=Api;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Sochi',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=rsvi_base;options='--client_encoding=UTF8'",
-        'user'     => 'sochi',
-        'password' => '3a612a70bab93b1fa58dd4663ec847dd'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=rsvi_base;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Billing',
     [
-        'dsn'      => "pgsql:host=db.dostek.kg;port=5432;dbname=billing_base;options='--client_encoding=UTF8'",
-        'user'     => 'billing',
-        'password' => 'e66d3a950e52f3363a01489445fb825e'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=billing_base;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
@@ -87,18 +87,18 @@ Connections::configure(
 Connections::configure(
     'OnlineStatements',
     [
-        'dsn'      => "pgsql:host=scans.dostek.kg;port=5432;dbname=OnlineStatements;options='--client_encoding=UTF8'",
-        'user'     => 'site',
-        'password' => '255c80917457f05fd8b936899116b58b'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=OnlineStatements;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'OnlineStatementFiles',
     [
-        'dsn'      => "pgsql:host=scans.dostek.kg;port=5432;dbname=OnlineStatementFiles;options='--client_encoding=UTF8'",
-        'user'     => 'site',
-        'password' => '255c80917457f05fd8b936899116b58b'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=OnlineStatementFiles;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
@@ -132,18 +132,18 @@ Connections::configure(
 Connections::configure(
     'Sti',
     [
-        'dsn'      => "pgsql:host=curator.sti.gov.kg;port=5432;dbname=Sti;options='--client_encoding=UTF8'",
-        'user'     => 'sti_user',
-        'password' => 'P@$$w0rdSTI'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=Sti;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 
 Connections::configure(
     'Nsc',
     [
-        'dsn'      => "pgsql:host=curator.stat.kg;port=5432;dbname=Nsc;options='--client_encoding=UTF8'",
-        'user'     => 'stat',
-        'password' => 'P@$$w0rdSTAT'
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=Nsc;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
     ]
 );
 ?>
