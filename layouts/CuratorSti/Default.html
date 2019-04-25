@@ -257,99 +257,99 @@
 
 
 
-<?php if(empty($rsvi_sochi)): ?>
-<div class="empty-resultset">Протокол обработки Сочи</div>
-<?php else: ?>
-<form class="form center" action="index.php?<?php echo $_SERVER['QUERY_STRING'] ?>" method="POST">
+    <?php if(empty($rsvi_sochi)): ?>
+        <div class="empty-resultset">Протокол обработки Сочи</div>
+    <?php else: ?>
+    <form class="form center" action="index.php?<?php echo $_SERVER['QUERY_STRING'] ?>" method="POST">
 
-    <table class="data">
-        <caption>Протокол обработки Сочи</caption>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>UIN:</th>
-            <th>Дата и время:</th>
-            <th>Статус отчета:</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-                        foreach($rsvi_sochi as $index => &$record):
-        switch($record['status']):
-        case 1:
-        $class = 'failed';
-        $sochiRepStatus = 'Неверная подпись';
-        break;
-        case 2:
-        $class = 'failed';
-        $sochiRepStatus = 'Ошибка дешифрования';
-        break;
-        case 3:
-        $class = 'failed';
-        $sochiRepStatus = 'Отклонен';
-        break;
-        case 4:
-        $class = 'successful';
-        $sochiRepStatus = 'Принят';
-        break;
-        case 5:
-        $class = 'successful';
-        $sochiRepStatus = 'Ожидает проверки';
-        break;
-        case 6:
-        $class = 'successful';
-        $sochiRepStatus = 'Ожидает отправки';
-        break;
-        case 7:
-        $class = 'failed';
-        $sochiRepStatus = 'Ожидает оплаты';
-        break;
-        case 9:
-        $class = 'failed';
-        $sochiRepStatus = 'Отправка отменена';
-        break;
+        <table class="data">
+            <caption>Протокол обработки Сочи</caption>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>UIN:</th>
+                <th>Дата и время:</th>
+                <th>Статус отчета:</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+                            foreach($rsvi_sochi as $index => &$record):
+            switch($record['status']):
+            case 1:
+            $class = 'failed';
+            $sochiRepStatus = 'Неверная подпись';
+            break;
+            case 2:
+            $class = 'failed';
+            $sochiRepStatus = 'Ошибка дешифрования';
+            break;
+            case 3:
+            $class = 'failed';
+            $sochiRepStatus = 'Отклонен';
+            break;
+            case 4:
+            $class = 'successful';
+            $sochiRepStatus = 'Принят';
+            break;
+            case 5:
+            $class = 'successful';
+            $sochiRepStatus = 'Ожидает проверки';
+            break;
+            case 6:
+            $class = 'successful';
+            $sochiRepStatus = 'Ожидает отправки';
+            break;
+            case 7:
+            $class = 'failed';
+            $sochiRepStatus = 'Ожидает оплаты';
+            break;
+            case 9:
+            $class = 'failed';
+            $sochiRepStatus = 'Отправка отменена';
+            break;
 
-        default:
-        $class = '';
-        break;
-        endswitch;
-        ?>
-        <tr class="<?php echo $class; ?>">
-            <td class="center"><?php
-                            echo $index + 1;
-                        ?></td>
-            <td><?php
-                            echo htmlspecialchars($record['uin']);
-                        ?></td>
-            <td class="center"><?php
-                            echo htmlspecialchars($record['input_date']);
-                        ?></td>
-            <td class="center"><b><?php
-                            echo htmlspecialchars($record['status'])."<br/>";
-                echo htmlspecialchars($sochiRepStatus)."<br/>";
-                ?></b>
-                Новый статус :<select name="sochi-status-sti-report">
-                    <option value="1">Неверная подпись</option>
-                    <option value="2">Ошибка дешифрования</option>
-                    <option value="3">Отклонен</option>
-                    <option value="4">Принят</option>
-                    <option value="5">Ожидает проверки</option>
-                    <option value="6">Ожидает отправки</option>
-                    <option value="7">Ожидает оплаты</option>
-                    <option value="9">Отправка отменена</option>
+            default:
+            $class = '';
+            break;
+            endswitch;
+            ?>
+            <tr class="<?php echo $class; ?>">
+                <td class="center"><?php
+                                echo $index + 1;
+                            ?></td>
+                <td><?php
+                                echo htmlspecialchars($record['uin']);
+                            ?></td>
+                <td class="center"><?php
+                                echo htmlspecialchars($record['input_date']);
+                            ?></td>
+                <td class="center"><b><?php
+                                echo htmlspecialchars($record['status'])."<br/>";
+                    echo htmlspecialchars($sochiRepStatus)."<br/>";
+                    ?></b>
+                    Новый статус :<select name="sochi-status-sti-report">
+                        <option value="1">Неверная подпись</option>
+                        <option value="2">Ошибка дешифрования</option>
+                        <option value="3">Отклонен</option>
+                        <option value="4">Принят</option>
+                        <option value="5">Ожидает проверки</option>
+                        <option value="6">Ожидает отправки</option>
+                        <option value="7">Ожидает оплаты</option>
+                        <option value="9">Отправка отменена</option>
 
-                </select> </td>
+                    </select> </td>
 
-        </tr>
+            </tr>
 
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
 
-    <input type="submit" name="sochi-change-report-status" class="button" value="изменить статус">
-</form>
+        <input type="submit" name="sochi-change-report-status" class="button" value="изменить статус">
+    </form>
 
-<?php endif; ?>
+    <?php endif; ?>
 
 
 
