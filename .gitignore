@@ -1,6 +1,8 @@
 
 core/configuration\.php
 
-core/soap-clients/Api/
-
 \.idea/
+
+core/soap-clients/Api/RequisitesData\.php
+
+core/soap-clients/Api/RequisitesMeta\.php
