@@ -2,8 +2,8 @@
 namespace Environment\Soap\Clients;
 
 class PkiService extends \SoapClient {
-    // const WSDL = 'http://pkiservice-test.dostek.kg/pkiservice.php?wsdl';
-    const WSDL = 'http://pkiservice.dostek.kg/pkiservice.php?wsdl';
+
+    const WSDL = 'http://pkiservice.dostek.test/pkiservice.php?wsdl';
 
     public function __construct(){
         $options = [
