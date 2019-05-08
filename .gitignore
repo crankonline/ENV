@@ -6,3 +6,7 @@ core/configuration\.php
 core/soap-clients/Api/RequisitesData\.php
 
 core/soap-clients/Api/RequisitesMeta\.php
+
+core/soap-clients/PkiServiceUBR\.php
+
+core/soap-clients/PkiService\.php
