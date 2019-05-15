@@ -186,7 +186,7 @@
         <div class="empty-resultset">Протокол обработки пуст.</div>
     <?php else: ?>
         <table class="data">
-            <caption>Протокол обработки</caption>
+            <caption>Протокол обработки Кураторского приложения</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -232,7 +232,7 @@
                 </tr>
                 <tr class="<?php echo $class; ?>">
                     <th class="center">Результат:</th>
-                    <td colspan="4">
+                    <td colspan="3">
                         <pre><?php
                             echo htmlspecialchars(
                                 print_r(
@@ -241,6 +241,14 @@
                                 )
                             );
                         ?></pre>
+                    </td>
+                    <td>
+                        <?php if ($record['report-status-id'] == $this::REPORT_STATUS_DECLINED): ?>
+                        <form class="form center" action="index.php?<?php echo $_SERVER['QUERY_STRING'] ?>" method="POST">
+                            <input type="submit" name="processing-change-curator-status" class="button" value="Поменять статус на принят">
+                        </form>
+                        <?php endif; ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>
