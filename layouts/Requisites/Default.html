@@ -366,12 +366,20 @@ if($common):
 
                 $tmp = '';
 
+                $tmpArr = [];
+
                 foreach($roles as $role):
-                    $tmp .= htmlspecialchars($role->name) . ',';
+
+                    if(!in_array($role->id, $tmpArr)):
+                        $tmp .= htmlspecialchars($role->name) . ',';
+                    endif;
 
                     if($role->id == $this::ROLES_CHIEF):
                         $isChief = true;
                     endif;
+
+                    $tmpArr[] = $role->id;
+
                 endforeach;
 
                 $tmp = trim($tmp, ',');

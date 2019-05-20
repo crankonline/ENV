@@ -6,7 +6,9 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 class CuratorSti extends \Environment\Core\Module {
     const
         PMS_CHANGE_REGION    = 'can-change-region',
-        PMS_CLEAR_PROCESSING = 'can-clear-processing';
+        PMS_CLEAR_PROCESSING = 'can-clear-processing',
+        PMS_CHANGE_SOCHI_REPORT_STATUS = 'can-change-sochi-report-status',
+		PMS_CHANGE_CURATOR_REPORT_STATUS = 'can-change-curator-report-status';
 
     const
         DEPLOYMENT_ADDRESS = 'curator.sti.gov.kg';
@@ -231,6 +233,73 @@ SQL;
         ]);
     }
 
+    protected function getSochiReportSti($uin){
+    	$sql = <<<SQL
+SELECT 
+	rep.uin as "uin",
+	form.form_name as "form_name",
+	rep.form_type as "form_type",
+	rep.region_code as "region_code",
+	rep.input_date as "input_date",
+	rep.period_quarter as "period_quarter",
+	rep.period_year as "period_year",
+	rep.period_month as "period_month",
+	rep.status as "status"
+FROM sti_reporting.reports as rep
+LEFT JOIN sti_reporting.forms as form on rep.form_id = form.id
+WHERE rep.uin = :uin;
+SQL;
+
+	    $stmt = Connections::getConnection('Sochi')->prepare($sql);
+
+	    $stmt->execute([
+		    'uin' => $uin
+	    ]);
+
+	    return $stmt->fetchAll();
+    }
+
+    protected function updateSochiReportStatusSti($uin, $status) {
+		$sql = <<<SQL
+		UPDATE sti_reporting.reports
+		SET status = :status
+		WHERE uin = :uin;
+
+SQL;
+	    $stmt = Connections::getConnection('Sochi')->prepare($sql);
+
+	    return $stmt->execute([
+		    'uin' => $uin,
+		    'status' => $status
+	    ]);
+    }
+
+    protected function updateCuratorReportStatus($uin) {
+    	$sql = <<<SQL
+		UPDATE "ReportProcessing"."RuleExecutionResult"
+		SET "ReportStatusID" = 10,
+		"isSuccess" = TRUE,
+		"Result" = '{"DeclarationProcessResults":{"ProcessResultDescription":"Отчет обработан","eDeclarationPostProcessResult":"ProcessedSuccefully"}}'
+		WHERE
+		    "IDRuleExecutionResult" = (
+		    SELECT
+		        "ReportProcessing"."RuleExecutionResult"."IDRuleExecutionResult"
+		    FROM
+		        "ReportProcessing"."RuleExecutionResult"
+		        INNER JOIN "ReportProcessing"."RuleExecution" ON "ReportProcessing"."RuleExecutionResult"."RuleExecutionID" = "ReportProcessing"."RuleExecution"."IDRuleExecution"
+		    WHERE
+		    "ReportID" = ( SELECT "IDReport" FROM "Reporting"."Report" WHERE "Uin" = :uin )
+		    AND "isFinish")
+		RETURNING "IDRuleExecutionResult";
+SQL;
+
+	    $stmt = Connections::getConnection('Sti')->prepare($sql);
+
+	    return $stmt->execute([
+		    'uin' => $uin
+	    ]);
+    }
+
     protected function main(){
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-curator.css';
@@ -246,6 +315,16 @@ SQL;
             self::AK_CURATOR_STI,
             self::PMS_CLEAR_PROCESSING
         );
+
+        $canChangeSochiReportStatus = $this->isPermitted(
+        	self::AK_SOCHI
+        );
+
+        $canChangeCuratorStiReportStatus = $this->isPermitted(
+	        self::AK_CURATOR_STI,
+        	self::PMS_CHANGE_CURATOR_REPORT_STATUS
+        );
+
 
         $uin = isset($_GET['uin']) ? $_GET['uin'] : null;
 
@@ -277,6 +356,18 @@ SQL;
                         $canClearProcessing
                     );
 
+                    $isChangeStatusSochi = (
+                        isset($_POST['sochi-change-report-status'], $_POST['sochi-status-sti-report'])
+                        &&
+                        $canChangeSochiReportStatus
+                    );
+
+                    $isChangeStatusCurator = (
+                        isset($_POST['processing-change-curator-status'])
+                        &&
+                        $canChangeCuratorStiReportStatus
+                    );
+
                     if($isChangeRegion){
                         $result = $this->changeRegion(
                             $report['id'],
@@ -292,6 +383,17 @@ SQL;
                         $status = $result
                             ? 'Протокол проверки успешно очищен.'
                             : 'Не удалось очистить протокол проверки.';
+                    } elseif($isChangeStatusSochi) {
+	                    $sochiRepStatus = $_POST['sochi-status-sti-report'];
+	                    $result = $this->updateSochiReportStatusSti($uin,$sochiRepStatus);
+	                    $status = $result
+		                    ? 'Статус отчета сочи изменен'
+		                    : 'Не удалось изменить статус отчета сочи.'.$_POST['sochi-status-sti-report'];
+                    } elseif($isChangeStatusCurator) {
+                    	$result = $this->updateCuratorReportStatus($uin);
+                    	$status = $result
+		                    ? 'Статус в кураторском приложении успешно изменен'
+		                    : 'Не удалось изменить статус в кураторском приложении - '.$result;
                     } else {
                         $result = false;
                         $status = 'Неверный набор параметров для осуществления действия.';
@@ -313,6 +415,10 @@ SQL;
 
                 $this->variables->files = $this->getFilesByReportId(
                     $report['id']
+                );
+
+                $this->variables->rsvi_sochi = $this->getSochiReportSti(
+                    $uin
                 );
             }
         } catch(\Exception $e) {
