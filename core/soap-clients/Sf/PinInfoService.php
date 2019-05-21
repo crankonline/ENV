@@ -2,7 +2,7 @@
 namespace Environment\Soap\Clients\Sf;
 
 class PinInfoService extends \SoapClient {
-    const WSDL = 'http://eleed.sf.kg:8009/PinInfoService?wsdl';
+    const WSDL = 'http://eleed.sf.kg:8010/PinInfoService?wsdl';
 
     public function __construct(){
         $options = [
