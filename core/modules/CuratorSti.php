@@ -317,7 +317,8 @@ SQL;
         );
 
         $canChangeSochiReportStatus = $this->isPermitted(
-        	self::AK_SOCHI
+        	self::AK_CURATOR_STI,
+	        self::PMS_CHANGE_SOCHI_REPORT_STATUS
         );
 
         $canChangeCuratorStiReportStatus = $this->isPermitted(
@@ -332,6 +333,8 @@ SQL;
 
         $this->variables->canChangeRegion    = $canChangeRegion;
         $this->variables->canClearProcessing = $canClearProcessing;
+        $this->variables->canChangeSochiReportStatus = $canChangeSochiReportStatus;
+        $this->variables->canChangeCuratorStiReportStatus = $canChangeCuratorStiReportStatus;
 
         if(empty($uin)){
             return;
