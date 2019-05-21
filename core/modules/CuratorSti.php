@@ -8,7 +8,7 @@ class CuratorSti extends \Environment\Core\Module {
         PMS_CHANGE_REGION    = 'can-change-region',
         PMS_CLEAR_PROCESSING = 'can-clear-processing',
         PMS_CHANGE_SOCHI_REPORT_STATUS = 'can-change-sochi-report-status',
-		PMS_CHANGE_CURATOR_REPORT_STATUS = 'can-change-curator-report-status';
+        PMS_CHANGE_CURATOR_REPORT_STATUS = 'can-change-curator-report-status';
 
     const
         DEPLOYMENT_ADDRESS = 'curator.sti.gov.kg';
@@ -317,7 +317,8 @@ SQL;
         );
 
         $canChangeSochiReportStatus = $this->isPermitted(
-        	self::AK_SOCHI
+        	self::AK_CURATOR_STI,
+	        self::PMS_CHANGE_SOCHI_REPORT_STATUS
         );
 
         $canChangeCuratorStiReportStatus = $this->isPermitted(
@@ -332,6 +333,8 @@ SQL;
 
         $this->variables->canChangeRegion    = $canChangeRegion;
         $this->variables->canClearProcessing = $canClearProcessing;
+        $this->variables->canChangeSochiReportStatus = $canChangeSochiReportStatus;
+        $this->variables->canChangeCuratorStiReportStatus = $canChangeCuratorStiReportStatus;
 
         if(empty($uin)){
             return;
