@@ -243,12 +243,10 @@
                         ?></pre>
                     </td>
                     <td>
-                        <?php if($canChangeCuratorStiReportStatus): ?>
-                        <?php if ($record['report-status-id'] == $this::REPORT_STATUS_DECLINED): ?>
+                        <?php if ($canChangeCuratorStiReportStatus && $record['report-status-id'] == $this::REPORT_STATUS_DECLINED): ?>
                         <form class="form center" action="index.php?<?php echo $_SERVER['QUERY_STRING'] ?>" method="POST">
                             <input type="submit" name="processing-change-curator-status" class="button" value="Поменять статус на принят">
                         </form>
-                        <?php endif; ?>
                         <?php endif; ?>
 
                     </td>
