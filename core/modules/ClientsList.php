@@ -13,116 +13,102 @@ class ClientsList extends \Environment\Core\Module {
         SUBSCRIBER_ID = 1;
 
     protected $config = [
-        'template' => 'layouts/ClientsList/Default.html'
+        'template' => 'layouts/ClientsList/Default.html',
+        'plugins'  => [
+	        'paginator' => Plugins\Paginator::class
+        ]
     ];
 
     protected function getClients(){
         $sql = <<<SQL
 SELECT
-    "c-rqst"."IDRequisites",
-    TO_CHAR(
-        "u-uid"."DateTime",
+  "c-rqst"."IDRequisites",
+  TO_CHAR(
+      "u-uid"."DateTime",
+      'DD.MM.YYYY HH24:MI:SS'
+  ) as "register-stamp",
+  CONCAT_WS(
+      ' ',
+      COALESCE(
+          "c-lf"."ShortName",
+          "c-lf"."Name"
+      ),
+      "c-rqst"."Name"
+  ) as "name",
+  "c-rqst"."Inn" as "inn",
+  CONCAT_WS(
+      ' ',
+      "c-rpsn-chief"."Surname",
+      "c-rpsn-chief"."Name",
+      "c-rpsn-chief"."MiddleName"
+  ) as "chief-name",
+  "c-pspt-chief"."Series" as "chief-passport-series",
+  "c-pspt-chief"."Number" as "chief-passport-number",
+  CONCAT_WS(
+      ' ',
+      "c-rpsn-acc"."Surname",
+      "c-rpsn-acc"."Name",
+      "c-rpsn-acc"."MiddleName"
+  ) as "accountant-name",
+  "c-pspt-acc"."Series" as "accountant-passport-series",
+  "c-pspt-acc"."Number" as "accountant-passport-number",
+  "u-uid"."IDUid" "uid-id",
+  (
+    SELECT "isActive" FROM "Common"."Usage" WHERE "uid-id" =  "u-uid"."IDUid"
+  ) "usage-status-activity",(
+    SELECT    TO_CHAR(
+        "DateTime",
         'DD.MM.YYYY HH24:MI:SS'
-    ) as "register-stamp",
-    CONCAT_WS(
-        ' ',
-        COALESCE(
-            "c-lf"."ShortName",
-            "c-lf"."Name"
-        ),
-        "c-rqst"."Name"
-    ) as "name",
-    "c-rqst"."Inn" as "inn",
-    CONCAT_WS(
-        ' ',
-        "c-rpsn-chief"."Surname",
-        "c-rpsn-chief"."Name",
-        "c-rpsn-chief"."MiddleName"
-    ) as "chief-name",
-    "c-pspt-chief"."Series" as "chief-passport-series",
-    "c-pspt-chief"."Number" as "chief-passport-number",
-    CONCAT_WS(
-        ' ',
-        "c-rpsn-acc"."Surname",
-        "c-rpsn-acc"."Name",
-        "c-rpsn-acc"."MiddleName"
-    ) as "accountant-name",
-    "c-pspt-acc"."Series" as "accountant-passport-series",
-    "c-pspt-acc"."Number" as "accountant-passport-number",
-    "u-s"."isActive" as "usage-status-activity",
-    TO_CHAR(
-        "u-s"."DateTime",
-        'DD.MM.YYYY HH24:MI:SS'
-    ) as "usage-status-date-time"
+    ) FROM "Common"."Usage" WHERE "uid-id" =  "u-uid"."IDUid"
+  ) "usage-status-date-time"
 FROM
-    "Common"."Requisites" as "c-rqst"
-        INNER JOIN "Uid"."Uid" as "u-uid"
-            ON "c-rqst"."UidID" = "u-uid"."IDUid"
-        INNER JOIN "Common"."LegalFormCivilLegalStatus" as "c-lfcls"
-            ON "c-rqst"."LegalFormCivilLegalStatusID" = "c-lfcls"."IDLegalFormCivilLegalStatus"
-        INNER JOIN "Common"."LegalForm" as "c-lf"
-            ON "c-lfcls"."LegalFormID" = "c-lf"."IDLegalForm"
-        LEFT JOIN (
-            "Common"."RequisitesRepresentative" as "c-rr-chief"
-                INNER JOIN "Common"."Representative" as "c-rpsn-chief"
-                    ON "c-rr-chief"."RepresentativeID" = "c-rpsn-chief"."IDRepresentative"
-                INNER JOIN "Common"."RequisitesRepresentativeRole" as "c-rrr-chief"
-                    ON "c-rpsn-chief"."IDRepresentative" = "c-rrr-chief"."RepresentativeID"
-                INNER JOIN "Common"."RepresentativeRole" as "c-rrl-chief"
-                    ON "c-rrr-chief"."RepresentativeRoleID" = "c-rrl-chief"."IDRepresentativeRole"
-                INNER JOIN "Common"."Passport" as "c-pspt-chief"
-                    ON "c-rpsn-chief"."PassportID" = "c-pspt-chief"."IDPassport"
-            ) ON
-                ("c-rqst"."IDRequisites" = "c-rr-chief"."RequisitesID")
-                AND
-                ("c-rqst"."IDRequisites" = "c-rrr-chief"."RequisitesID")
-                AND
-                ("c-rrl-chief"."IDRepresentativeRole" = :chiefRoleId)
-        LEFT JOIN (
-            "Common"."RequisitesRepresentative" as "c-rr-acc"
-                INNER JOIN "Common"."Representative" as "c-rpsn-acc"
-                    ON "c-rr-acc"."RepresentativeID" = "c-rpsn-acc"."IDRepresentative"
-                INNER JOIN "Common"."RequisitesRepresentativeRole" as "c-rrr-acc"
-                    ON "c-rpsn-acc"."IDRepresentative" = "c-rrr-acc"."RepresentativeID"
-                INNER JOIN "Common"."RepresentativeRole" as "c-rrl-acc"
-                    ON "c-rrr-acc"."RepresentativeRoleID" = "c-rrl-acc"."IDRepresentativeRole"
-                INNER JOIN "Common"."Passport" as "c-pspt-acc"
-                    ON "c-rpsn-acc"."PassportID" = "c-pspt-acc"."IDPassport"
-            ) ON
-                ("c-rqst"."IDRequisites" = "c-rr-acc"."RequisitesID")
-                AND
-                ("c-rqst"."IDRequisites" = "c-rrr-acc"."RequisitesID")
-                AND
-                ("c-rrl-acc"."IDRepresentativeRole" = :accountantRoleId)
-        LEFT JOIN (
-            "Uid"."UsageStatus" as "u-s"
-                INNER JOIN (
-                        SELECT
-                            "UidID" as "uid-id",
-                            MAX("IDUsageStatus") as "usage-status-id"
-                        FROM
-                            "Uid"."UsageStatus" as "u-s"
-                        GROUP BY
-                            1
-                        ORDER BY
-                            1 DESC
-                    ) as "u-s-grouper" ON
-                        ("u-s"."UidID" = "u-s-grouper"."uid-id")
-                        AND
-                        ("u-s"."IDUsageStatus" = "u-s-grouper"."usage-status-id")
-            ) ON
-                ("u-s"."UidID" = "u-s-grouper"."uid-id")
-                AND
-                ("u-s"."UidID" = "u-uid"."IDUid")
-                AND
-                ("u-s"."IDUsageStatus" = "u-s-grouper"."usage-status-id")
+  "Common"."Requisites" as "c-rqst"
+  INNER JOIN "Uid"."Uid" as "u-uid"
+    ON "c-rqst"."UidID" = "u-uid"."IDUid"
+  INNER JOIN "Common"."LegalFormCivilLegalStatus" as "c-lfcls"
+    ON "c-rqst"."LegalFormCivilLegalStatusID" = "c-lfcls"."IDLegalFormCivilLegalStatus"
+  INNER JOIN "Common"."LegalForm" as "c-lf"
+    ON "c-lfcls"."LegalFormID" = "c-lf"."IDLegalForm"
+  LEFT JOIN (
+    "Common"."RequisitesRepresentative" as "c-rr-chief"
+    INNER JOIN "Common"."Representative" as "c-rpsn-chief"
+      ON "c-rr-chief"."RepresentativeID" = "c-rpsn-chief"."IDRepresentative"
+    INNER JOIN "Common"."RequisitesRepresentativeRole" as "c-rrr-chief"
+      ON "c-rpsn-chief"."IDRepresentative" = "c-rrr-chief"."RepresentativeID"
+    INNER JOIN "Common"."RepresentativeRole" as "c-rrl-chief"
+      ON "c-rrr-chief"."RepresentativeRoleID" = "c-rrl-chief"."IDRepresentativeRole"
+    INNER JOIN "Common"."Passport" as "c-pspt-chief"
+      ON "c-rpsn-chief"."PassportID" = "c-pspt-chief"."IDPassport"
+  ) ON
+      ("c-rqst"."IDRequisites" = "c-rr-chief"."RequisitesID")
+      AND
+      ("c-rqst"."IDRequisites" = "c-rrr-chief"."RequisitesID")
+      AND
+      ("c-rrl-chief"."IDRepresentativeRole" = :chiefRoleId)
+  LEFT JOIN (
+    "Common"."RequisitesRepresentative" as "c-rr-acc"
+    INNER JOIN "Common"."Representative" as "c-rpsn-acc"
+      ON "c-rr-acc"."RepresentativeID" = "c-rpsn-acc"."IDRepresentative"
+    INNER JOIN "Common"."RequisitesRepresentativeRole" as "c-rrr-acc"
+      ON "c-rpsn-acc"."IDRepresentative" = "c-rrr-acc"."RepresentativeID"
+    INNER JOIN "Common"."RepresentativeRole" as "c-rrl-acc"
+      ON "c-rrr-acc"."RepresentativeRoleID" = "c-rrl-acc"."IDRepresentativeRole"
+    INNER JOIN "Common"."Passport" as "c-pspt-acc"
+      ON "c-rpsn-acc"."PassportID" = "c-pspt-acc"."IDPassport"
+  ) ON
+      ("c-rqst"."IDRequisites" = "c-rr-acc"."RequisitesID")
+      AND
+      ("c-rqst"."IDRequisites" = "c-rrr-acc"."RequisitesID")
+      AND
+      ("c-rrl-acc"."IDRepresentativeRole" = :accountantRoleId)
+
 WHERE
-    ("u-uid"."SubscriberID" = :subscriberId)
-    AND
-    "c-rqst"."IsActive"
+  ("u-uid"."SubscriberID" = :subscriberId)
+  AND
+  "c-rqst"."IsActive"
 ORDER BY
-    "u-s"."isActive" DESC,
-    "u-uid"."DateTime";
+  "usage-status-activity" DESC,
+  "u-uid"."DateTime";
 SQL;
 
         $stmt = Connections::getConnection('Requisites')->prepare($sql);
