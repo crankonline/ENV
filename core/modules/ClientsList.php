@@ -24,7 +24,7 @@ class ClientsList extends \Environment\Core\Module {
     protected function getClients(array $filters, $limit = null, $offset = null){
 	    $sql = <<<SQL
 SELECT
-    COUNT(*)
+    COUNT("IDRequisites")
 FROM
     "Common"."Requisites" as "r-s"
 WHERE 
