@@ -9,6 +9,8 @@ class ClientsList extends \Environment\Core\Module {
         ROLES_CHIEF      = 1,
         ROLES_ACCOUNTANT = 2;
 
+    const ROWS_PER_PAGE = 30;
+
     const
         SUBSCRIBER_ID = 1;
 
@@ -19,8 +21,23 @@ class ClientsList extends \Environment\Core\Module {
         ]
     ];
 
-    protected function getClients(){
-        $sql = <<<SQL
+    protected function getClients(array $filters, $limit = null, $offset = null){
+	    $sql = <<<SQL
+SELECT
+    COUNT(*)
+FROM
+    "Common"."Requisites" as "r-s"
+WHERE 
+	"r-s"."IsActive" = TRUE;
+
+SQL;
+	    $stmt = Connections::getConnection('Requisites')->prepare($sql);
+
+	    $stmt->execute();
+
+	    $count = $stmt->fetchColumn();
+
+    	$sql = <<<SQL
 SELECT
   "c-rqst"."IDRequisites",
   TO_CHAR(
@@ -108,7 +125,8 @@ WHERE
   "c-rqst"."IsActive"
 ORDER BY
   "usage-status-activity" DESC,
-  "u-uid"."DateTime";
+  "u-uid"."DateTime"
+LIMIT :limit OFFSET :offset;
 SQL;
 
         $stmt = Connections::getConnection('Requisites')->prepare($sql);
@@ -116,10 +134,14 @@ SQL;
         $stmt->execute([
             'chiefRoleId'      => self::ROLES_CHIEF,
             'accountantRoleId' => self::ROLES_ACCOUNTANT,
-            'subscriberId'     => self::SUBSCRIBER_ID
+            'subscriberId'     => self::SUBSCRIBER_ID,
+	        'limit'            => 30,
+	        'offset'           => $offset
         ]);
+	    $rows = $stmt->fetchAll();
 
-        return $stmt;
+//        return $stmt;
+	    return [ &$count, &$rows ];
     }
 
     protected function main(){
@@ -128,8 +150,20 @@ SQL;
 
         $this->variables->errors = [];
 
+
+	    $page   = isset($_GET['page']) ? (abs((int)$_GET['page']) ?: 1) : 1;
+	    $limit  = self::ROWS_PER_PAGE;
+	    $offset = ($page - 1) * $limit;
+
         try {
-            $this->variables->clients = $this->getClients();
+//            $this->variables->clients = $this->getClients();
+
+	        list($count, $clients) = $this->getClients([], $limit, $offset);
+
+	        $this->context->paginator['count'] = (int)ceil($count / $limit);
+
+	        $this->variables->count = $count;
+	        $this->variables->clients = &$clients;
         } catch(\Exception $e) {
             $this->variables->errors[] = $e->getMessage();
         }
