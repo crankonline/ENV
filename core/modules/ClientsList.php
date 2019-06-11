@@ -2,27 +2,27 @@
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections,
-    Unikum\Core\DataLayer as Datalayer;
+	Unikum\Core\DataLayer as Datalayer;
 
 class ClientsList extends \Environment\Core\Module {
-    const
-        ROLES_CHIEF      = 1,
-        ROLES_ACCOUNTANT = 2;
+	const
+		ROLES_CHIEF      = 1,
+		ROLES_ACCOUNTANT = 2;
 
-    const ROWS_PER_PAGE = 30;
+	const ROWS_PER_PAGE = 30;
 
-    const
-        SUBSCRIBER_ID = 1;
+	const
+		SUBSCRIBER_ID = 1;
 
-    protected $config = [
-        'template' => 'layouts/ClientsList/Default.html',
-        'plugins'  => [
-	        'paginator' => Plugins\Paginator::class
-        ]
-    ];
+	protected $config = [
+		'template' => 'layouts/ClientsList/Default.html',
+		'plugins'  => [
+			'paginator' => Plugins\Paginator::class
+		]
+	];
 
-    protected function getClients(array $filters, $limit = null, $offset = null){
-	    $sql = <<<SQL
+	protected function getClients(array $filters, $limit = null, $offset = null){
+		$sql = <<<SQL
 SELECT
     COUNT("IDRequisites")
 FROM
@@ -31,13 +31,28 @@ WHERE
 	"r-s"."IsActive" = TRUE;
 
 SQL;
-	    $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection('Requisites')->prepare($sql);
 
-	    $stmt->execute();
+		$stmt->execute();
 
-	    $count = $stmt->fetchColumn();
+		$count = $stmt->fetchColumn();
 
-    	$sql = <<<SQL
+		$limits = null;
+		if($limit !== null){
+			$limits[] = 'LIMIT :limit';
+
+			$values['limit'] = $limit;
+
+			if($offset !== null){
+				$limits[] = 'OFFSET :offset';
+
+				$values['offset'] = $offset;
+			}
+		}
+
+		$limits = !empty($limits) ? implode(PHP_EOL, $limits) : '';
+
+		$sql = <<<SQL
 SELECT
   "c-rqst"."IDRequisites",
   TO_CHAR(
@@ -126,47 +141,63 @@ WHERE
 ORDER BY
   "usage-status-activity" DESC,
   "u-uid"."DateTime"
-LIMIT :limit OFFSET :offset;
+  {$limits};
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection('Requisites')->prepare($sql);
 
-        $stmt->execute([
-            'chiefRoleId'      => self::ROLES_CHIEF,
-            'accountantRoleId' => self::ROLES_ACCOUNTANT,
-            'subscriberId'     => self::SUBSCRIBER_ID,
-	        'limit'            => 30,
-	        'offset'           => $offset
-        ]);
-	    $rows = $stmt->fetchAll();
+		if($limit !== null) {
+			$stmt->execute( [
+				'chiefRoleId'      => self::ROLES_CHIEF,
+				'accountantRoleId' => self::ROLES_ACCOUNTANT,
+				'subscriberId'     => self::SUBSCRIBER_ID,
+				'limit'            => 30,
+				'offset'           => $offset
+			] );
+			$rows = $stmt->fetchAll();
+			return [ &$count, &$rows ];
+		} else {
+			$stmt->execute( [
+				'chiefRoleId'      => self::ROLES_CHIEF,
+				'accountantRoleId' => self::ROLES_ACCOUNTANT,
+				'subscriberId'     => self::SUBSCRIBER_ID
+			] );
+			return $stmt;
+		}
 
-//        return $stmt;
-	    return [ &$count, &$rows ];
-    }
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-clients-list.css';
+	}
 
-        $this->variables->errors = [];
+	protected function main(){
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-clients-list.css';
+
+		$this->variables->errors = [];
 
 
-	    $page   = isset($_GET['page']) ? (abs((int)$_GET['page']) ?: 1) : 1;
-	    $limit  = self::ROWS_PER_PAGE;
-	    $offset = ($page - 1) * $limit;
+		$page   = isset($_GET['page']) ? (abs((int)$_GET['page']) ?: 1) : 1;
+		$limit  = self::ROWS_PER_PAGE;
+		$offset = ($page - 1) * $limit;
 
-        try {
+		try {
+			if($_POST){
+				if (isset($_POST["client-list-all"])){
+					$this->variables->count   = 0;
+					$this->variables->clients = $this->getClients( [], null, null);
+				}
+			} else {
 //            $this->variables->clients = $this->getClients();
 
-	        list($count, $clients) = $this->getClients([], $limit, $offset);
+				list( $count, $clients ) = $this->getClients( [], $limit, $offset );
 
-	        $this->context->paginator['count'] = (int)ceil($count / $limit);
+				$this->context->paginator['count'] = (int) ceil( $count / $limit );
 
-	        $this->variables->count = $count;
-	        $this->variables->clients = &$clients;
-        } catch(\Exception $e) {
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+				$this->variables->count   = $count;
+				$this->variables->clients = &$clients;
+			}
+		} catch(\Exception $e) {
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
 ?>
