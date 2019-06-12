@@ -75,10 +75,10 @@ class Navigator extends \Unikum\Core\Module {
 
     protected function main(){
 
-        if(isset($_GET['service'])) {
+        /*if(isset($_GET['service'])) {
             $this->service($_GET['service'], $_GET['action']);
             exit;
-        }
+        }*/
 
         $user      = &$_SESSION[SESSION_USER_KEY];
         $accessKey = isset($_GET['view']) ? $_GET['view'] : null;

@@ -2,7 +2,7 @@
 namespace Environment\Soap\Clients\Sf;
 
 class PayerInfoService extends \SoapClient {
-    const WSDL = 'http://eleed.sf.kg:8040/PayerInfoService?wsdl';
+    const WSDL = 'http://eleed.sf.kg:8041/PayerInfoService?wsdl';
 
     public function __construct(){
         $options = [
