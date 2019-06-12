@@ -81,6 +81,13 @@
     <?php endforeach; ?>
 </table>
 
+<div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
+
+<form action="index.php?view=clients-list" method="POST">
+    <input type="submit" name="client-list-all" class="button" value="показать все записи">
+</form>
+
+{plugin:paginator}
 <script type="text/javascript">
 (function(w, d){
 
