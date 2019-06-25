@@ -32,8 +32,10 @@ define('PATH_WORKERS', SYSTEM_ROOT . 'workers' . DS);
 define('PATH_LOGS', SYSTEM_ROOT . 'logs' . DS);
 
 define('PATH_BASE_CLASSES', PATH_CORE . 'classes' . DS);
+define('PATH_DERIVED_TRAITS', PATH_CORE . 'traits-derived' . DS);
 define('PATH_DERIVED_CLASSES', PATH_CORE . 'classes-derived' . DS);
 define('PATH_MODULES', PATH_CORE . 'modules' . DS);
+define('PATH_JSON_SERVICES', PATH_CORE . 'services' . DS);
 define('PATH_DATA_LAYERS', PATH_CORE . 'data-layers' . DS);
 define('PATH_SOAP_CLIENTS', PATH_CORE . 'soap-clients' . DS);
 define('PATH_SOAP_SERVICES', PATH_CORE . 'soap-services' . DS);
@@ -50,4 +52,7 @@ define('SESSION_ACTION_LAST_KEY', 'last');
 define('SESSION_ACTION_INTERVAL_KEY', 'interval');
 
 define('SESSION_USER_KEY', 'user');
+
+define('API_SUBSCRIBER_TOKEN', '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
+
 ?>

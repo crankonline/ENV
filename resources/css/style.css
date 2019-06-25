@@ -1,0 +1,765 @@
+/**
+Reregister
+ */
+*
+    {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+/*html,*/
+/*body*/
+    /*{*/
+        /*display: block;*/
+
+        /*height: 100%;*/
+        /*width: 100%;*/
+
+        /*margin: 0px;*/
+        /*padding: 0px;*/
+    /*}*/
+
+/*body*/
+    /*{*/
+        /*font-family: Calibri, Arial;*/
+
+        /*text-align: center;*/
+    /*}*/
+
+pre.error
+    {
+        background: #ff9999;
+
+        border: 1px solid #ff0000;
+
+        display: inline-block;
+
+        padding: 10px;
+
+        text-align: left;
+
+        width: 800px;
+
+        word-break: break-word;
+    }
+
+form.main
+    {
+        display: inline-block;
+
+        width: 800px;
+
+        padding: 50px 0px 25px 0px;
+    }
+
+form.main table.requisites caption
+    {
+        color: #0069a4;
+
+        font-size: 18px;
+        font-weight: bold;
+
+        margin: 15px 0px 15px 0px;
+
+        text-align: center;
+    }
+
+form.main table.requisites caption a
+    {
+        color: #0069a4;
+    }
+
+form.main table.requisites
+    {
+        border-collapse: separate;
+        border-spacing: 5px;
+
+        width: 100%;
+    }
+
+form.main table.requisites tr th,
+form.main table.requisites tr td
+    {
+        text-align: left;
+    }
+
+form.main table.requisites tr td
+    {
+        width: 300px;
+    }
+
+form.main table.requisites tr td.section-name
+    {
+        background: #0069a4;
+
+        color: #fff;
+
+        font-weight: bold;
+
+        padding: 10px;
+
+        text-align: center;
+    }
+
+form.main table.requisites tr td.centered
+    {
+        text-align: center;
+    }
+
+form.main table.requisites tr th
+    {
+        color: #0069a4;
+
+        font-size: 16px;
+        font-weight: normal;
+
+        padding: 10px;
+
+        vertical-align: middle;
+
+        width: 475px;
+    }
+
+form.main table.requisites tr th.attached
+    {
+        padding: 14px 10px 14px 10px;
+
+        vertical-align: top;
+    }
+
+form.main table.requisites tr:nth-child(odd) th
+    {
+        background: #ebf2f7;
+    }
+
+form.main table.requisites tr:nth-child(even) th
+    {
+        background: #f7f9fd;
+    }
+
+form.main table.requisites tr td input[type=text],
+form.main table.requisites tr td input[type=email],
+form.main table.requisites tr td textarea,
+form.main table.requisites tr td select
+    {
+        background: #f7fff7;
+        border: solid 1px #0069a4;
+
+        font-family: Calibri, Arial;
+        font-size: 15px;
+
+        margin: 0px;
+
+        outline: none;
+
+        padding: 10px;
+
+        width: 100%;
+    }
+
+form.main table.requisites tr td input[type=text]:disabled,
+form.main table.requisites tr td input[type=email]:disabled,
+form.main table.requisites tr td textarea:disabled,
+form.main table.requisites tr td select:disabled
+    {
+        background: #ebebe4 !important;
+    }
+
+form.main table.requisites tr td input[type=text]:read-only,
+form.main table.requisites tr td input[type=email]:read-only,
+form.main table.requisites tr td textarea:read-only
+    {
+        background: #ebebe4 !important;
+    }
+
+form.main table.requisites tr td input[type=text]:not(:valid),
+form.main table.requisites tr td input[type=email]:not(:valid),
+form.main table.requisites tr td textarea:not(:valid),
+form.main table.requisites tr td select:not(:valid)
+    {
+        background: #ffefef;
+    }
+
+form.main table.requisites tr td select
+    {
+        cursor: pointer;
+    }
+
+form.main table.requisites tr td textarea
+    {
+        height: 40px;
+
+        min-height: 40px;
+
+        overflow: hidden;
+
+        resize: none;
+    }
+
+form.main table.buttons
+    {
+        margin: 15px 0px 15px 0px;
+
+        text-align: center;
+
+        width: 100%;
+    }
+
+form.main div.name-container
+    {
+        position: relative;
+    }
+
+form.main div.name-container div.editor
+    {
+        background: #fff;
+        border: 1px solid #0069a4;
+
+        padding: 10px;
+
+        position: relative;
+
+        z-index: 75;
+    }
+
+form.main div.name-container input.input
+    {
+        position: absolute;
+
+        bottom: 0;
+
+        z-index: 50;
+    }
+
+.pointing
+    {
+        cursor: pointer;
+    }
+
+input.button
+    {
+        background: #00699e;
+        border: 0px;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        font-size: 23px;
+
+        margin: 10px 0px 0px 0px;
+
+        min-width: 140px;
+
+        padding: 10px 20px;
+    }
+
+form.main input.button
+    {
+        margin: 15px 0px 15px 0px;
+    }
+
+div.dialog-background-layer
+    {
+        background: rgba(0, 0, 0, 0.25);
+
+        display: table;
+
+        position: fixed;
+
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+
+        width: 100%;
+        height: 100%;
+
+        z-index: 200;
+    }
+
+div.dialog-background-layer div.dialog-layout
+    {
+        display: table-cell;
+
+        text-align: center;
+
+        vertical-align: middle;
+    }
+
+div.dialog-background-layer div.dialog-message
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.50);
+
+        display: inline-block;
+
+        min-width: 600px;
+
+        padding: 15px;
+    }
+
+div.wizard-background-layer
+    {
+        background: rgba(0, 0, 0, 0.25);
+
+        display: table;
+
+        position: fixed;
+
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+
+        width: 100%;
+        height: 100%;
+
+        z-index: 175;
+    }
+
+div.wizard-background-layer div.wizard-layout
+    {
+        display: table-cell;
+
+        text-align: center;
+
+        vertical-align: middle;
+    }
+
+div.wizard-background-layer div.wizard-box
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.50);
+
+        display: inline-block;
+
+        min-width: 600px;
+
+        padding: 15px;
+
+        text-align: right;
+    }
+
+div.wizard-background-layer div.wizard-display
+    {
+        text-align: left;
+    }
+
+div.wizard-background-layer div.wizard-display p.caption
+    {
+        font-weight: bold;
+
+        margin: 0px 0px 15px 0px;
+    }
+
+div.wizard-background-layer input.button
+    {
+        margin-left: 5px;
+
+        outline: none;
+    }
+
+div.wizard-background-layer input.button:disabled
+    {
+        background: #666;
+    }
+
+div.radio-group
+    {
+        border: 1px solid #00699e;
+
+        max-height: 400px;
+        max-width: 800px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        padding: 0px 5px 0px 5px;
+    }
+
+div.radio-row
+    {
+        margin: 5px 0px 5px 0px;
+
+        padding: 5px;
+    }
+
+div.activity-container
+    {
+        border: 1px solid #00699e;
+
+        max-height: 400px;
+        max-width: 800px;
+
+        margin-top: 5px;
+
+        overflow-y: auto;
+
+        padding: 0px 5px 0px 5px;
+    }
+
+div.activity-row
+    {
+        border: 1px solid #ccc;
+
+        margin: 5px 0px 5px 0px;
+
+        padding: 0px 0px 0px 5px;
+    }
+
+div.activity-row.invalid
+    {
+        border: 1px solid #aa3e40 !important;
+
+        background: #ffefef;
+    }
+
+div.activity-row input
+    {
+        display: inline-block;
+
+        margin: 5px 5px 5px 0px;
+    }
+
+input.activity-button
+    {
+        background: #00699e;
+
+        border: 1px solid #00699e;
+
+        color: #fff;
+
+        padding: 5px 15px 5px 15px;
+    }
+
+input.activity-button.right
+    {
+        float: right;
+    }
+
+input.activity-gked
+    {
+        background: #fff;
+
+        border: 1px solid #00699e;
+
+        color: #000;
+
+        padding: 5px;
+
+        text-align: center;
+
+        outline: none;
+
+        width: 200px;
+    }
+
+div.activity-name
+    {
+        font-size: 14px;
+        font-style: italic;
+
+        padding: 0px 5px 5px 5px;
+    }
+
+div.modes
+    {
+        background: rgba(0, 105, 158, 0.75);
+
+        border-bottom: 1px solid rgba(0, 105, 158, 0.5);
+
+        display: table;
+
+        margin: 0px;
+
+        width: 100%;
+
+        position: fixed;
+
+        bottom: 0px;
+
+        z-index: 500;
+    }
+
+div.modes label
+    {
+        color: #fff;
+
+        display: table-cell;
+
+        padding: 15px;
+
+        width: 25%;
+    }
+
+div.modes label:hover
+    {
+        background: rgba(0, 105, 158, 1);
+    }
+
+div.modes input[type="radio"]:checked + *
+    {
+        font-weight: bold;
+    }
+
+div.usage-status-dialog
+    {
+        background: rgba(0, 0, 0, 0.25);
+
+        display: table;
+
+        font-size: 14px;
+
+        position: fixed;
+
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+
+        width: 100%;
+        height: 100%;
+
+        z-index: 175;
+    }
+
+div.usage-status-dialog div.layout
+    {
+        display: table-cell;
+
+        text-align: center;
+
+        vertical-align: middle;
+    }
+
+div.usage-status-dialog div.layout div.box
+    {
+        background: #fff;
+
+        border: 1px solid #ccc;
+
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.50);
+
+        display: inline-block;
+
+        min-width: 600px;
+
+        padding: 15px;
+    }
+
+div.usage-status-dialog div.layout div.box div.caption
+    {
+        background: #00699e;
+
+        color: #fff;
+
+        font-weight: bold;
+
+        margin: 5px 0px;
+
+        padding: 5px;
+    }
+
+div.usage-status-dialog div.layout div.box div.history
+    {
+        background: #f6f6f6;
+        border: 1px solid #ccc;
+
+        max-height: 200px;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        padding: 5px;
+    }
+
+div.usage-status-dialog div.message
+    {
+        padding: 5px;
+
+        margin: 5px 0px;
+    }
+
+div.usage-status-dialog div.message.neutral
+    {
+        background: #efefef;
+
+        border: 1px solid #ccc;
+    }
+
+div.usage-status-dialog div.message.negative
+    {
+        background: #efcece;
+
+        border: 1px solid #D00;
+    }
+
+div.usage-status-dialog div.message.positive
+    {
+        background: #c9efc3;
+
+        border: 1px solid #0D0;
+    }
+
+div.usage-status-dialog table.status
+    {
+        border-collapse: collapse;
+
+        margin: 0px 0px 5px 0px;
+
+        text-align: left;
+
+        width: 100%;
+    }
+
+div.usage-status-dialog table.status th,
+div.usage-status-dialog table.status td
+    {
+        border: 1px solid #ccc;
+
+        padding: 5px;
+
+        vertical-align: middle;
+    }
+
+div.usage-status-dialog table.status th
+    {
+        background: #ebf2f7;
+
+        font-weight: bold;
+
+        text-align: center;
+    }
+
+div.usage-status-dialog table.status td
+    {
+        background: #f7f9fd
+    }
+
+div.usage-status-dialog table.status td pre
+    {
+        margin: 0px;
+
+        padding: 0px;
+    }
+
+div.usage-status-dialog table.status td select,
+div.usage-status-dialog table.status td textarea
+    {
+        background: #fff;
+        border: solid 1px #0069a4;
+
+        font-family: inherit;
+        font-size: inherit;
+
+        outline: none;
+
+        padding: 5px;
+    }
+
+div.usage-status-dialog table.status td textarea
+    {
+        display: block;
+
+        height: 100px;
+        width: 100%;
+
+        resize: none;
+    }
+
+div.usage-status-dialog table.status td.buttons
+    {
+        text-align: center;
+    }
+
+div.usage-status-dialog table.status td.buttons input.button
+    {
+        font-size: 15px;
+
+        margin: 0px;
+
+        padding: 10px 5px;
+    }
+
+div.usage-status-dialog div.message p.caption
+    {
+        margin: 5px 0px;
+
+        padding: 5px;
+    }
+
+div.usage-status-dialog div.message pre
+    {
+        display: block;
+
+        margin: 0px;
+
+        max-width: 800px;
+
+        padding: 10px;
+
+        width: auto;
+    }
+
+div.anchors
+    {
+        display: table;
+
+        top: 0px;
+        right: 0px;
+
+        position: fixed;
+
+        max-width: 175px;
+
+        height: 100%;
+
+        z-index: 250;
+    }
+
+div.anchors .container
+    {
+        display: table-cell;
+
+        text-align: center;
+
+        vertical-align: middle;
+    }
+
+div.anchors a
+    {
+        background: #00699e;
+
+        color: #fff;
+
+        display: block;
+
+        margin: 1px 0px;
+
+        padding: 20px 10px;
+
+        text-decoration: none;
+    }
+
+div.anchors a:hover
+    {
+        background: #007bb8;
+    }
+
+div.anchors a.green
+    {
+        background: green;
+    }
+
+div.anchors a.grey
+    {
+        background: grey;
+    }
