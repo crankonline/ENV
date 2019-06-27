@@ -122,6 +122,7 @@ class RegisterUser extends \Environment\Core\Module {
 
                 $_POST = [];
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->result = false;
 
                 switch($e->getCode()){
@@ -154,6 +155,7 @@ class RegisterUser extends \Environment\Core\Module {
         try {
             $this->variables->roles = $dlUserRoles->getAll();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка ролей.';
         }
     }

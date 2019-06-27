@@ -86,6 +86,7 @@ class ModifyUserRole extends \Environment\Core\Module {
 
                 $_POST = [];
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $dbms->rollBack();
 
                 $this->variables->result = false;
@@ -124,6 +125,7 @@ class ModifyUserRole extends \Environment\Core\Module {
                 $this->redirect('index.php?view=' . self::AK_USER_ROLES);
             }
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
 
             switch($e->getCode()){
@@ -184,6 +186,7 @@ class ModifyUserRole extends \Environment\Core\Module {
         try {
             $this->variables->role = $dlUserRoles->getById($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о роли учетных записей.';
             return;
         }
@@ -202,6 +205,7 @@ class ModifyUserRole extends \Environment\Core\Module {
 
             $this->variables->permissions = &$permissions;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка возможностей.';
             return;
         }
@@ -217,6 +221,7 @@ class ModifyUserRole extends \Environment\Core\Module {
                 );
             }
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка возможностей роли учетных записей.';
         }
     }

@@ -367,6 +367,7 @@ SQL;
         try {
             $this->variables->activities = $this->getActivities();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'При получении списка видов деятельности произошла ошибка.';
             return;
         }
@@ -374,6 +375,7 @@ SQL;
         try {
             $this->variables->legalForms = $this->getLegalForms();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'При получении списка организационно-правовых форм произошла ошибка.';
             return;
         }
@@ -381,6 +383,7 @@ SQL;
         try {
             $this->variables->forms = $this->getForms();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'При получении списка форм отчетности произошла ошибка.';
             return;
         }
@@ -429,6 +432,7 @@ SQL;
             try {
                 $this->variables->users = $this->getUsers($cActivities, $cLegalForms);
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = 'При получении списка клиентов произошла ошибка.';
                 return;
             }
@@ -444,6 +448,7 @@ SQL;
 */
                 $this->variables->reports = $this->getReports($cPeriodFrom, $cPeriodTo);
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->getMessage(); // 'При получении данных об отчетности произошла ошибка';
             }
 

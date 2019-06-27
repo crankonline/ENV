@@ -32,6 +32,7 @@ class Settlements extends \Unikum\Core\Module {
                 )
             ];
         } catch (\Exception $e) {
+	        \Sentry\captureException($e);
             $result = [
                 'success'       => false,
                 'error-code'    => $e->getCode(),

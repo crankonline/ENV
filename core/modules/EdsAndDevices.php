@@ -77,9 +77,11 @@ class EdsAndDevices extends \Environment\Core\Module {
         try {
             list($requisites, $bindings) = $this->getRequisites($inn, null);
         } catch(\SoapFault $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->faultstring;
             return;
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }

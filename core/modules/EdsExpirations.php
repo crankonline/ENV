@@ -149,8 +149,10 @@ SQL;
             $this->variables->certificates = &$certificates;
             $this->variables->statuses     = &$statuses;
         } catch(\SoapFault $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->faultstring;
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

@@ -55,8 +55,10 @@ class PkiSearch extends \Environment\Core\Module {
 
 
         } catch(\SoapFault $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->faultstring;
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

@@ -196,6 +196,7 @@ SQL;
 				$this->variables->clients = &$clients;
 			}
 		} catch(\Exception $e) {
+			\Sentry\captureException($e);
 			$this->variables->errors[] = $e->getMessage();
 		}
 	}

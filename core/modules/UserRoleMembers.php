@@ -34,6 +34,7 @@ class UserRoleMembers extends \Environment\Core\Module {
             $this->variables->result = true;
             $this->variables->status = 'Роль успешно назначена учетным записям.';
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $dbms->rollBack();
 
             $this->variables->result = false;
@@ -61,6 +62,7 @@ class UserRoleMembers extends \Environment\Core\Module {
         try {
             $this->variables->role = $dlUserRoles->getById($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о роли учетных записей.';
             return;
         }
@@ -77,6 +79,7 @@ class UserRoleMembers extends \Environment\Core\Module {
 
             $this->variables->nonMemberUsers = $users;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о доступных учетных записях.';
             return;
         }
@@ -88,6 +91,7 @@ class UserRoleMembers extends \Environment\Core\Module {
 
             $this->variables->memberUsers = $users;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведени об участвующих учетных записях.';
         }
     }

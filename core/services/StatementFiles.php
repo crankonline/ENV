@@ -39,6 +39,7 @@ class StatementFiles extends \Unikum\Core\Module {
 
             echo base64_decode($file['content']);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             return http_response_code(500);
         }
     }

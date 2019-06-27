@@ -180,6 +180,7 @@ SQL;
 
             $this->variables->users = $this->getUsers();
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

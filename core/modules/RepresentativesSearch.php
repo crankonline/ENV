@@ -86,6 +86,7 @@ SQL;
             try {
                 $this->variables->data = $this->getData($_POST);
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->getMessage();
             }
         }

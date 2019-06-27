@@ -18,6 +18,7 @@ class UserRoles extends \Environment\Core\Module {
         try {
             $this->variables->roles = $dlUserRoles->getAll();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->error = 'Произошла ошибка при получении списка ролей.';
         }
     }

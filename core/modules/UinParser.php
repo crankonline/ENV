@@ -47,6 +47,7 @@ class UinParser extends \Environment\Core\Module {
         try {
             $this->variables->data = $this->parse($uin);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

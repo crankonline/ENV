@@ -54,6 +54,7 @@ class Nwa extends \Environment\Core\Module {
                 $result = [];
             }
         } catch(\SoapFault $f) {
+	        \Sentry\captureException($e);
             throw new \Exception($f->faultstring);
         }
 
@@ -263,6 +264,7 @@ SQL;
 
             return $stmt->fetchAll();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             throw new \Exception($e->getMessage());
         }
     }
@@ -296,24 +298,28 @@ SQL;
         try {
             $this->variables->sfData = $this->getSf($type, $value);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors['sf'][] = $e->getMessage();
         }
 
         try {
             $this->variables->mjData = $this->getMj($type, $value);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors['mj'][] = $e->getMessage();
         }
 
         try {
             $this->variables->nscData = $this->getNsc($type, $value);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors['nsc'][] = $e->getMessage();
         }
 
         try {
             $this->variables->stiData = $this->getSti($type, $value);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors['sti'][] = $e->getMessage();
         }
     }

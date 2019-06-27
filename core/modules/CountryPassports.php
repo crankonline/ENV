@@ -76,6 +76,7 @@ SQL;
             try {
                 $this->variables->passports = $this->getPassports();
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->getMessage();
             }
         }

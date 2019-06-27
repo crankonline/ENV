@@ -23,6 +23,7 @@ class Activities extends \Unikum\Core\Module {
                 'result-set' => $client->getCommonActivities(API_SUBSCRIBER_TOKEN, $activityId)
             ];
         } catch (\Exception $e) {
+	        \Sentry\captureException($e);
             $result = [
                 'success'       => false,
                 'error-code'    => $e->getCode(),
@@ -45,6 +46,7 @@ class Activities extends \Unikum\Core\Module {
                     'activity' => $client->getCommonActivityByGked(API_SUBSCRIBER_TOKEN, $gked)
                 ];
             } catch (\Exception $e) {
+	            \Sentry\captureException($e);
                 $result = [
                     'success'       => false,
                     'error-code'    => $e->getCode(),

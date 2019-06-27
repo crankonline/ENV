@@ -253,6 +253,7 @@ SQL;
                 );
             }
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

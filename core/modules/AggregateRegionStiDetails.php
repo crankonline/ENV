@@ -116,6 +116,7 @@ SQL;
         try {
             $region = $this->getRegionInfo($id);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }
@@ -128,6 +129,7 @@ SQL;
         try {
             $clients = $this->getClientsByRegion($id);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }

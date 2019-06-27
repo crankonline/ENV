@@ -53,12 +53,14 @@ class Reregister extends \Environment\Core\Module {
 				'uid'     => $uid
 			];
 		} catch(\SoapFault $e) {
+			\Sentry\captureException($e);
 			$result = [
 				'success'       => false,
 				'error-code'    => 'SOAP:' . $e->faultcode,
 				'error-message' => $e->getMessage()
 			];
 		} catch(\Exception $e) {
+			\Sentry\captureException($e);
 			$result = [
 				'success'       => false,
 				'error-code'    => $e->getCode(),
@@ -104,6 +106,7 @@ class Reregister extends \Environment\Core\Module {
 				'sti-region' => $client->getStiRegions(API_SUBSCRIBER_TOKEN)
 			];
 		} catch(\Exception $e) {
+			\Sentry\captureException($e);
 			$this->variables->errors[] = $e->getMessage();
 		}
 	}

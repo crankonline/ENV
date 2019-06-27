@@ -95,12 +95,14 @@ SQL;
         try {
             $this->variables->call = $this->getCall($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении информации о вызове.';
         }
 
         try {
             $this->variables->arguments = $this->getCallArguments($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка аргументов вызова.';
         }
     }

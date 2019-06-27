@@ -133,6 +133,7 @@ class ModifyUser extends \Environment\Core\Module {
                 $this->variables->result = true;
                 $this->variables->status = 'Сведения учетной записи обновлены.';
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->result = false;
 
                 switch($e->getCode()){
@@ -176,6 +177,7 @@ class ModifyUser extends \Environment\Core\Module {
             $this->variables->result = true;
             $this->variables->status = 'Учетная запись ' . ($state ? 'активирована' : 'заблокирована') . '.';
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
             $this->variables->status = 'При обновлении сведений учетной записи произошла ошибка.';
         }
@@ -205,6 +207,7 @@ class ModifyUser extends \Environment\Core\Module {
                 $this->variables->result = true;
                 $this->variables->status = 'Пароль учетной записи изменен.';
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->result = false;
                 $this->variables->status = 'При изменении пароля учетной записи произошла ошибка.';
             }
@@ -239,6 +242,7 @@ class ModifyUser extends \Environment\Core\Module {
             $this->variables->result = true;
             $this->variables->status = 'Пароль помечен как "' . ($state ? 'устаревший' : 'актуальный') . '".';
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
             $this->variables->status = 'При обновлении сведений учетной записи произошла ошибка.';
         }
@@ -260,6 +264,7 @@ class ModifyUser extends \Environment\Core\Module {
                 $this->redirect('index.php?view=' . self::AK_USERS);
             }
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
             $this->variables->status = 'При удалении учетной записи произошла ошибка.';
         }
@@ -291,6 +296,7 @@ class ModifyUser extends \Environment\Core\Module {
             $this->variables->result = true;
             $this->variables->status = 'Стартовый модуль учетной записи установлен.';
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
             $this->variables->status = 'При назначении стартового модуля учетной записи произошла ошибка.';
         }
@@ -333,6 +339,7 @@ class ModifyUser extends \Environment\Core\Module {
         try {
             $this->variables->user = $dlUsers->getById($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений учетной записи.';
             return;
         }
@@ -345,6 +352,7 @@ class ModifyUser extends \Environment\Core\Module {
         try {
             $this->variables->roles = $dlUserRoles->getAll();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка ролей.';
         }
 
@@ -360,6 +368,7 @@ class ModifyUser extends \Environment\Core\Module {
 
             $this->variables->moduleGroups = &$moduleGroups;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о доступных модулях.';
         }
     }

@@ -57,6 +57,7 @@ SQL;
         try {
             $this->variables->data = $this->getData();
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

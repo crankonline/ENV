@@ -45,6 +45,7 @@ class DataHarvester extends \Environment\Core\Module {
                 $result = [];
             }
         } catch(\SoapFault $f) {
+	        \Sentry\captureException($f);
             throw new \Exception($f->faultstring);
         }
 
@@ -189,18 +190,21 @@ class DataHarvester extends \Environment\Core\Module {
         try {
             $result['sf'] = $this->getSf(0, $inn);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $result['sf'] = [ 'message' => $e->getMessage() ];
         }
 
         try {
             $result['sti'] = $this->getSti(0, $inn);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $result['sti'] = [ 'message' => $e->getMessage() ];
         }
 
         try {
             $result['mj'] = $this->getMj(0, $inn);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $result['mj'] = [ 'message' => $e->getMessage() ];
         }
 

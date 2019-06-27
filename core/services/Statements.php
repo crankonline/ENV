@@ -57,6 +57,7 @@ class Statements extends \Unikum\Core\Module {
                     'data'    => &$statement
                 ];
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $result = [
                     'success'       => false,
                     'error-code'    => $e->getCode(),

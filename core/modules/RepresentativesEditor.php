@@ -300,6 +300,7 @@ SQL;
                 $this->variables->result = true;
                 $this->variables->status = 'Данные обновлены.';
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 if($isTransaction){
                     $dbms->rollBack();
                 }
@@ -334,6 +335,7 @@ SQL;
                 $this->variables->result = true;
                 $this->variables->status = 'Данные удалены.';
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->result = false;
                 $this->variables->status = $e->getMessage();
             }
@@ -375,6 +377,7 @@ SQL;
                     );
                 }
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->getMessage();
             }
 

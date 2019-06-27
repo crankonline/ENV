@@ -46,6 +46,7 @@ class UidParser extends \Environment\Core\Module {
         try {
             $this->variables->data = $this->parse($uid);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

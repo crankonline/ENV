@@ -32,6 +32,7 @@ class Users extends \Environment\Core\Module {
             $this->variables->count = $count;
             $this->variables->users = &$users;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->error = 'Произошла ошибка при получении списка учетных записей.';
         }
     }

@@ -62,6 +62,7 @@ class StatementsProcessed extends \Environment\Core\Module {
                 'status-id' => &$allowedStatuses
             ]);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении состояний заявок.';
         }
 
@@ -77,6 +78,7 @@ class StatementsProcessed extends \Environment\Core\Module {
             $this->variables->count      = $count;
             $this->variables->statements = &$rows;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка заявок.';
         }
     }

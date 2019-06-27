@@ -36,6 +36,7 @@ class UsageStatuses extends \Unikum\Core\Module {
                     'result-set' => &$statuses
                 ];
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $result = [
                     'success'       => false,
                     'error-code'    => $e->getCode(),
@@ -71,6 +72,7 @@ class UsageStatuses extends \Unikum\Core\Module {
                     )
                 ];
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $result = [
                     'success'       => false,
                     'error-code'    => $e->getCode(),

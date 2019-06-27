@@ -76,6 +76,7 @@ class Profile extends \Unikum\Core\Module {
 
                 $user['is-password-expired'] = $updated['is-password-expired'];
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->result = false;
                 $this->variables->status = 'При изменении пароля учетной записи произошла ошибка.';
             }
@@ -106,6 +107,7 @@ class Profile extends \Unikum\Core\Module {
             $this->variables->result = true;
             $this->variables->status = 'Стартовый модуль установлен.';
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->result = false;
             $this->variables->status = 'При назначении стартового модуля произошла ошибка.';
         }
@@ -145,6 +147,7 @@ class Profile extends \Unikum\Core\Module {
 
             $this->variables->visits = $dlVisits->getByUser($user['id'], 10);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о посещениях.';
             return;
         }
@@ -163,6 +166,7 @@ class Profile extends \Unikum\Core\Module {
 
             $this->variables->moduleGroups = &$moduleGroups;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении сведений о доступных модулях.';
         }
     }

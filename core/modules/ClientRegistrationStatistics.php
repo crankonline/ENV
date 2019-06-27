@@ -94,6 +94,7 @@ SQL;
         try {
             $this->variables->records = $this->getRecords($periodFrom, $periodTo);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

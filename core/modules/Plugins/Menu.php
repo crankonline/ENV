@@ -43,6 +43,7 @@ class Menu extends \Unikum\Core\Module {
                 $groups[$group][] = $module;
             }
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->error = 'При формировании меню произошла ошибка СУБД';
         }
 

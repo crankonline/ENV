@@ -145,6 +145,7 @@ class Statement extends \Environment\Core\Module {
 
             $dbms->commit();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $dbms->rollBack();
 
             throw $e;
@@ -191,6 +192,7 @@ class Statement extends \Environment\Core\Module {
 
                 $dbmsStatementFiles->commit();
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $dbmsStatementFiles->rollBack();
 
                 throw $e;
@@ -200,6 +202,7 @@ class Statement extends \Environment\Core\Module {
 
             $dbmsStatements->commit();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $dbmsStatements->rollBack();
 
             throw $e;
@@ -219,6 +222,7 @@ class Statement extends \Environment\Core\Module {
         try {
             $statement = $dlStatements->getById($id);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             return $this->setOperationStatus(
                 false,
                 'Произошла ошибка при получении данных заявки.'
@@ -319,6 +323,7 @@ class Statement extends \Environment\Core\Module {
 
             return $this->setOperationStatus(true, 'Действие выполнено.');
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             return $this->setOperationStatus(
                 false,
                 'Произошла ошибка при осуществлении действия.'
@@ -365,8 +370,10 @@ class Statement extends \Environment\Core\Module {
             echo base64_decode($file['content']);
             exit;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Про получении файла произошла ошибка БД.';
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }
@@ -470,6 +477,7 @@ class Statement extends \Environment\Core\Module {
 
             $this->variables->statement = &$statement;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении данных заявки.';
             return;
         }
@@ -593,6 +601,7 @@ class Statement extends \Environment\Core\Module {
                 );
             }
         } catch(\SoapFault $f){
+	        \Sentry\captureException($f);
             $this->variables->errors[] = 'Произошла ошибка при осуществлении запроса к справочникам службы реквизитов.';
             return;
         }
@@ -631,6 +640,7 @@ class Statement extends \Environment\Core\Module {
 
             $this->variables->statuses = &$statuses;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка заявок.';
         }
 
@@ -638,6 +648,7 @@ class Statement extends \Environment\Core\Module {
             try {
                 $this->variables->files = $dlFiles->getByStatement($statement['id']);
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = 'Произошла ошибка при получении списка заявок.';
             }
         }
@@ -658,6 +669,7 @@ class Statement extends \Environment\Core\Module {
 
                 $this->variables->payment = &$payment;
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = 'Произошла ошибка при получении данных о предоплате.';
             }
         }

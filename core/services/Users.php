@@ -49,6 +49,7 @@ class Users extends \Unikum\Core\Module {
                     'data'    => &$data
                 ];
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $result = [
                     'success'       => false,
                     'error-code'    => $e->getCode(),

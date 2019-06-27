@@ -274,18 +274,21 @@ SQL;
         try {
             $this->variables->subscribers = $this->getSubscribers();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка систем-подписчиков.';
         }
 
         try {
             $this->variables->serviceMethods = $this->getServiceMethods();
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка служб и методов.';
         }
 
         try {
             $this->variables->calls = $this->getCalls($filters, $limit);
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении данных о вызововах.';
         }
     }

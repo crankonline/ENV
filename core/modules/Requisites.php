@@ -145,9 +145,11 @@ SQL;
         try {
             list($requisites, $bindings) = $this->getRequisites($inn, $uid);
         } catch(\SoapFault $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->faultstring;
             return;
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }
@@ -161,6 +163,7 @@ SQL;
                 $this->variables->balance = null;
             }
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
 
@@ -177,9 +180,11 @@ SQL;
                     throw new \Exception('Не удалось назначить состояние обслуживания.');
                 }
             } catch(\SoapFault $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->faultstring;
                 return;
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->errors[] = $e->getMessage();
                 return;
             }
@@ -193,8 +198,10 @@ SQL;
                 $requisites->common->inn
             );
         } catch(\SoapFault $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->faultstring;
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

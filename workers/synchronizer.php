@@ -44,6 +44,7 @@ while(true) {
             try {
                 $requisites = $client->getByUid(API_SUBSCRIBER_TOKEN, $uid, null);
             } catch(\Exception $e){
+	            \Sentry\captureException($e);
                 if($e instanceof \SoapFault){
                     $code    = $e->faultcode;
                     $message = $e->faultstring;
@@ -92,6 +93,7 @@ while(true) {
 
                     $result = $result ? 'success' : 'failure';
                 } catch(\Exception $e) {
+	                \Sentry\captureException($e);
                     if($e instanceof \SoapFault){
                         $code    = $e->faultcode;
                         $message = $e->faultstring;

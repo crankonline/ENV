@@ -78,6 +78,7 @@ class RegisterUserRole extends \Environment\Core\Module {
 
                 $_POST = [];
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $dbms->rollBack();
 
                 $this->variables->result = false;
@@ -136,6 +137,7 @@ class RegisterUserRole extends \Environment\Core\Module {
 
             $this->variables->permissions = &$permissions;
         } catch(\PDOException $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = 'Произошла ошибка при получении списка возможностей.';
         }
     }

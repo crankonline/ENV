@@ -102,8 +102,10 @@ class Navigator extends \Unikum\Core\Module {
                     $permissions = $this->getPermissions($user['user-role-id']);
                     $handler     = $module['handler-class'];
                 } catch(\PDOException $e) {
+	                \Sentry\captureException($e);
                     $error = 'В процессе навигации произошла ошибка СУБД.';
                 } catch(\Exception $e) {
+	                \Sentry\captureException($e);
                     $error = $e->getMessage();
                 }
             }

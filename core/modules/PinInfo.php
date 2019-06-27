@@ -18,6 +18,7 @@ class PinInfo extends \Environment\Core\Module {
 
             $result = $client->GetPinInfo($args)->GetPinInfoResult;
         } catch (\SoapFault $f){
+	        \Sentry\captureException($f);
             throw new \Exception($f->faultstring);
         }
 
@@ -41,6 +42,7 @@ class PinInfo extends \Environment\Core\Module {
         try {
             $this->variables->data = $this->getByPin($pin);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
         }
     }

@@ -23,6 +23,7 @@ class Tokens extends \Unikum\Core\Module {
                 'result'  => $client->checktoken($deviceSerial)
             ];
         } catch (\Exception $e) {
+	        \Sentry\captureException($e);
             $result = [
                 'success'       => false,
                 'error-code'    => $e->getCode(),

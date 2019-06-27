@@ -99,6 +99,7 @@ SQL;
         try {
             $activity = $this->getActivityInfo($id);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }
@@ -111,6 +112,7 @@ SQL;
         try {
             $clients = $this->getClientsByActivity($id);
         } catch(\Exception $e) {
+	        \Sentry\captureException($e);
             $this->variables->errors[] = $e->getMessage();
             return;
         }

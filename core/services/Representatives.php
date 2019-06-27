@@ -48,6 +48,7 @@ class Representatives extends \Unikum\Core\Module {
                 'result'  => $person
             ];
         } catch (\Exception $e) {
+	        \Sentry\captureException($e);
             $result = [
                 'success'       => false,
                 'error-code'    => $e->getCode(),

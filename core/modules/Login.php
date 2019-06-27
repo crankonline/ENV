@@ -53,8 +53,10 @@ class Login extends \Unikum\Core\Module {
                     throw new \Exception('Неверный логин или пароль');
                 }
             } catch(\PDOException $e) {
+	            \Sentry\captureException($e);
                 $this->variables->message = 'Произошла ошибка при работе с БД';
             } catch(\Exception $e) {
+	            \Sentry\captureException($e);
                 $this->variables->message = $e->getMessage();
             }
         }
