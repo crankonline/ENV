@@ -8,7 +8,7 @@ use Environment\Soap\Clients as SoapClients;
 class Nwa extends \Environment\Core\Module {
     const
         URL_MJ  = 'http://register.minjust.gov.kg/register/',
-        URL_STI = 'http://ws.sti.gov.kg/tax/';
+        URL_STI = 'https://salyk.kg/TaxPayer/Info?Type=ByTin&Tin=';
 
     protected
         $config = [
@@ -19,6 +19,24 @@ class Nwa extends \Environment\Core\Module {
             1 => 'ОКПО',
             2 => 'Рег. номер СФ'
         ];
+
+	function getSslPage($url) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'WEWE');
+
+//	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+		$result = curl_exec($ch);
+		if (curl_errno($ch)) {
+			print curl_error($ch);
+		}
+		curl_close($ch);
+		return $result;
+	}
 
     protected function getSf($type, $value){
 
@@ -63,53 +81,32 @@ class Nwa extends \Environment\Core\Module {
 
     protected function getSti($type, $value){
 
-        return [];
+    	$district = null;
+	    $companyname = null;
+	    $inn = $value;
+	    $url = self::URL_STI . $inn;
+	    $code = $this->getSslPage($url);
+	    $doc = new \DOMDocument();
+	    if (!@$doc->loadHTML($code))
+	    { throw new \Exception('TaxPayer --> Невозможно обработать ответ.'); }
 
-        switch($type){
-            default:
-            case 0:
-                // passed
-            break;
+	    $div_cont = $doc->getElementById('ByTin');
+	    $rows_table = $div_cont->getElementsByTagName('tr');
+	    if ($rows_table->length != 2)
+	    { throw new \Exception('TaxPayer --> Сервис вернул не действительное значение.'); }
 
-            case 1:
-            case 2:
-                throw new \Exception('Тип реквизита для поиска не поддерживается.');
-            break;
-        }
+	    foreach ($rows_table as $key => $row){
+		    if (!$key)
+		    { continue; }
 
-        $query = http_build_query([
-            'compn' => 1,
-            'compa' => 1,
-            'compd' => 1,
-            'compv' => 1,
-            'tin'   => $value
-        ]);
+		    $cells = $row->getElementsByTagName('td');
+		    $district =$cells[1]->nodeValue;
+		    $companyname = $cells[2]->nodeValue;
+	    }
+	    echo $companyname.' '.$district;
 
-        $url = self::URL_STI . 'tin_list_all_out.idc' . '?' . $query;
+        return [$inn, $district, $companyname];
 
-        $content = @file_get_contents($url);
-        $result  = [];
-
-        if(!$content){
-            return $result;
-        }
-
-        preg_match_all('/\'(.+)\'/', $content, $matches);
-
-        $matches = $matches[1];
-
-        foreach($matches as $key => $match){
-            $match = trim(str_replace('&nbsp', ' ', strip_tags($match)));
-
-            if($match && $key){
-                $match = preg_replace('/\s+/', ' ', $match);
-                $match = iconv('Windows-1251', 'UTF-8', $match);
-
-                $result[] = $match;
-            }
-        }
-
-        return $result;
     }
 
     protected function getMj($type, $value){
