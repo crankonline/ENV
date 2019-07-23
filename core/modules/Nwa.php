@@ -108,7 +108,6 @@ class Nwa extends \Environment\Core\Module {
 			$district    = $cells[1]->nodeValue;
 			$companyname = $cells[2]->nodeValue;
 		}
-		echo $companyname . ' ' . $district;
 
 		return [ $inn, $district, $companyname ];
 
