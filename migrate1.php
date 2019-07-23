@@ -20,13 +20,13 @@ INSERT INTO "Core"."Module"
 VALUES
     (
         DEFAULT,
-        8,
-        'reregister',
-        'Reregister',
-        'Перерегистрация клиентов',
-        TRUE
+        :moduleGroupId,
+        :accesKey,
+        :handleClass,
+        :namemg,
+        :isEntryPoint
     )RETURNING
-    "IDModule";;
+    "IDModule";
 
 
 SQL;
@@ -34,12 +34,11 @@ SQL;
 		$stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
 		$stmt->execute( [
-////			'id' => 42,
-//			'moduleGroupId' => 8,
-//			'accesKey' => 'reregister',
-//			'handleClass' => 'Reregister',
-//			'name' => 'Перерегистрация клиентов',
-//			'isEntryPoint' => true
+			'moduleGroupId' => 8,
+			'accesKey' => "reregister",
+			'handleClass' => "Reregister",
+			'namemg' => "Перерегистрация клиентов",
+			'isEntryPoint' => true
 		] );
 
 		return $stmt->fetchColumn();
