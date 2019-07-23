@@ -1,49 +1,62 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class CuratorNsc extends \Environment\Core\Module {
-    const
-        PMS_CLEAR_PROCESSING = 'can-clear-processing';
+	const
+		PMS_CLEAR_PROCESSING = 'can-clear-processing';
 
-    const
-        DEPLOYMENT_ADDRESS = 'curator.stat.kg';
+	const
+		DEPLOYMENT_ADDRESS = 'curator.stat.kg';
 
-    const
-        REPORT_STATUS_ACCEPTED = 10,
-        REPORT_STATUS_DECLINED = 20;
+	const
+		REPORT_STATUS_ACCEPTED = 10,
+		REPORT_STATUS_DECLINED = 20;
 
-    protected
-        $config = [
-            'template' => 'layouts/CuratorNsc/Default.html',
-            'listen'   => 'action'
-        ],
-        $fileMap = [
-            1 => 'fileshare/data/',
-            2 => 'fileshare/rendered/',
-            3 => 'fileshare/notes/'
-        ];
+	protected
+		$config = [
+		'template' => 'layouts/CuratorNsc/Default.html',
+		'listen'   => 'action'
+	],
+		$fileMap = [
+		1 => 'fileshare/data/',
+		2 => 'fileshare/rendered/',
+		3 => 'fileshare/notes/'
+	];
 
-    protected function getMonthName($number){
-        switch($number){
-            case 1: return 'Январь';
-            case 2: return 'Февраль';
-            case 3: return 'Март';
-            case 4: return 'Апрель';
-            case 5: return 'Май';
-            case 6: return 'Июнь';
-            case 7: return 'Июль';
-            case 8: return 'Август';
-            case 9: return 'Сентябрь';
-            case 10: return 'Октябрь';
-            case 11: return 'Ноябрь';
-            case 12: return 'Декабрь';
-        }
-    }
+	protected function getMonthName( $number ) {
+		switch ( $number ) {
+			case 1:
+				return 'Январь';
+			case 2:
+				return 'Февраль';
+			case 3:
+				return 'Март';
+			case 4:
+				return 'Апрель';
+			case 5:
+				return 'Май';
+			case 6:
+				return 'Июнь';
+			case 7:
+				return 'Июль';
+			case 8:
+				return 'Август';
+			case 9:
+				return 'Сентябрь';
+			case 10:
+				return 'Октябрь';
+			case 11:
+				return 'Ноябрь';
+			case 12:
+				return 'Декабрь';
+		}
+	}
 
-    protected function getReportByUin($uin){
-        $sql = <<<SQL
+	protected function getReportByUin( $uin ) {
+		$sql = <<<SQL
 SELECT
     "r-rpt"."IDReport" as "id",
     "r-pi"."Inn" as "payer-inn",
@@ -102,17 +115,17 @@ WHERE
     ("r-rpt"."Uin" = :uin);
 SQL;
 
-        $stmt = Connections::getConnection('Nsc')->prepare($sql);
+		$stmt = Connections::getConnection( 'Nsc' )->prepare( $sql );
 
-        $stmt->execute([
-            'uin' => $uin
-        ]);
+		$stmt->execute( [
+			'uin' => $uin
+		] );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function getProtocolByReportId($reportId){
-        $sql = <<<SQL
+	protected function getProtocolByReportId( $reportId ) {
+		$sql = <<<SQL
 SELECT
     "rp-rer"."IDRuleExecutionResult" as "rule-execution-result-id",
     "rp-t"."Name" as "trigger-name",
@@ -142,17 +155,17 @@ ORDER BY
     "rp-rer"."DateTime";
 SQL;
 
-        $stmt = Connections::getConnection('Nsc')->prepare($sql);
+		$stmt = Connections::getConnection( 'Nsc' )->prepare( $sql );
 
-        $stmt->execute([
-            'reportId' => $reportId
-        ]);
+		$stmt->execute( [
+			'reportId' => $reportId
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getFilesByReportId($reportId){
-        $sql = <<<SQL
+	protected function getFilesByReportId( $reportId ) {
+		$sql = <<<SQL
 SELECT
     "r-rf"."IDReportFile" as "id",
     "r-rft"."IDReportFileType" as "report-file-type-id",
@@ -171,91 +184,92 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Nsc')->prepare($sql);
+		$stmt = Connections::getConnection( 'Nsc' )->prepare( $sql );
 
-        $stmt->execute([
-            'reportId' => $reportId
-        ]);
+		$stmt->execute( [
+			'reportId' => $reportId
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function clearProcessing($reportId){
-        $sql = <<<SQL
+	protected function clearProcessing( $reportId ) {
+		$sql = <<<SQL
 DELETE FROM
     "ReportProcessing"."RuleExecution"
 WHERE
     ("ReportID" = :reportId);
 SQL;
 
-        $stmt = Connections::getConnection('Nsc')->prepare($sql);
+		$stmt = Connections::getConnection( 'Nsc' )->prepare( $sql );
 
-        return $stmt->execute([
-            'reportId' => $reportId
-        ]);
-    }
+		return $stmt->execute( [
+			'reportId' => $reportId
+		] );
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-curator.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-curator.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $canClearProcessing = $this->isPermitted(
-            self::AK_CURATOR_NSC,
-            self::PMS_CLEAR_PROCESSING
-        );
+		$canClearProcessing = $this->isPermitted(
+			self::AK_CURATOR_NSC,
+			self::PMS_CLEAR_PROCESSING
+		);
 
-        $uin = isset($_GET['uin']) ? $_GET['uin'] : null;
+		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
 
-        $this->variables->cUin = $uin;
+		$this->variables->cUin = $uin;
 
-        $this->variables->canClearProcessing = $canClearProcessing;
+		$this->variables->canClearProcessing = $canClearProcessing;
 
-        if(empty($uin)){
-            return;
-        }
+		if ( empty( $uin ) ) {
+			return;
+		}
 
-        try {
-            $report = $this->getReportByUin($uin);
+		try {
+			$report = $this->getReportByUin( $uin );
 
-            $this->variables->report = &$report;
+			$this->variables->report = &$report;
 
-            if($report){
-                if($_POST){
-                    $isClearProcessing = (
-                        isset($_POST['clear-processing'])
-                        &&
-                        $canClearProcessing
-                    );
+			if ( $report ) {
+				if ( $_POST ) {
+					$isClearProcessing = (
+						isset( $_POST['clear-processing'] )
+						&&
+						$canClearProcessing
+					);
 
-                    if($isClearProcessing){
-                        $result = $this->clearProcessing($report['id']);
+					if ( $isClearProcessing ) {
+						$result = $this->clearProcessing( $report['id'] );
 
-                        $status = $result
-                            ? 'Протокол проверки успешно очищен.'
-                            : 'Не удалось очистить протокол проверки.';
-                    } else {
-                        $result = false;
-                        $status = 'Неверный набор параметров для осуществления действия.';
-                    }
+						$status = $result
+							? 'Протокол проверки успешно очищен.'
+							: 'Не удалось очистить протокол проверки.';
+					} else {
+						$result = false;
+						$status = 'Неверный набор параметров для осуществления действия.';
+					}
 
-                    $this->variables->result = $result;
-                    $this->variables->status = $status;
-                }
+					$this->variables->result = $result;
+					$this->variables->status = $status;
+				}
 
-                $this->variables->protocol = $this->getProtocolByReportId(
-                    $report['id']
-                );
+				$this->variables->protocol = $this->getProtocolByReportId(
+					$report['id']
+				);
 
-                $this->variables->files = $this->getFilesByReportId(
-                    $report['id']
-                );
-            }
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+				$this->variables->files = $this->getFilesByReportId(
+					$report['id']
+				);
+			}
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

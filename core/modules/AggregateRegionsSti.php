@@ -1,15 +1,16 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class AggregateRegionsSti extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/AggregateRegionsSti/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/AggregateRegionsSti/Default.html'
+	];
 
-    protected function getData(){
-        $sql = <<<SQL
+	protected function getData() {
+		$sql = <<<SQL
 SELECT
     "sti-rgn"."IDRegion" as "region-id",
     "sti-rgn"."Name" as "region-name",
@@ -42,24 +43,25 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-aggregate-regions-sti.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-aggregate-regions-sti.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        try {
-            $this->variables->data = $this->getData();
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+		try {
+			$this->variables->data = $this->getData();
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

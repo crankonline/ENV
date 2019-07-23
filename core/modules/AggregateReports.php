@@ -1,15 +1,16 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class AggregateReports extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/AggregateReports/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/AggregateReports/Default.html'
+	];
 
-    protected function getActivities(){
-        $sql = <<<SQL
+	protected function getActivities() {
+		$sql = <<<SQL
 SELECT
     "c-avt"."IDActivity" as "id",
     "c-avt"."Name" as "name",
@@ -32,15 +33,15 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getLegalForms(){
-        $sql = <<<SQL
+	protected function getLegalForms() {
+		$sql = <<<SQL
 SELECT
     "c-lf"."IDLegalForm" as "id",
     "c-lf"."Name" as "name",
@@ -64,43 +65,43 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getUsers(array & $activities, array & $legalForms){
-        $params = [];
-        $values = [];
+	protected function getUsers( array & $activities, array & $legalForms ) {
+		$params = [];
+		$values = [];
 
-        $params[] = '"c-rqst"."IsActive"';
-        $params[] = '("u-u"."SubscriberID" = 1)';
+		$params[] = '"c-rqst"."IsActive"';
+		$params[] = '("u-u"."SubscriberID" = 1)';
 
-        if($activities){
-            $count    = count($activities);
-            $places   = implode(',', array_fill(0, $count, '?'));
-            $params[] = '("c-avt"."IDActivity" IN (' . $places . '))';
+		if ( $activities ) {
+			$count    = count( $activities );
+			$places   = implode( ',', array_fill( 0, $count, '?' ) );
+			$params[] = '("c-avt"."IDActivity" IN (' . $places . '))';
 
-            foreach($activities as $activity){
-                $values[] = $activity;
-            }
-        }
+			foreach ( $activities as $activity ) {
+				$values[] = $activity;
+			}
+		}
 
-        if($legalForms){
-            $count    = count($legalForms);
-            $places   = implode(',', array_fill(0, $count, '?'));
-            $params[] = '("c-lf"."IDLegalForm" IN (' . $places . '))';
+		if ( $legalForms ) {
+			$count    = count( $legalForms );
+			$places   = implode( ',', array_fill( 0, $count, '?' ) );
+			$params[] = '("c-lf"."IDLegalForm" IN (' . $places . '))';
 
-            foreach($legalForms as $legalForm){
-                $values[] = $legalForm;
-            }
-        }
+			foreach ( $legalForms as $legalForm ) {
+				$values[] = $legalForm;
+			}
+		}
 
-        $params = $params ? 'WHERE ' . implode(' AND ', $params) : null;
+		$params = $params ? 'WHERE ' . implode( ' AND ', $params ) : null;
 
-        $sql = <<<SQL
+		$sql  = <<<SQL
 SELECT
     "u-u"."Value" as "uid",
     "c-rqst"."Inn" as "inn",
@@ -124,15 +125,15 @@ FROM
             ON "c-rqst"."UidID" = "u-u"."IDUid"
 {$params};
 SQL;
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute($values);
+		$stmt->execute( $values );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getForms(){
-        $sql = <<<SQL
+	protected function getForms() {
+		$sql = <<<SQL
 SELECT
     3000 as "id",
     'СФ - Расчетная ведомость' as "name"
@@ -168,123 +169,124 @@ FROM
     ) as "sub-nsc";
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
-/*
-    protected function getReports(
-        array & $users,
-        array & $forms,
-        $periodFrom,
-        $periodTo
-    ){
-        $params = [
-            'sf'  => [],
-            'sti' => [],
-            'nsc' => [],
-            'sub' => []
-        ];
+		return $stmt->fetchAll();
+	}
 
-        $values = [];
+	/*
+		protected function getReports(
+			array & $users,
+			array & $forms,
+			$periodFrom,
+			$periodTo
+		){
+			$params = [
+				'sf'  => [],
+				'sti' => [],
+				'nsc' => [],
+				'sub' => []
+			];
 
-        $params['sf'][] = '("sf-rpt"."input_date" BETWEEN ? AND ?)';
-        $values[] = $periodFrom;
-        $values[] = $periodTo;
+			$values = [];
 
-        $params['sti'][] = '("sti-rpt"."input_date" BETWEEN ? AND ?)';
-        $values[] = $periodFrom;
-        $values[] = $periodTo;
+			$params['sf'][] = '("sf-rpt"."input_date" BETWEEN ? AND ?)';
+			$values[] = $periodFrom;
+			$values[] = $periodTo;
 
-        $params['nsc'][] = '("nsc-rpt"."input_date" BETWEEN ? AND ?)';
-        $values[] = $periodFrom;
-        $values[] = $periodTo;
+			$params['sti'][] = '("sti-rpt"."input_date" BETWEEN ? AND ?)';
+			$values[] = $periodFrom;
+			$values[] = $periodTo;
 
-        if($users){
-            $count           = count($users);
-            $places          = implode(',', array_fill(0, $count, '?'));
-            $params['sub'][] = '("sub"."uid" IN (' . $places . '))';
+			$params['nsc'][] = '("nsc-rpt"."input_date" BETWEEN ? AND ?)';
+			$values[] = $periodFrom;
+			$values[] = $periodTo;
 
-            foreach($users as &$user) {
-                $values[] = $user['uid'];
-            }
-        }
+			if($users){
+				$count           = count($users);
+				$places          = implode(',', array_fill(0, $count, '?'));
+				$params['sub'][] = '("sub"."uid" IN (' . $places . '))';
 
-        if($forms){
-            $count           = count($forms);
-            $places          = implode(',', array_fill(0, $count, '?'));
-            $params['sub'][] = '("sub"."form" IN (' . $places . '))';
+				foreach($users as &$user) {
+					$values[] = $user['uid'];
+				}
+			}
 
-            foreach($forms as &$form) {
-                $values[] = $form['id'];
-            }
-        }
+			if($forms){
+				$count           = count($forms);
+				$places          = implode(',', array_fill(0, $count, '?'));
+				$params['sub'][] = '("sub"."form" IN (' . $places . '))';
 
-        foreach($params as $key => $subset){
-            $params[$key] = $params[$key]
-                ? 'WHERE ' . implode(' AND ', $params[$key])
-                : null;
-        }
+				foreach($forms as &$form) {
+					$values[] = $form['id'];
+				}
+			}
 
-        $sql = <<<SQL
-SELECT
-    CONCAT_WS('-', "sub"."uid", "sub"."form") as "uid-form",
-    "count" as "count"
-FROM
-    (
-        SELECT
-            "sf-rpt"."uid" as "uid",
-            3000 as "form",
-            COUNT(*) as "count"
-        FROM
-            "sf_reporting"."pass_reports" as "sf-rpt"
-        {$params['sf']}
-        GROUP BY
-            1, 2
-        UNION ALL
-        SELECT
-            "sti-rpt"."user_id",
-            "sti-rpt"."form_id" + 1000,
-            COUNT(*)
-        FROM
-            "sti_reporting"."reports" as "sti-rpt"
-        {$params['sti']}
-        GROUP BY
-            1, 2
-        UNION ALL
-        SELECT
-            "nsc-rpt"."uid",
-            "nsc-rpt"."form_id" + 2000,
-            COUNT(*)
-        FROM
-            "stat_reporting"."reports" as "nsc-rpt"
-        {$params['nsc']}
-        GROUP BY
-            1, 2
-    ) as "sub"
-{$params['sub']};
-SQL;
+			foreach($params as $key => $subset){
+				$params[$key] = $params[$key]
+					? 'WHERE ' . implode(' AND ', $params[$key])
+					: null;
+			}
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+			$sql = <<<SQL
+	SELECT
+		CONCAT_WS('-', "sub"."uid", "sub"."form") as "uid-form",
+		"count" as "count"
+	FROM
+		(
+			SELECT
+				"sf-rpt"."uid" as "uid",
+				3000 as "form",
+				COUNT(*) as "count"
+			FROM
+				"sf_reporting"."pass_reports" as "sf-rpt"
+			{$params['sf']}
+			GROUP BY
+				1, 2
+			UNION ALL
+			SELECT
+				"sti-rpt"."user_id",
+				"sti-rpt"."form_id" + 1000,
+				COUNT(*)
+			FROM
+				"sti_reporting"."reports" as "sti-rpt"
+			{$params['sti']}
+			GROUP BY
+				1, 2
+			UNION ALL
+			SELECT
+				"nsc-rpt"."uid",
+				"nsc-rpt"."form_id" + 2000,
+				COUNT(*)
+			FROM
+				"stat_reporting"."reports" as "nsc-rpt"
+			{$params['nsc']}
+			GROUP BY
+				1, 2
+		) as "sub"
+	{$params['sub']};
+	SQL;
 
-        $stmt->execute($values);
+			$stmt = Connections::getConnection('Sochi')->prepare($sql);
 
-        $result = $stmt->fetchAll();
+			$stmt->execute($values);
 
-        foreach($result as $index => $row){
-            $result[$row['uid-form']] = $row;
+			$result = $stmt->fetchAll();
 
-            unset($result[$index]);
-        }
+			foreach($result as $index => $row){
+				$result[$row['uid-form']] = $row;
 
-        return $result;
-    }
-*/
+				unset($result[$index]);
+			}
 
-    protected function getReports($periodFrom, $periodTo){
-        $sql = <<<SQL
+			return $result;
+		}
+	*/
+
+	protected function getReports( $periodFrom, $periodTo ) {
+		$sql = <<<SQL
 SELECT
     CONCAT_WS('-', "sf-rpt"."uid", 3000) as "uid-form",
     TO_CHAR("sf-rpt"."input_date", 'MM.YYYY') as "period",
@@ -324,136 +326,141 @@ ORDER BY
     2 DESC;
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute([
-            'periodFrom' => $periodFrom,
-            'periodTo'   => $periodTo
-        ]);
+		$stmt->execute( [
+			'periodFrom' => $periodFrom,
+			'periodTo'   => $periodTo
+		] );
 
-        $result = $stmt->fetchAll();
+		$result = $stmt->fetchAll();
 
-        foreach($result as $index => $row){
-            $group  = $row['uid-form'];
-            $period = $row['period'];
+		foreach ( $result as $index => $row ) {
+			$group  = $row['uid-form'];
+			$period = $row['period'];
 
-            unset($row['uid-form'], $row['period'], $result[$index]);
+			unset( $row['uid-form'], $row['period'], $result[ $index ] );
 
-            if(!isset($result[$group])){
-                $result[$group] = [];
-            }
+			if ( ! isset( $result[ $group ] ) ) {
+				$result[ $group ] = [];
+			}
 
-            $result[$group][$period] = $row['count'];
-        }
+			$result[ $group ][ $period ] = $row['count'];
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-aggregate-reports.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-aggregate-reports.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $this->context->title = null;
+		$this->context->title = null;
 
-        $this->variables->cActivities = [];
-        $this->variables->cLegalForms = [];
-        $this->variables->cForms      = [];
+		$this->variables->cActivities = [];
+		$this->variables->cLegalForms = [];
+		$this->variables->cForms      = [];
 
-        $this->variables->cPeriodFrom = date('Y-m-') . '01';
-        $this->variables->cPeriodTo   = date('Y-m-d');
+		$this->variables->cPeriodFrom = date( 'Y-m-' ) . '01';
+		$this->variables->cPeriodTo   = date( 'Y-m-d' );
 
-        try {
-            $this->variables->activities = $this->getActivities();
-        } catch(\PDOException $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = 'При получении списка видов деятельности произошла ошибка.';
-            return;
-        }
+		try {
+			$this->variables->activities = $this->getActivities();
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'При получении списка видов деятельности произошла ошибка.';
 
-        try {
-            $this->variables->legalForms = $this->getLegalForms();
-        } catch(\PDOException $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = 'При получении списка организационно-правовых форм произошла ошибка.';
-            return;
-        }
+			return;
+		}
 
-        try {
-            $this->variables->forms = $this->getForms();
-        } catch(\PDOException $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = 'При получении списка форм отчетности произошла ошибка.';
-            return;
-        }
+		try {
+			$this->variables->legalForms = $this->getLegalForms();
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'При получении списка организационно-правовых форм произошла ошибка.';
 
-        if($_POST){
-            $cActivities = empty($_POST['activities'])
-                ? $this->variables->cActivities
-                : $_POST['activities'];
+			return;
+		}
 
-            $cLegalForms = empty($_POST['legal-forms'])
-                ? $this->variables->cLegalForms
-                : $_POST['legal-forms'];
+		try {
+			$this->variables->forms = $this->getForms();
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'При получении списка форм отчетности произошла ошибка.';
 
-            $cForms = empty($_POST['forms'])
-                ? $this->variables->cForms
-                : $_POST['forms'];
+			return;
+		}
 
-            $cPeriodFrom = empty($_POST['from'])
-                ? $this->variables->cPeriodFrom
-                : $_POST['from'];
+		if ( $_POST ) {
+			$cActivities = empty( $_POST['activities'] )
+				? $this->variables->cActivities
+				: $_POST['activities'];
 
-            $cPeriodTo = empty($_POST['to'])
-                ? $this->variables->cPeriodTo
-                : $_POST['to'];
+			$cLegalForms = empty( $_POST['legal-forms'] )
+				? $this->variables->cLegalForms
+				: $_POST['legal-forms'];
 
-            $this->variables->cActivities = &$cActivities;
-            $this->variables->cLegalForms = &$cLegalForms;
-            $this->variables->cForms      = &$cForms;
-            $this->variables->cPeriodFrom = &$cPeriodFrom;
-            $this->variables->cPeriodTo   = &$cPeriodTo;
+			$cForms = empty( $_POST['forms'] )
+				? $this->variables->cForms
+				: $_POST['forms'];
 
-            if(empty($cForms)){
-                $this->variables->targetForms = &$this->variables->forms;
-            } else {
-                $targetForms = [];
+			$cPeriodFrom = empty( $_POST['from'] )
+				? $this->variables->cPeriodFrom
+				: $_POST['from'];
 
-                foreach($this->variables->forms as &$form){
-                    if(in_array($form['id'], $cForms)){
-                        $targetForms[] = $form;
-                    }
-                }
+			$cPeriodTo = empty( $_POST['to'] )
+				? $this->variables->cPeriodTo
+				: $_POST['to'];
 
-                $this->variables->targetForms = &$targetForms;
-            }
+			$this->variables->cActivities = &$cActivities;
+			$this->variables->cLegalForms = &$cLegalForms;
+			$this->variables->cForms      = &$cForms;
+			$this->variables->cPeriodFrom = &$cPeriodFrom;
+			$this->variables->cPeriodTo   = &$cPeriodTo;
 
-            try {
-                $this->variables->users = $this->getUsers($cActivities, $cLegalForms);
-            } catch(\PDOException $e) {
-	            \Sentry\captureException($e);
-                $this->variables->errors[] = 'При получении списка клиентов произошла ошибка.';
-                return;
-            }
+			if ( empty( $cForms ) ) {
+				$this->variables->targetForms = &$this->variables->forms;
+			} else {
+				$targetForms = [];
 
-            try {
-/*
-                $this->variables->reports = $this->getReports(
-                    $this->variables->users,
-                    $this->variables->targetForms,
-                    $cPeriodFrom,
-                    $cPeriodTo
-                );
-*/
-                $this->variables->reports = $this->getReports($cPeriodFrom, $cPeriodTo);
-            } catch(\PDOException $e) {
-	            \Sentry\captureException($e);
-                $this->variables->errors[] = $e->getMessage(); // 'При получении данных об отчетности произошла ошибка';
-            }
+				foreach ( $this->variables->forms as &$form ) {
+					if ( in_array( $form['id'], $cForms ) ) {
+						$targetForms[] = $form;
+					}
+				}
 
-            set_time_limit(0);
-        }
-    }
+				$this->variables->targetForms = &$targetForms;
+			}
+
+			try {
+				$this->variables->users = $this->getUsers( $cActivities, $cLegalForms );
+			} catch ( \PDOException $e ) {
+				\Sentry\captureException( $e );
+				$this->variables->errors[] = 'При получении списка клиентов произошла ошибка.';
+
+				return;
+			}
+
+			try {
+				/*
+								$this->variables->reports = $this->getReports(
+									$this->variables->users,
+									$this->variables->targetForms,
+									$cPeriodFrom,
+									$cPeriodTo
+								);
+				*/
+				$this->variables->reports = $this->getReports( $cPeriodFrom, $cPeriodTo );
+			} catch ( \PDOException $e ) {
+				\Sentry\captureException( $e );
+				$this->variables->errors[] = $e->getMessage(); // 'При получении данных об отчетности произошла ошибка';
+			}
+
+			set_time_limit( 0 );
+		}
+	}
 }
+
 ?>

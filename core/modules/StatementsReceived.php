@@ -1,116 +1,118 @@
 <?php
+
 namespace Environment\Modules;
 
 use Environment\DataLayers\OnlineStatements\Statements as StatementsSchema;
 
 class StatementsReceived extends \Environment\Core\Module {
-    const
-        ROWS_PER_PAGE = 30;
+	const
+		ROWS_PER_PAGE = 30;
 
-    protected $config = [
-        'template' => 'layouts/StatementsReceived/Default.html',
-        'plugins'  => [
-            'paginator' => Plugins\Paginator::class
-        ]
-    ];
+	protected $config = [
+		'template' => 'layouts/StatementsReceived/Default.html',
+		'plugins'  => [
+			'paginator' => Plugins\Paginator::class
+		]
+	];
 
-    protected function getPermittedStatuses(){
-        $statuses = [];
+	protected function getPermittedStatuses() {
+		$statuses = [];
 
-        if($this->isPermitted(Statement::AK_STATEMENT, Statement::PMS_APPROVE)){
-            $statuses[] = StatementsSchema\Statuses::REVISION;
-        }
+		if ( $this->isPermitted( Statement::AK_STATEMENT, Statement::PMS_APPROVE ) ) {
+			$statuses[] = StatementsSchema\Statuses::REVISION;
+		}
 
-        if($this->isPermitted(Statement::AK_STATEMENT, Statement::PMS_IDENTIFY)){
-            $statuses[] = StatementsSchema\Statuses::IDENTIFICATION;
-        }
+		if ( $this->isPermitted( Statement::AK_STATEMENT, Statement::PMS_IDENTIFY ) ) {
+			$statuses[] = StatementsSchema\Statuses::IDENTIFICATION;
+		}
 
-        if($this->isPermitted(Statement::AK_STATEMENT, Statement::PMS_CONFIRM_PAYMENT)){
-            $statuses[] = StatementsSchema\Statuses::PAYABLE;
-        }
+		if ( $this->isPermitted( Statement::AK_STATEMENT, Statement::PMS_CONFIRM_PAYMENT ) ) {
+			$statuses[] = StatementsSchema\Statuses::PAYABLE;
+		}
 
-        if($this->isPermitted(Statement::AK_STATEMENT, Statement::PMS_COMPLETE)){
-            $statuses[] = StatementsSchema\Statuses::PAID;
-        }
+		if ( $this->isPermitted( Statement::AK_STATEMENT, Statement::PMS_COMPLETE ) ) {
+			$statuses[] = StatementsSchema\Statuses::PAID;
+		}
 
-        return $statuses;
-    }
+		return $statuses;
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-stripes.css';
-        $this->context->css[] = 'resources/css/ui-statements.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-stripes.css';
+		$this->context->css[] = 'resources/css/ui-statements.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $inn    = isset($_GET['inn']) ? $_GET['inn'] : null;
-        $status = isset($_GET['status']) ? $_GET['status'] : null;
+		$inn    = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
+		$status = isset( $_GET['status'] ) ? $_GET['status'] : null;
 
-        $page   = isset($_GET['page']) ? (abs((int)$_GET['page']) ?: 1) : 1;
-        $limit  = self::ROWS_PER_PAGE;
-        $offset = ($page - 1) * $limit;
+		$page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
+		$limit  = self::ROWS_PER_PAGE;
+		$offset = ( $page - 1 ) * $limit;
 
-        $allowedStatuses = $this->getPermittedStatuses();
+		$allowedStatuses = $this->getPermittedStatuses();
 
-        if(!$allowedStatuses){
-            $allowedStatuses = [
-                StatementsSchema\Statuses::REVISION,
-                StatementsSchema\Statuses::REVISED,
-                StatementsSchema\Statuses::IDENTIFICATION,
-                StatementsSchema\Statuses::IDENTIFIED,
-                StatementsSchema\Statuses::PAYABLE,
-                StatementsSchema\Statuses::PAID
-            ];
-        }
+		if ( ! $allowedStatuses ) {
+			$allowedStatuses = [
+				StatementsSchema\Statuses::REVISION,
+				StatementsSchema\Statuses::REVISED,
+				StatementsSchema\Statuses::IDENTIFICATION,
+				StatementsSchema\Statuses::IDENTIFIED,
+				StatementsSchema\Statuses::PAYABLE,
+				StatementsSchema\Statuses::PAID
+			];
+		}
 
-        if(!preg_match('/^((\d{10,10})|(\d{14,14}))$/', $inn)){
-            $inn = null;
-        }
+		if ( ! preg_match( '/^((\d{10,10})|(\d{14,14}))$/', $inn ) ) {
+			$inn = null;
+		}
 
-        if(!($status && in_array($status, $allowedStatuses))){
-            $status = $allowedStatuses;
-        }
+		if ( ! ( $status && in_array( $status, $allowedStatuses ) ) ) {
+			$status = $allowedStatuses;
+		}
 
-        $this->variables->cInn    = $inn;
-        $this->variables->cStatus = $status;
+		$this->variables->cInn    = $inn;
+		$this->variables->cStatus = $status;
 
-        $filters = [];
+		$filters = [];
 
-        if($inn){
-            $filters['inn'] = $inn;
-        }
+		if ( $inn ) {
+			$filters['inn'] = $inn;
+		}
 
-        if($status){
-            $filters['status-id'] = $status;
-        }
+		if ( $status ) {
+			$filters['status-id'] = $status;
+		}
 
-        $dlStatuses   = new StatementsSchema\Statuses();
-        $dlStatements = new StatementsSchema\Statements();
+		$dlStatuses   = new StatementsSchema\Statuses();
+		$dlStatements = new StatementsSchema\Statements();
 
-        try {
-            $this->variables->statuses = $dlStatuses->getBy([
-                'status-id' => &$allowedStatuses
-            ]);
-        } catch(\PDOException $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = 'Произошла ошибка при получении состояний заявок.';
-        }
+		try {
+			$this->variables->statuses = $dlStatuses->getBy( [
+				'status-id' => &$allowedStatuses
+			] );
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'Произошла ошибка при получении состояний заявок.';
+		}
 
-        try {
-            list($count, $rows) = $dlStatements->getBy(
-                $filters,
-                $limit,
-                $offset
-            );
+		try {
+			list( $count, $rows ) = $dlStatements->getBy(
+				$filters,
+				$limit,
+				$offset
+			);
 
-            $this->context->paginator['count'] = (int)ceil($count / $limit);
+			$this->context->paginator['count'] = (int) ceil( $count / $limit );
 
-            $this->variables->count      = $count;
-            $this->variables->statements = &$rows;
-        } catch(\PDOException $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = 'Произошла ошибка при получении списка заявок.';
-        }
-    }
+			$this->variables->count      = $count;
+			$this->variables->statements = &$rows;
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'Произошла ошибка при получении списка заявок.';
+		}
+	}
 }
+
 ?>

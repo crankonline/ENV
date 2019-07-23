@@ -2,6 +2,7 @@
 /**
  * Reregister
  */
+
 namespace Environment\Modules;
 
 use Environment\Soap\Clients as SoapClients,
@@ -17,13 +18,13 @@ class Reregister extends \Environment\Core\Module {
 		'skipMain' => false
 	];
 
-	public function submit(){
-		header('Content-Type: application/json');
+	public function submit() {
+		header( 'Content-Type: application/json' );
 
 		try {
-			$uid = empty($_POST['uid']) ? null : $_POST['uid'];
+			$uid = empty( $_POST['uid'] ) ? null : $_POST['uid'];
 
-			$requisites = Types\Import\Data::create($_POST);
+			$requisites = Types\Import\Data::create( $_POST );
 
 			$dataClient = new SoapClients\Requisites\Data();
 
@@ -34,33 +35,33 @@ class Reregister extends \Environment\Core\Module {
 				'ip-address' => $_SERVER['REMOTE_ADDR']
 			];
 
-			if($uid){
-				$dataClient->update(API_SUBSCRIBER_TOKEN, $uid, $requisites);
+			if ( $uid ) {
+				$dataClient->update( API_SUBSCRIBER_TOKEN, $uid, $requisites );
 
 				$actionRow['action-type-id'] = 2;
 			} else {
-				$uid = $dataClient->register(API_SUBSCRIBER_TOKEN, $requisites);
+				$uid = $dataClient->register( API_SUBSCRIBER_TOKEN, $requisites );
 
 				$actionRow['action-type-id'] = 1;
 			}
 
-			$dlActions->register($actionRow);
+			$dlActions->register( $actionRow );
 
-			$dlSync->setPending($uid);
+			$dlSync->setPending( $uid );
 
 			$result = [
 				'success' => true,
 				'uid'     => $uid
 			];
-		} catch(\SoapFault $e) {
-			\Sentry\captureException($e);
+		} catch ( \SoapFault $e ) {
+			\Sentry\captureException( $e );
 			$result = [
 				'success'       => false,
 				'error-code'    => 'SOAP:' . $e->faultcode,
 				'error-message' => $e->getMessage()
 			];
-		} catch(\Exception $e) {
-			\Sentry\captureException($e);
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
 			$result = [
 				'success'       => false,
 				'error-code'    => $e->getCode(),
@@ -72,12 +73,12 @@ class Reregister extends \Environment\Core\Module {
 
 		$this->suppress();
 
-		die( json_encode($result) ); //чтоб не подгружался вышестоящий темплейт.
+		die( json_encode( $result ) ); //чтоб не подгружался вышестоящий темплейт.
 	}
 
-	protected function main(){
+	protected function main() {
 
-		if($this->config->skipMain){
+		if ( $this->config->skipMain ) {
 			return;
 		}
 
@@ -87,28 +88,29 @@ class Reregister extends \Environment\Core\Module {
 			$client = new SoapClients\Requisites\Meta();
 
 			$this->variables->data = [
-				'common-bank'                    => $client->getCommonBanks(API_SUBSCRIBER_TOKEN),
-				'common-legal-form'              => $client->getCommonLegalForms(API_SUBSCRIBER_TOKEN),
-				'common-management-form'         => $client->getCommonManagementForms(API_SUBSCRIBER_TOKEN),
-				'common-ownership-form'          => $client->getCommonOwnershipForms(API_SUBSCRIBER_TOKEN),
-				'common-civil-legal-status'      => $client->getCommonCivilLegalStatuses(API_SUBSCRIBER_TOKEN),
-				'common-capital-form'            => $client->getCommonCapitalForms(API_SUBSCRIBER_TOKEN),
-				'common-region'                  => $client->getCommonRegions(API_SUBSCRIBER_TOKEN),
-				'common-district'                => $client->getCommonDistricts(API_SUBSCRIBER_TOKEN),
-				'common-eds-usage-model'         => $client->getCommonEdsUsageModels(API_SUBSCRIBER_TOKEN),
-				'common-representative-role'     => $client->getCommonRepresentativeRoles(API_SUBSCRIBER_TOKEN),
-				'common-representative-position' => $client->getCommonRepresentativePositions(API_SUBSCRIBER_TOKEN),
-				'common-chief-basis'             => $client->getCommonChiefBasises(API_SUBSCRIBER_TOKEN),
+				'common-bank'                    => $client->getCommonBanks( API_SUBSCRIBER_TOKEN ),
+				'common-legal-form'              => $client->getCommonLegalForms( API_SUBSCRIBER_TOKEN ),
+				'common-management-form'         => $client->getCommonManagementForms( API_SUBSCRIBER_TOKEN ),
+				'common-ownership-form'          => $client->getCommonOwnershipForms( API_SUBSCRIBER_TOKEN ),
+				'common-civil-legal-status'      => $client->getCommonCivilLegalStatuses( API_SUBSCRIBER_TOKEN ),
+				'common-capital-form'            => $client->getCommonCapitalForms( API_SUBSCRIBER_TOKEN ),
+				'common-region'                  => $client->getCommonRegions( API_SUBSCRIBER_TOKEN ),
+				'common-district'                => $client->getCommonDistricts( API_SUBSCRIBER_TOKEN ),
+				'common-eds-usage-model'         => $client->getCommonEdsUsageModels( API_SUBSCRIBER_TOKEN ),
+				'common-representative-role'     => $client->getCommonRepresentativeRoles( API_SUBSCRIBER_TOKEN ),
+				'common-representative-position' => $client->getCommonRepresentativePositions( API_SUBSCRIBER_TOKEN ),
+				'common-chief-basis'             => $client->getCommonChiefBasises( API_SUBSCRIBER_TOKEN ),
 
-				'sf-tariff' => $client->getSfTariffs(API_SUBSCRIBER_TOKEN),
-				'sf-region' => $client->getSfRegions(API_SUBSCRIBER_TOKEN),
+				'sf-tariff' => $client->getSfTariffs( API_SUBSCRIBER_TOKEN ),
+				'sf-region' => $client->getSfRegions( API_SUBSCRIBER_TOKEN ),
 
-				'sti-region' => $client->getStiRegions(API_SUBSCRIBER_TOKEN)
+				'sti-region' => $client->getStiRegions( API_SUBSCRIBER_TOKEN )
 			];
-		} catch(\Exception $e) {
-			\Sentry\captureException($e);
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
 		}
 	}
 }
+
 ?>

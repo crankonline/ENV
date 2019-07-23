@@ -1,51 +1,64 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class CuratorSti extends \Environment\Core\Module {
-    const
-        PMS_CHANGE_REGION    = 'can-change-region',
-        PMS_CLEAR_PROCESSING = 'can-clear-processing',
-        PMS_CHANGE_SOCHI_REPORT_STATUS = 'can-change-sochi-report-status',
-        PMS_CHANGE_CURATOR_REPORT_STATUS = 'can-change-curator-report-status';
+	const
+		PMS_CHANGE_REGION = 'can-change-region',
+		PMS_CLEAR_PROCESSING = 'can-clear-processing',
+		PMS_CHANGE_SOCHI_REPORT_STATUS = 'can-change-sochi-report-status',
+		PMS_CHANGE_CURATOR_REPORT_STATUS = 'can-change-curator-report-status';
 
-    const
-        DEPLOYMENT_ADDRESS = 'curator.sti.gov.kg';
+	const
+		DEPLOYMENT_ADDRESS = 'curator.sti.gov.kg';
 
-    const
-        REPORT_STATUS_ACCEPTED = 10,
-        REPORT_STATUS_DECLINED = 20;
+	const
+		REPORT_STATUS_ACCEPTED = 10,
+		REPORT_STATUS_DECLINED = 20;
 
-    protected
-        $config = [
-            'template' => 'layouts/CuratorSti/Default.html'
-        ],
-        $fileMap = [
-            1 => 'fileshare/data/',
-            2 => 'fileshare/rendered/',
-            3 => 'fileshare/notes/'
-        ];
+	protected
+		$config = [
+		'template' => 'layouts/CuratorSti/Default.html'
+	],
+		$fileMap = [
+		1 => 'fileshare/data/',
+		2 => 'fileshare/rendered/',
+		3 => 'fileshare/notes/'
+	];
 
-    protected function getMonthName($number){
-        switch($number){
-            case 1: return 'Январь';
-            case 2: return 'Февраль';
-            case 3: return 'Март';
-            case 4: return 'Апрель';
-            case 5: return 'Май';
-            case 6: return 'Июнь';
-            case 7: return 'Июль';
-            case 8: return 'Август';
-            case 9: return 'Сентябрь';
-            case 10: return 'Октябрь';
-            case 11: return 'Ноябрь';
-            case 12: return 'Декабрь';
-        }
-    }
+	protected function getMonthName( $number ) {
+		switch ( $number ) {
+			case 1:
+				return 'Январь';
+			case 2:
+				return 'Февраль';
+			case 3:
+				return 'Март';
+			case 4:
+				return 'Апрель';
+			case 5:
+				return 'Май';
+			case 6:
+				return 'Июнь';
+			case 7:
+				return 'Июль';
+			case 8:
+				return 'Август';
+			case 9:
+				return 'Сентябрь';
+			case 10:
+				return 'Октябрь';
+			case 11:
+				return 'Ноябрь';
+			case 12:
+				return 'Декабрь';
+		}
+	}
 
-    protected function getReportByUin($uin){
-        $sql = <<<SQL
+	protected function getReportByUin( $uin ) {
+		$sql = <<<SQL
 SELECT
     "r-rpt"."IDReport" as "id",
     "r-pi"."Inn" as "payer-inn",
@@ -104,17 +117,17 @@ WHERE
     ("r-rpt"."Uin" = :uin);
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        $stmt->execute([
-            'uin' => $uin
-        ]);
+		$stmt->execute( [
+			'uin' => $uin
+		] );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function getProtocolByReportId($reportId){
-        $sql = <<<SQL
+	protected function getProtocolByReportId( $reportId ) {
+		$sql = <<<SQL
 SELECT
     "rp-rer"."IDRuleExecutionResult" as "rule-execution-result-id",
     "rp-t"."Name" as "trigger-name",
@@ -144,17 +157,17 @@ ORDER BY
     "rp-rer"."DateTime";
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        $stmt->execute([
-            'reportId' => $reportId
-        ]);
+		$stmt->execute( [
+			'reportId' => $reportId
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getFilesByReportId($reportId){
-        $sql = <<<SQL
+	protected function getFilesByReportId( $reportId ) {
+		$sql = <<<SQL
 SELECT
     "r-rf"."IDReportFile" as "id",
     "r-rft"."IDReportFileType" as "report-file-type-id",
@@ -173,17 +186,17 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        $stmt->execute([
-            'reportId' => $reportId
-        ]);
+		$stmt->execute( [
+			'reportId' => $reportId
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function getRegions(){
-        $sql = <<<SQL
+	protected function getRegions() {
+		$sql = <<<SQL
 SELECT
     "r-rgn"."IDRegion" as "id",
     CONCAT_WS(' - ', "r-rgn"."Code", "r-rgn"."Name") as "name"
@@ -193,15 +206,15 @@ ORDER BY
     2;
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function changeRegion($reportId, $regionId){
-        $sql = <<<SQL
+	protected function changeRegion( $reportId, $regionId ) {
+		$sql = <<<SQL
 UPDATE
     "Reporting"."Report"
 SET
@@ -210,31 +223,31 @@ WHERE
     ("IDReport" = :reportId);
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        return $stmt->execute([
-            'reportId' => $reportId,
-            'regionId' => $regionId
-        ]);
-    }
+		return $stmt->execute( [
+			'reportId' => $reportId,
+			'regionId' => $regionId
+		] );
+	}
 
-    protected function clearProcessing($reportId){
-        $sql = <<<SQL
+	protected function clearProcessing( $reportId ) {
+		$sql = <<<SQL
 DELETE FROM
     "ReportProcessing"."RuleExecution"
 WHERE
     ("ReportID" = :reportId);
 SQL;
 
-        $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-        return $stmt->execute([
-            'reportId' => $reportId
-        ]);
-    }
+		return $stmt->execute( [
+			'reportId' => $reportId
+		] );
+	}
 
-    protected function getSochiReportSti($uin){
-    	$sql = <<<SQL
+	protected function getSochiReportSti( $uin ) {
+		$sql = <<<SQL
 SELECT 
 	rep.uin as "uin",
 	form.form_name as "form_name",
@@ -250,32 +263,32 @@ LEFT JOIN sti_reporting.forms as form on rep.form_id = form.id
 WHERE rep.uin = :uin;
 SQL;
 
-	    $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-	    $stmt->execute([
-		    'uin' => $uin
-	    ]);
+		$stmt->execute( [
+			'uin' => $uin
+		] );
 
-	    return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function updateSochiReportStatusSti($uin, $status) {
-		$sql = <<<SQL
+	protected function updateSochiReportStatusSti( $uin, $status ) {
+		$sql  = <<<SQL
 		UPDATE sti_reporting.reports
 		SET status = :status
 		WHERE uin = :uin;
 
 SQL;
-	    $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-	    return $stmt->execute([
-		    'uin' => $uin,
-		    'status' => $status
-	    ]);
-    }
+		return $stmt->execute( [
+			'uin'    => $uin,
+			'status' => $status
+		] );
+	}
 
-    protected function updateCuratorReportStatus($uin) {
-    	$sql = <<<SQL
+	protected function updateCuratorReportStatus( $uin ) {
+		$sql = <<<SQL
 		UPDATE "ReportProcessing"."RuleExecutionResult"
 		SET "ReportStatusID" = 10,
 		"isSuccess" = TRUE,
@@ -293,141 +306,142 @@ SQL;
 		RETURNING "IDRuleExecutionResult";
 SQL;
 
-	    $stmt = Connections::getConnection('Sti')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sti' )->prepare( $sql );
 
-	    return $stmt->execute([
-		    'uin' => $uin
-	    ]);
-    }
+		return $stmt->execute( [
+			'uin' => $uin
+		] );
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-curator.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-curator.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $canChangeRegion = $this->isPermitted(
-            self::AK_CURATOR_STI,
-            self::PMS_CHANGE_REGION
-        );
+		$canChangeRegion = $this->isPermitted(
+			self::AK_CURATOR_STI,
+			self::PMS_CHANGE_REGION
+		);
 
-        $canClearProcessing = $this->isPermitted(
-            self::AK_CURATOR_STI,
-            self::PMS_CLEAR_PROCESSING
-        );
+		$canClearProcessing = $this->isPermitted(
+			self::AK_CURATOR_STI,
+			self::PMS_CLEAR_PROCESSING
+		);
 
-        $canChangeSochiReportStatus = $this->isPermitted(
-        	self::AK_CURATOR_STI,
-	        self::PMS_CHANGE_SOCHI_REPORT_STATUS
-        );
+		$canChangeSochiReportStatus = $this->isPermitted(
+			self::AK_CURATOR_STI,
+			self::PMS_CHANGE_SOCHI_REPORT_STATUS
+		);
 
-        $canChangeCuratorStiReportStatus = $this->isPermitted(
-	        self::AK_CURATOR_STI,
-        	self::PMS_CHANGE_CURATOR_REPORT_STATUS
-        );
+		$canChangeCuratorStiReportStatus = $this->isPermitted(
+			self::AK_CURATOR_STI,
+			self::PMS_CHANGE_CURATOR_REPORT_STATUS
+		);
 
 
-        $uin = isset($_GET['uin']) ? $_GET['uin'] : null;
+		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
 
-        $this->variables->cUin = $uin;
+		$this->variables->cUin = $uin;
 
-        $this->variables->canChangeRegion    = $canChangeRegion;
-        $this->variables->canClearProcessing = $canClearProcessing;
-        $this->variables->canChangeSochiReportStatus = $canChangeSochiReportStatus;
-        $this->variables->canChangeCuratorStiReportStatus = $canChangeCuratorStiReportStatus;
+		$this->variables->canChangeRegion                 = $canChangeRegion;
+		$this->variables->canClearProcessing              = $canClearProcessing;
+		$this->variables->canChangeSochiReportStatus      = $canChangeSochiReportStatus;
+		$this->variables->canChangeCuratorStiReportStatus = $canChangeCuratorStiReportStatus;
 
-        if(empty($uin)){
-            return;
-        }
+		if ( empty( $uin ) ) {
+			return;
+		}
 
-        try {
-            $report = $this->getReportByUin($uin);
+		try {
+			$report = $this->getReportByUin( $uin );
 
-            $this->variables->report = &$report;
+			$this->variables->report = &$report;
 
-            if($report){
-                if($_POST){
-                    $isChangeRegion = (
-                        isset($_POST['change-region'], $_POST['region-id'])
-                        &&
-                        $canChangeRegion
-                    );
+			if ( $report ) {
+				if ( $_POST ) {
+					$isChangeRegion = (
+						isset( $_POST['change-region'], $_POST['region-id'] )
+						&&
+						$canChangeRegion
+					);
 
-                    $isClearProcessing = (
-                        isset($_POST['clear-processing'])
-                        &&
-                        $canClearProcessing
-                    );
+					$isClearProcessing = (
+						isset( $_POST['clear-processing'] )
+						&&
+						$canClearProcessing
+					);
 
-                    $isChangeStatusSochi = (
-                        isset($_POST['sochi-change-report-status'], $_POST['sochi-status-sti-report'])
-                        &&
-                        $canChangeSochiReportStatus
-                    );
+					$isChangeStatusSochi = (
+						isset( $_POST['sochi-change-report-status'], $_POST['sochi-status-sti-report'] )
+						&&
+						$canChangeSochiReportStatus
+					);
 
-                    $isChangeStatusCurator = (
-                        isset($_POST['processing-change-curator-status'])
-                        &&
-                        $canChangeCuratorStiReportStatus
-                    );
+					$isChangeStatusCurator = (
+						isset( $_POST['processing-change-curator-status'] )
+						&&
+						$canChangeCuratorStiReportStatus
+					);
 
-                    if($isChangeRegion){
-                        $result = $this->changeRegion(
-                            $report['id'],
-                            (int)$_POST['region-id']
-                        );
+					if ( $isChangeRegion ) {
+						$result = $this->changeRegion(
+							$report['id'],
+							(int) $_POST['region-id']
+						);
 
-                        $status = $result
-                            ? 'Адресат успешно изменен.'
-                            : 'Не удалось изменить адресата.';
-                    } elseif($isClearProcessing) {
-                        $result = $this->clearProcessing($report['id']);
+						$status = $result
+							? 'Адресат успешно изменен.'
+							: 'Не удалось изменить адресата.';
+					} elseif ( $isClearProcessing ) {
+						$result = $this->clearProcessing( $report['id'] );
 
-                        $status = $result
-                            ? 'Протокол проверки успешно очищен.'
-                            : 'Не удалось очистить протокол проверки.';
-                    } elseif($isChangeStatusSochi) {
-	                    $sochiRepStatus = $_POST['sochi-status-sti-report'];
-	                    $result = $this->updateSochiReportStatusSti($uin,$sochiRepStatus);
-	                    $status = $result
-		                    ? 'Статус отчета сочи изменен'
-		                    : 'Не удалось изменить статус отчета сочи.'.$_POST['sochi-status-sti-report'];
-                    } elseif($isChangeStatusCurator) {
-                    	$result = $this->updateCuratorReportStatus($uin);
-                    	$status = $result
-		                    ? 'Статус в кураторском приложении успешно изменен'
-		                    : 'Не удалось изменить статус в кураторском приложении - '.$result;
-                    } else {
-                        $result = false;
-                        $status = 'Неверный набор параметров для осуществления действия.';
-                    }
+						$status = $result
+							? 'Протокол проверки успешно очищен.'
+							: 'Не удалось очистить протокол проверки.';
+					} elseif ( $isChangeStatusSochi ) {
+						$sochiRepStatus = $_POST['sochi-status-sti-report'];
+						$result         = $this->updateSochiReportStatusSti( $uin, $sochiRepStatus );
+						$status         = $result
+							? 'Статус отчета сочи изменен'
+							: 'Не удалось изменить статус отчета сочи.' . $_POST['sochi-status-sti-report'];
+					} elseif ( $isChangeStatusCurator ) {
+						$result = $this->updateCuratorReportStatus( $uin );
+						$status = $result
+							? 'Статус в кураторском приложении успешно изменен'
+							: 'Не удалось изменить статус в кураторском приложении - ' . $result;
+					} else {
+						$result = false;
+						$status = 'Неверный набор параметров для осуществления действия.';
+					}
 
-                    $this->variables->result = $result;
-                    $this->variables->status = $status;
+					$this->variables->result = $result;
+					$this->variables->status = $status;
 
-                    if($result){
-                        $report = $this->getReportByUin($uin);
-                    }
-                }
+					if ( $result ) {
+						$report = $this->getReportByUin( $uin );
+					}
+				}
 
-                $this->variables->regions = $this->getRegions();
+				$this->variables->regions = $this->getRegions();
 
-                $this->variables->protocol = $this->getProtocolByReportId(
-                    $report['id']
-                );
+				$this->variables->protocol = $this->getProtocolByReportId(
+					$report['id']
+				);
 
-                $this->variables->files = $this->getFilesByReportId(
-                    $report['id']
-                );
+				$this->variables->files = $this->getFilesByReportId(
+					$report['id']
+				);
 
-                $this->variables->rsvi_sochi = $this->getSochiReportSti(
-                    $uin
-                );
-            }
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+				$this->variables->rsvi_sochi = $this->getSochiReportSti(
+					$uin
+				);
+			}
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

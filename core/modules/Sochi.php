@@ -1,50 +1,63 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class Sochi extends \Environment\Core\Module {
-    protected $config = [
-        'template'   => 'layouts/Sochi/Default.html',
-        'listen'     => 'action'
-    ];
+	protected $config = [
+		'template' => 'layouts/Sochi/Default.html',
+		'listen'   => 'action'
+	];
 
-    protected function getMonthName($number){
-        switch($number){
-            case 1:  return 'Январь';
-            case 2:  return 'Февраль';
-            case 3:  return 'Март';
-            case 4:  return 'Апрель';
-            case 5:  return 'Май';
-            case 6:  return 'Июнь';
-            case 7:  return 'Июль';
-            case 8:  return 'Август';
-            case 9:  return 'Сентябрь';
-            case 10: return 'Октябрь';
-            case 11: return 'Ноябрь';
-            case 12: return 'Декабрь';
-        }
+	protected function getMonthName( $number ) {
+		switch ( $number ) {
+			case 1:
+				return 'Январь';
+			case 2:
+				return 'Февраль';
+			case 3:
+				return 'Март';
+			case 4:
+				return 'Апрель';
+			case 5:
+				return 'Май';
+			case 6:
+				return 'Июнь';
+			case 7:
+				return 'Июль';
+			case 8:
+				return 'Август';
+			case 9:
+				return 'Сентябрь';
+			case 10:
+				return 'Октябрь';
+			case 11:
+				return 'Ноябрь';
+			case 12:
+				return 'Декабрь';
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public function getUser($inn, $uid){
-        $params = [];
-        $values = [];
+	public function getUser( $inn, $uid ) {
+		$params = [];
+		$values = [];
 
-        if($uid){
-            $params[] = '("b-u"."uid" = :uid)';
+		if ( $uid ) {
+			$params[] = '("b-u"."uid" = :uid)';
 
-            $values['uid'] = $uid;
-        } elseif($inn) {
-            $params[] = '("b-u"."inn" = :inn)';
+			$values['uid'] = $uid;
+		} elseif ( $inn ) {
+			$params[] = '("b-u"."inn" = :inn)';
 
-            $values['inn'] = $inn;
-        }
+			$values['inn'] = $inn;
+		}
 
-        $params = $params ? 'WHERE ' . implode(' AND ', $params) : '';
+		$params = $params ? 'WHERE ' . implode( ' AND ', $params ) : '';
 
-        $sql = <<<SQL
+		$sql = <<<SQL
 SELECT
     "b-u"."id" as "id",
     "b-u"."uid" as "uid",
@@ -56,15 +69,15 @@ FROM
 {$params}
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute($values);
+		$stmt->execute( $values );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    public function getAccruals($inn){
-        $sql = <<<SQL
+	public function getAccruals( $inn ) {
+		$sql = <<<SQL
 SELECT
     "b-s"."name" as "name",
     TO_CHAR("b-a"."date_time", 'DD.MM.YYYY HH24:MI:SS') as "date-time",
@@ -81,17 +94,17 @@ ORDER BY
     "b-a"."date_time" DESC;
 SQL;
 
-        $stmt = Connections::getConnection('Billing')->prepare($sql);
+		$stmt = Connections::getConnection( 'Billing' )->prepare( $sql );
 
-        $stmt->execute([
-            'inn' => $inn
-        ]);
+		$stmt->execute( [
+			'inn' => $inn
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    public function getBills($inn){
-        $sql = <<<SQL
+	public function getBills( $inn ) {
+		$sql = <<<SQL
 SELECT
     "b-sc"."name" as "subscriber",
     "b-sv"."name" as "service",
@@ -112,17 +125,17 @@ ORDER BY
     "b-b"."date_time" DESC;
 SQL;
 
-        $stmt = Connections::getConnection('Billing')->prepare($sql);
+		$stmt = Connections::getConnection( 'Billing' )->prepare( $sql );
 
-        $stmt->execute([
-            'inn' => $inn
-        ]);
+		$stmt->execute( [
+			'inn' => $inn
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    public function getBalance($inn){
-        $sql = <<<SQL
+	public function getBalance( $inn ) {
+		$sql = <<<SQL
 SELECT
     COALESCE("b-a"."payed", 0) - COALESCE("b-b"."wasted", 0)
 FROM
@@ -151,17 +164,17 @@ WHERE
     ("b-c"."inn" = :inn)
 SQL;
 
-        $stmt = Connections::getConnection('Billing')->prepare($sql);
+		$stmt = Connections::getConnection( 'Billing' )->prepare( $sql );
 
-        $stmt->execute([
-            'inn' => $inn
-        ]);
+		$stmt->execute( [
+			'inn' => $inn
+		] );
 
-        return $stmt->fetchColumn();
-    }
+		return $stmt->fetchColumn();
+	}
 
-    public function getSfReports($inn, $uid){
-        $sql = <<<SQL
+	public function getSfReports( $inn, $uid ) {
+		$sql = <<<SQL
 SELECT
     "r"."uin" as "uin",
     TO_CHAR("r"."input_date", 'DD.MM.YYYY HH24:MI:SS') as "input-date-time",
@@ -213,18 +226,18 @@ ORDER BY
     "r"."input_date" DESC;
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute([
-            'uid' => $uid,
-            'inn' => $inn
-        ]);
+		$stmt->execute( [
+			'uid' => $uid,
+			'inn' => $inn
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    public function getStiReports($inn, $uid){
-        $sql = <<<SQL
+	public function getStiReports( $inn, $uid ) {
+		$sql = <<<SQL
 SELECT
     "f"."form_name" as "form",
     COALESCE("t"."name", '-') as "type",
@@ -308,18 +321,18 @@ ORDER BY
     "f"."form_name";
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute([
-            'uid' => $uid,
-            'inn' => $inn
-        ]);
+		$stmt->execute( [
+			'uid' => $uid,
+			'inn' => $inn
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    public function getNscReports($uid){
-        $sql = <<<SQL
+	public function getNscReports( $uid ) {
+		$sql = <<<SQL
 SELECT
     "f"."form_name" as "form",
     TO_CHAR("r"."input_date", 'DD.MM.YYYY HH24:MI:SS') as "input-date-time",
@@ -370,68 +383,71 @@ ORDER BY
     "f"."form_name";
 SQL;
 
-        $stmt = Connections::getConnection('Sochi')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-        $stmt->execute([
-            'uid' => $uid
-        ]);
+		$stmt->execute( [
+			'uid' => $uid
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-sochi.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-sochi.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $inn = isset($_GET['inn']) ? $_GET['inn'] : null;
-        $uid = isset($_GET['uid']) ? $_GET['uid'] : null;
+		$inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
+		$uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
 
-        if(!($inn || $uid)){
-            return;
-        }
+		if ( ! ( $inn || $uid ) ) {
+			return;
+		}
 
-        if($inn && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $inn)) {
-            $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
-            return;
-        }
+		if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
+			$this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
 
-        if($uid && !preg_match('/^\d{23,23}$/', $uid)) {
-            $this->variables->errors[] = 'UID должен состоять из 23 цифр';
-            return;
-        }
+			return;
+		}
 
-        try {
-            $user = $this->getUser($inn, $uid);
+		if ( $uid && ! preg_match( '/^\d{23,23}$/', $uid ) ) {
+			$this->variables->errors[] = 'UID должен состоять из 23 цифр';
 
-            if(!$user){
-                throw new \Exception('Пользователь не найден');
-            }
+			return;
+		}
 
-            $this->variables->user = &$user;
+		try {
+			$user = $this->getUser( $inn, $uid );
 
-            $this->variables->accruals = $this->getAccruals($user['inn']);
-            $this->variables->bills    = $this->getBills($user['inn']);
-            $this->variables->balance  = $this->getBalance($user['inn']);
+			if ( ! $user ) {
+				throw new \Exception( 'Пользователь не найден' );
+			}
 
-            $this->variables->sfReports = $this->getSfReports(
-                $user['inn'],
-                $user['uid']
-            );
+			$this->variables->user = &$user;
 
-            $this->variables->stiReports = $this->getStiReports(
-                $user['inn'],
-                $user['uid']
-            );
+			$this->variables->accruals = $this->getAccruals( $user['inn'] );
+			$this->variables->bills    = $this->getBills( $user['inn'] );
+			$this->variables->balance  = $this->getBalance( $user['inn'] );
 
-            $this->variables->nscReports = $this->getNscReports(
-                $user['uid']
-            );
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+			$this->variables->sfReports = $this->getSfReports(
+				$user['inn'],
+				$user['uid']
+			);
+
+			$this->variables->stiReports = $this->getStiReports(
+				$user['inn'],
+				$user['uid']
+			);
+
+			$this->variables->nscReports = $this->getNscReports(
+				$user['uid']
+			);
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

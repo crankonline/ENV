@@ -1,32 +1,33 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class CuratorSf extends \Environment\Core\Module {
-    const
-        DEPLOYMENT_ADDRESS = 'curator.sf.kg';
+	const
+		DEPLOYMENT_ADDRESS = 'curator.sf.kg';
 
-    const
-        REPORT_STATUS_ACCEPTED    = 10,
-        REPORT_STATUS_DECLINED    = 20,
-        REPORT_STATUS_UNPROCESSED = 30;
+	const
+		REPORT_STATUS_ACCEPTED = 10,
+		REPORT_STATUS_DECLINED = 20,
+		REPORT_STATUS_UNPROCESSED = 30;
 
-    protected
-        $config = [
-            'template' => 'layouts/CuratorSf/Default.html',
-            'listen'   => 'action'
-        ],
-        $fileMap = [
-            1 => 'fileshare/data/',
-            2 => 'fileshare/rendered/',
-            3 => 'fileshare/notes/',
-            4 => 'fileshare/images/',
-            5 => 'fileshare/images/'
-        ];
+	protected
+		$config = [
+		'template' => 'layouts/CuratorSf/Default.html',
+		'listen'   => 'action'
+	],
+		$fileMap = [
+		1 => 'fileshare/data/',
+		2 => 'fileshare/rendered/',
+		3 => 'fileshare/notes/',
+		4 => 'fileshare/images/',
+		5 => 'fileshare/images/'
+	];
 
-    protected function getReportByUin($uin){
-        $sql = <<<SQL
+	protected function getReportByUin( $uin ) {
+		$sql = <<<SQL
 SELECT
     "r-rpt"."IDReport" as "id",
     "r-pi"."Inn" as "payer-imported-inn",
@@ -122,17 +123,17 @@ WHERE
     ("r-rpt"."Uin" = :uin);
 SQL;
 
-        $stmt = Connections::getConnection('Sf')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sf' )->prepare( $sql );
 
-        $stmt->execute([
-            'uin' => $uin
-        ]);
+		$stmt->execute( [
+			'uin' => $uin
+		] );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function getFilesByReportId($reportId){
-        $sql = <<<SQL
+	protected function getFilesByReportId( $reportId ) {
+		$sql = <<<SQL
 SELECT
     "r-rf"."IDReportFile" as "id",
     "r-rft"."IDReportFileType" as "report-file-type-id",
@@ -151,43 +152,44 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Sf')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sf' )->prepare( $sql );
 
-        $stmt->execute([
-            'reportId' => $reportId
-        ]);
+		$stmt->execute( [
+			'reportId' => $reportId
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-curator.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-curator.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $uin = isset($_GET['uin']) ? $_GET['uin'] : null;
+		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
 
-        $this->variables->cUin = $uin;
+		$this->variables->cUin = $uin;
 
-        if(empty($uin)){
-            return;
-        }
+		if ( empty( $uin ) ) {
+			return;
+		}
 
-        try {
-            $report = $this->getReportByUin($uin);
+		try {
+			$report = $this->getReportByUin( $uin );
 
-            $this->variables->report = &$report;
+			$this->variables->report = &$report;
 
-            if($report){
-                $this->variables->files = $this->getFilesByReportId(
-                    $report['id']
-                );
-            }
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+			if ( $report ) {
+				$this->variables->files = $this->getFilesByReportId(
+					$report['id']
+				);
+			}
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

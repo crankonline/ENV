@@ -2,46 +2,49 @@
 /**
  * Reregister
  */
+
 namespace Environment\Services;
 
 use Environment\DataLayers\FileStore\Files as FilesSchema;
 
 class StatementFiles extends \Unikum\Core\Module {
-    protected $config = [
-        'render' => false
-    ];
+	protected $config = [
+		'render' => false
+	];
 
-    protected function main(){
-        if(empty($_GET['id'])){
-            return http_response_code(404);
-        }
+	protected function main() {
+		if ( empty( $_GET['id'] ) ) {
+			return http_response_code( 404 );
+		}
 
-        try {
-            $id = $_GET['id'];
+		try {
+			$id = $_GET['id'];
 
-            $dlStore = new FilesSchema\Store();
+			$dlStore = new FilesSchema\Store();
 
-            $file = $dlStore->getById($id);
+			$file = $dlStore->getById( $id );
 
-            if(!$file){
-                return http_response_code(404);
-            }
+			if ( ! $file ) {
+				return http_response_code( 404 );
+			}
 
-            $alias = addslashes($file['name']);
+			$alias = addslashes( $file['name'] );
 
-            header('Content-Length: ' . $file['size']);
-            header('Accept-Ranges: bytes');
-            header('Connection: close');
-            header('Content-Type: image/jpeg');
-            header('Content-Disposition: inline; filename="' . $alias . '"');
-            //header('Content-Type: application/force-download');
-            //header('Content-Disposition: attachment; filename="' . $alias . '"');
+			header( 'Content-Length: ' . $file['size'] );
+			header( 'Accept-Ranges: bytes' );
+			header( 'Connection: close' );
+			header( 'Content-Type: image/jpeg' );
+			header( 'Content-Disposition: inline; filename="' . $alias . '"' );
+			//header('Content-Type: application/force-download');
+			//header('Content-Disposition: attachment; filename="' . $alias . '"');
 
-            echo base64_decode($file['content']);
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            return http_response_code(500);
-        }
-    }
+			echo base64_decode( $file['content'] );
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+
+			return http_response_code( 500 );
+		}
+	}
 }
+
 ?>

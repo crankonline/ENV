@@ -1,19 +1,20 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class ClientsComplexList extends \Environment\Core\Module {
-    const
-        ROLES_CONSULTING = 5,
-        ROLES_ROOT       = 6;
+	const
+		ROLES_CONSULTING = 5,
+		ROLES_ROOT = 6;
 
-    protected $config = [
-        'template' => 'layouts/ClientsComplexList/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/ClientsComplexList/Default.html'
+	];
 
-    protected function getData(){
-        $sql = <<<SQL
+	protected function getData() {
+		$sql = <<<SQL
 SELECT DISTINCT
     "c-pspt"."Series" as "passport-series",
     "c-pspt"."Number" as "passport-number",
@@ -73,27 +74,28 @@ ORDER BY
     3;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute([
-            'repRoot'       => self::ROLES_ROOT,
-            'repConsulting' => self::ROLES_CONSULTING
-        ]);
+		$stmt->execute( [
+			'repRoot'       => self::ROLES_ROOT,
+			'repConsulting' => self::ROLES_CONSULTING
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-clients-complex-list.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-clients-complex-list.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        try {
-            $this->variables->data = $this->getData();
-        } catch(\Exception $e) {
-	        \Sentry\captureException($e);
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+		try {
+			$this->variables->data = $this->getData();
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>
