@@ -53,6 +53,5 @@ define('SESSION_ACTION_INTERVAL_KEY', 'interval');
 
 define('SESSION_USER_KEY', 'user');
 
-define('API_SUBSCRIBER_TOKEN', '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
 
 ?>

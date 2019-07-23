@@ -8,6 +8,8 @@ require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 use Unikum\Core\AutoLoaders\Psr4 as Loader,
     Unikum\Core\Dbms\ConnectionManager as Connections;
 
+define('API_SUBSCRIBER_TOKEN', '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
+
 Loader::register();
 
 Loader::map('Unikum\\Core', PATH_BASE_CLASSES);
