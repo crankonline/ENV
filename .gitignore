@@ -10,3 +10,7 @@ core/soap-clients/Api/RequisitesMeta\.php
 core/soap-clients/PkiServiceUBR\.php
 
 core/soap-clients/PkiService\.php
+
+composer\.lock
+
+composer\.phar
