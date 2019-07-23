@@ -3,6 +3,7 @@ namespace Environment;
 
 require_once 'core/consts.php';
 require_once 'core/classes/AutoLoaders/Psr4.php';
+require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 use Unikum\Core\AutoLoaders\Psr4 as Loader,
     Unikum\Core\Dbms\ConnectionManager as Connections;
@@ -12,12 +13,16 @@ Loader::register();
 Loader::map('Unikum\\Core', PATH_BASE_CLASSES);
 
 Loader::map(__NAMESPACE__ . '\\Core', PATH_DERIVED_CLASSES);
+Loader::map(__NAMESPACE__ . '\\Traits', PATH_DERIVED_TRAITS);
 Loader::map(__NAMESPACE__ . '\\Modules', PATH_MODULES);
+Loader::map(__NAMESPACE__ . '\\Services', PATH_JSON_SERVICES);
 Loader::map(__NAMESPACE__ . '\\DataLayers', PATH_DATA_LAYERS);
 Loader::map(__NAMESPACE__ . '\\Vendors', PATH_VENDORS);
 Loader::map(__NAMESPACE__ . '\\Soap\\Clients', PATH_SOAP_CLIENTS);
 Loader::map(__NAMESPACE__ . '\\Soap\\Services', PATH_SOAP_SERVICES);
 Loader::map(__NAMESPACE__ . '\\Soap\\Types', PATH_SOAP_TYPES);
+
+\Sentry\init(['dsn' => 'http://0593a6c7c11d4136b9fc1cf5050d1ddc@sentry.dostek.kg/5' ]);
 
 ini_set('soap.wsdl_cache_enabled', 0);
 
@@ -145,6 +150,15 @@ Connections::configure(
         'user'     => 'postgres',
         'password' => '1qaz2WSX$$'
     ]
+);
+
+Connections::configure(
+	'FileStore',
+	[
+		'dsn'      => "pgsql:host=scans.dostek.kg;port=5432;dbname=OnlineStatementFiles;options='--client_encoding=UTF8'",
+		'user'     => 'site',
+		'password' => '255c80917457f05fd8b936899116b58b'
+	]
 );
 ?>
 
