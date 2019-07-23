@@ -74,7 +74,9 @@ $migrate = new migrate1();
 $t = $migrate->insertModule();
 $migrate->insertModuleAccess($t);
 
-print_r($t);
+if(isset($t)) {
+	print_r( "migrate succes - " . $t );
+}
 
 
 
