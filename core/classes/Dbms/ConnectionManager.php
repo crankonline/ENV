@@ -1,77 +1,83 @@
 <?php
+
 namespace Unikum\Core\Dbms;
 
 final class ConnectionManager {
-    public static
-        $configurations = [],
-        $connections    = [];
+	public static
+		$configurations = [],
+		$connections = [];
 
-    private function __construct(){}
-    private function __clone(){}
+	private function __construct() {
+	}
 
-    public static function configure($name, array $config){
-        self::$configurations[$name] = $config;
-    }
+	private function __clone() {
+	}
 
-    public static function unconfigure($name = null){
-        if($name === null){
-            $names = array_keys(self::$configurations);
+	public static function configure( $name, array $config ) {
+		self::$configurations[ $name ] = $config;
+	}
 
-            foreach($names as $name){
-                self::unconfigure($name);
-            }
-        } else {
-            self::$configurations[$name] = null;
+	public static function unconfigure( $name = null ) {
+		if ( $name === null ) {
+			$names = array_keys( self::$configurations );
 
-            unset(self::$configurations[$name]);
-        }
-    }
+			foreach ( $names as $name ) {
+				self::unconfigure( $name );
+			}
+		} else {
+			self::$configurations[ $name ] = null;
 
-    public static function connect($name){
-        if(!isset(self::$configurations[$name])){
-            throw new \Exception("Connection \"{$name}\" is not configured.");
-        }
+			unset( self::$configurations[ $name ] );
+		}
+	}
 
-        self::disconnect($name);
+	public static function connect( $name ) {
+		if ( ! isset( self::$configurations[ $name ] ) ) {
+			throw new \Exception( "Connection \"{$name}\" is not configured." );
+		}
 
-        $config = &self::$configurations[$name];
+		self::disconnect( $name );
 
-        try {
-            $connection = new \PDO($config['dsn'], $config['user'], $config['password']);
-            $connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-            $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch(\PDOException $e) {
-            throw new \Exception("Connection \"{$name}\" unestablished.");
-        }
+		$config = &self::$configurations[ $name ];
 
-        self::$connections[$name] = $connection;
-    }
+		try {
+			$connection = new \PDO( $config['dsn'], $config['user'], $config['password'] );
+			$connection->setAttribute( \PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC );
+			$connection->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			throw new \Exception( "Connection \"{$name}\" unestablished." );
+		}
 
-    public static function disconnect($name = null){
-        if($name === null){
-            $names = array_keys(self::$connections);
+		self::$connections[ $name ] = $connection;
+	}
 
-            foreach($names as $name){
-                self::disconnect($name);
-            }
-        } elseif (isset(self::$connections[$name])) {
-            self::$connections[$name] = null;
+	public static function disconnect( $name = null ) {
+		if ( $name === null ) {
+			$names = array_keys( self::$connections );
 
-            unset(self::$connections[$name]);
-        }
-    }
+			foreach ( $names as $name ) {
+				self::disconnect( $name );
+			}
+		} elseif ( isset( self::$connections[ $name ] ) ) {
+			self::$connections[ $name ] = null;
 
-    public static function shutdown(){
-        self::unconfigure();
-        self::disconnect();
-    }
+			unset( self::$connections[ $name ] );
+		}
+	}
 
-    public static function getConnection($name){
-        if(!isset(self::$connections[$name])){
-            self::connect($name);
-        }
+	public static function shutdown() {
+		self::unconfigure();
+		self::disconnect();
+	}
 
-        return self::$connections[$name];
-    }
+	public static function getConnection( $name ) {
+		if ( ! isset( self::$connections[ $name ] ) ) {
+			self::connect( $name );
+		}
+
+		return self::$connections[ $name ];
+	}
 }
+
 ?>

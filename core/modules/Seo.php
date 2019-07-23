@@ -1,27 +1,28 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class Seo extends \Environment\Core\Module {
-    protected $config = [
-        'template'   => 'layouts/Seo/Default.html',
-        'listen'     => 'action'
-    ];
+	protected $config = [
+		'template' => 'layouts/Seo/Default.html',
+		'listen'   => 'action'
+	];
 
-    protected function getUser($inn){
-        $params = [];
-        $values = [];
+	protected function getUser( $inn ) {
+		$params = [];
+		$values = [];
 
-        if($inn) {
-            $params[] = '"su-u"."inn" = :inn';
+		if ( $inn ) {
+			$params[] = '"su-u"."inn" = :inn';
 
-            $values['inn'] = $inn;
-        }
+			$values['inn'] = $inn;
+		}
 
-        $params = $params ? 'WHERE ' . implode(' AND ', $params) : null;
+		$params = $params ? 'WHERE ' . implode( ' AND ', $params ) : null;
 
-        $sql = <<<SQL
+		$sql = <<<SQL
 SELECT
     "su-u"."id" as "id",
     "su-u"."inn" as "inn",
@@ -152,41 +153,44 @@ FROM
 {$params}
 SQL;
 
-        $stmt = Connections::getConnection('SeoBaseWeb')->prepare($sql);
+		$stmt = Connections::getConnection( 'SeoBaseWeb' )->prepare( $sql );
 
-        $stmt->execute($values);
+		$stmt->execute( $values );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-seo.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-seo.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $inn = isset($_GET['inn']) ? $_GET['inn'] : null;
+		$inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
 
-        if(!$inn){
-            return;
-        }
+		if ( ! $inn ) {
+			return;
+		}
 
-        if($inn && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $inn)) {
-            $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
-            return;
-        }
+		if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
+			$this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
 
-        try {
-            $user = $this->getUser($inn);
+			return;
+		}
 
-            if(!$user){
-                throw new \Exception('Пользователь не найден');
-            }
+		try {
+			$user = $this->getUser( $inn );
 
-            $this->variables->user = &$user;
-        } catch(\Exception $e) {
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+			if ( ! $user ) {
+				throw new \Exception( 'Пользователь не найден' );
+			}
+
+			$this->variables->user = &$user;
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>

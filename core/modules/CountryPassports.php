@@ -1,46 +1,47 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections,
-    Unikum\Core\DataLayer as Datalayer;
+	Unikum\Core\DataLayer as Datalayer;
 
 class CountryPassports extends \Environment\Core\Module {
-    protected $config = [
-        'template'   => 'layouts/CountryPassports/Default.html',
-        'listen'     => 'action'
-    ];
+	protected $config = [
+		'template' => 'layouts/CountryPassports/Default.html',
+		'listen'   => 'action'
+	];
 
-    protected function getPassports(){
-        $params = [ "(document_series = 'AN')" ];
-        $values = [];
+	protected function getPassports() {
+		$params = [ "(document_series = 'AN')" ];
+		$values = [];
 
-        if(!empty($_POST['surname'])){
-            $params[] = "(person_lastname_kyr LIKE :surname)";
+		if ( ! empty( $_POST['surname'] ) ) {
+			$params[] = "(person_lastname_kyr LIKE :surname)";
 
-            $values['surname'] = '%' . $_POST['surname'] . '%';
-        }
+			$values['surname'] = '%' . $_POST['surname'] . '%';
+		}
 
-        if(!empty($_POST['name'])){
-            $params[] = "(person_firstname_kyr LIKE :name)";
+		if ( ! empty( $_POST['name'] ) ) {
+			$params[] = "(person_firstname_kyr LIKE :name)";
 
-            $values['name'] = '%' . $_POST['name'] . '%';
-        }
+			$values['name'] = '%' . $_POST['name'] . '%';
+		}
 
-        if(!empty($_POST['middle-name'])){
-            $params[] = "(person_patronymic_kyr LIKE :middleName)";
+		if ( ! empty( $_POST['middle-name'] ) ) {
+			$params[] = "(person_patronymic_kyr LIKE :middleName)";
 
-            $values['middleName'] = '%' . $_POST['middle-name'] . '%';
-        }
+			$values['middleName'] = '%' . $_POST['middle-name'] . '%';
+		}
 
-        if(!$values){
-            return null;
-        }
+		if ( ! $values ) {
+			return null;
+		}
 
-        $params[] = '(document_expiredate > GETDATE())';
+		$params[] = '(document_expiredate > GETDATE())';
 
-        $params = 'WHERE ' . implode(' AND ', $params);
+		$params = 'WHERE ' . implode( ' AND ', $params );
 
-        $sql = <<<SQL
+		$sql = <<<SQL
 SELECT
     person_idnp,
     LOWER(person_firstname_kyr) as person_firstname_kyr,
@@ -57,28 +58,30 @@ FROM
 {$params};
 SQL;
 
-        set_time_limit(0);
+		set_time_limit( 0 );
 
-        $stmt = Connections::getConnection('Sarp')->prepare($sql);
+		$stmt = Connections::getConnection( 'Sarp' )->prepare( $sql );
 
-        $stmt->execute($values);
+		$stmt->execute( $values );
 
-        return $stmt;
-    }
+		return $stmt;
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-country-passports.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-country-passports.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        if($_POST){
-            try {
-                $this->variables->passports = $this->getPassports();
-            } catch(\Exception $e) {
-                $this->variables->errors[] = $e->getMessage();
-            }
-        }
-    }
+		if ( $_POST ) {
+			try {
+				$this->variables->passports = $this->getPassports();
+			} catch ( \Exception $e ) {
+				\Sentry\captureException( $e );
+				$this->variables->errors[] = $e->getMessage();
+			}
+		}
+	}
 }
+
 ?>

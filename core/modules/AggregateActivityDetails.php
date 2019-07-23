@@ -1,15 +1,16 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class AggregateActivityDetails extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/AggregateActivityDetails/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/AggregateActivityDetails/Default.html'
+	];
 
-    protected function getActivityInfo($id){
-        $sql = <<<SQL
+	protected function getActivityInfo( $id ) {
+		$sql = <<<SQL
 SELECT
     "c-avt"."IDActivity" as "activity-id",
     "c-avt"."Name" as "activity-name",
@@ -33,17 +34,17 @@ GROUP BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute([
-            'id' => $id
-        ]);
+		$stmt->execute( [
+			'id' => $id
+		] );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function getClientsByActivity($id){
-        $sql = <<<SQL
+	protected function getClientsByActivity( $id ) {
+		$sql = <<<SQL
 SELECT
     "u-u"."Value" as "uid",
     "c-rqst"."Inn" as "inn",
@@ -74,49 +75,55 @@ ORDER BY
     3;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute([
-            'id' => $id
-        ]);
+		$stmt->execute( [
+			'id' => $id
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-aggregate-activities.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-aggregate-activities.css';
 
-        $this->context->view = static::AK_AGGREGATE_ACTIVITIES;
+		$this->context->view = static::AK_AGGREGATE_ACTIVITIES;
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $id = isset($_GET['id']) ? abs((int)$_GET['id']) : null;
+		$id = isset( $_GET['id'] ) ? abs( (int) $_GET['id'] ) : null;
 
-        if(empty($id)){
-            $this->variables->errors[] = 'Вид деятельности не задан.';
-        }
+		if ( empty( $id ) ) {
+			$this->variables->errors[] = 'Вид деятельности не задан.';
+		}
 
-        try {
-            $activity = $this->getActivityInfo($id);
-        } catch(\Exception $e) {
-            $this->variables->errors[] = $e->getMessage();
-            return;
-        }
+		try {
+			$activity = $this->getActivityInfo( $id );
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
 
-        if(!$activity){
-            $this->variables->errors[] = 'Вид деятельности не найден.';
-            return;
-        }
+			return;
+		}
 
-        try {
-            $clients = $this->getClientsByActivity($id);
-        } catch(\Exception $e) {
-            $this->variables->errors[] = $e->getMessage();
-            return;
-        }
+		if ( ! $activity ) {
+			$this->variables->errors[] = 'Вид деятельности не найден.';
 
-        $this->variables->activity = &$activity;
-        $this->variables->clients  = &$clients;
-    }
+			return;
+		}
+
+		try {
+			$clients = $this->getClientsByActivity( $id );
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+
+			return;
+		}
+
+		$this->variables->activity = &$activity;
+		$this->variables->clients  = &$clients;
+	}
 }
+
 ?>

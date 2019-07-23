@@ -1,4 +1,5 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections,
@@ -6,7 +7,7 @@ use Unikum\Core\Dbms\ConnectionManager as Connections,
 
 class ClientsList extends \Environment\Core\Module {
 	const
-		ROLES_CHIEF      = 1,
+		ROLES_CHIEF = 1,
 		ROLES_ACCOUNTANT = 2;
 
 	const ROWS_PER_PAGE = 30;
@@ -21,8 +22,8 @@ class ClientsList extends \Environment\Core\Module {
 		]
 	];
 
-	protected function getClients(array $filters, $limit = null, $offset = null){
-		$sql = <<<SQL
+	protected function getClients( array $filters, $limit = null, $offset = null ) {
+		$sql  = <<<SQL
 SELECT
     COUNT("IDRequisites")
 FROM
@@ -31,26 +32,26 @@ WHERE
 	"r-s"."IsActive" = TRUE;
 
 SQL;
-		$stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
 		$stmt->execute();
 
 		$count = $stmt->fetchColumn();
 
 		$limits = null;
-		if($limit !== null){
+		if ( $limit !== null ) {
 			$limits[] = 'LIMIT :limit';
 
 			$values['limit'] = $limit;
 
-			if($offset !== null){
+			if ( $offset !== null ) {
 				$limits[] = 'OFFSET :offset';
 
 				$values['offset'] = $offset;
 			}
 		}
 
-		$limits = !empty($limits) ? implode(PHP_EOL, $limits) : '';
+		$limits = ! empty( $limits ) ? implode( PHP_EOL, $limits ) : '';
 
 		$sql = <<<SQL
 SELECT
@@ -144,9 +145,9 @@ ORDER BY
   {$limits};
 SQL;
 
-		$stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-		if($limit !== null) {
+		if ( $limit !== null ) {
 			$stmt->execute( [
 				'chiefRoleId'      => self::ROLES_CHIEF,
 				'accountantRoleId' => self::ROLES_ACCOUNTANT,
@@ -155,6 +156,7 @@ SQL;
 				'offset'           => $offset
 			] );
 			$rows = $stmt->fetchAll();
+
 			return [ &$count, &$rows ];
 		} else {
 			$stmt->execute( [
@@ -162,28 +164,29 @@ SQL;
 				'accountantRoleId' => self::ROLES_ACCOUNTANT,
 				'subscriberId'     => self::SUBSCRIBER_ID
 			] );
+
 			return $stmt;
 		}
 
 
 	}
 
-	protected function main(){
+	protected function main() {
 		$this->context->css[] = 'resources/css/ui-misc-form.css';
 		$this->context->css[] = 'resources/css/ui-clients-list.css';
 
 		$this->variables->errors = [];
 
 
-		$page   = isset($_GET['page']) ? (abs((int)$_GET['page']) ?: 1) : 1;
+		$page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
 		$limit  = self::ROWS_PER_PAGE;
-		$offset = ($page - 1) * $limit;
+		$offset = ( $page - 1 ) * $limit;
 
 		try {
-			if($_POST){
-				if (isset($_POST["client-list-all"])){
+			if ( $_POST ) {
+				if ( isset( $_POST["client-list-all"] ) ) {
 					$this->variables->count   = 0;
-					$this->variables->clients = $this->getClients( [], null, null);
+					$this->variables->clients = $this->getClients( [], null, null );
 				}
 			} else {
 //            $this->variables->clients = $this->getClients();
@@ -195,9 +198,11 @@ SQL;
 				$this->variables->count   = $count;
 				$this->variables->clients = &$clients;
 			}
-		} catch(\Exception $e) {
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
 		}
 	}
 }
+
 ?>
