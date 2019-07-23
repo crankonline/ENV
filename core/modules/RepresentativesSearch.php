@@ -1,44 +1,45 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class RepresentativesSearch extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/RepresentativesSearch/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/RepresentativesSearch/Default.html'
+	];
 
-    protected function getData(array $filters){
-        $params = [];
-        $values = [];
+	protected function getData( array $filters ) {
+		$params = [];
+		$values = [];
 
-        if(!empty($filters['surname'])){
-            $params[] = '("c-rp"."Surname" LIKE :rSurname)';
+		if ( ! empty( $filters['surname'] ) ) {
+			$params[] = '("c-rp"."Surname" LIKE :rSurname)';
 
-            $values['rSurname'] = $filters['surname'];
-        }
+			$values['rSurname'] = $filters['surname'];
+		}
 
-        if(!empty($filters['name'])){
-            $params[] = '("c-rp"."Name" LIKE :rName)';
+		if ( ! empty( $filters['name'] ) ) {
+			$params[] = '("c-rp"."Name" LIKE :rName)';
 
-            $values['rName'] = $filters['name'];
-        }
+			$values['rName'] = $filters['name'];
+		}
 
-        if(!empty($filters['middle-name'])){
-            $params[] = '("c-rp"."MiddleName" LIKE :rMiddleName)';
+		if ( ! empty( $filters['middle-name'] ) ) {
+			$params[] = '("c-rp"."MiddleName" LIKE :rMiddleName)';
 
-            $values['rMiddleName'] = $filters['middle-name'];
-        }
+			$values['rMiddleName'] = $filters['middle-name'];
+		}
 
-        if(!$params){
-            return;
-        }
+		if ( ! $params ) {
+			return;
+		}
 
-        $params[] = '("c-p"."SubscriberID" = 1)';
+		$params[] = '("c-p"."SubscriberID" = 1)';
 
-        $params = $params ? 'WHERE ' . implode(' AND ', $params) : '';
+		$params = $params ? 'WHERE ' . implode( ' AND ', $params ) : '';
 
-        $sql = <<<SQL
+		$sql = <<<SQL
 SELECT
     "c-p"."IDPassport" as "passport-id",
     "c-p"."Series" as "passport-series",
@@ -68,27 +69,29 @@ ORDER BY
     "c-rp"."Surname", "c-rp"."Name", "c-rp"."MiddleName";
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute($values);
+		$stmt->execute( $values );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-stripes.css';
-        $this->context->css[] = 'resources/css/ui-representatives-search.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-stripes.css';
+		$this->context->css[] = 'resources/css/ui-representatives-search.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        if($_POST){
-            try {
-                $this->variables->data = $this->getData($_POST);
-            } catch(\Exception $e) {
-                $this->variables->errors[] = $e->getMessage();
-            }
-        }
-    }
+		if ( $_POST ) {
+			try {
+				$this->variables->data = $this->getData( $_POST );
+			} catch ( \Exception $e ) {
+				\Sentry\captureException( $e );
+				$this->variables->errors[] = $e->getMessage();
+			}
+		}
+	}
 }
+
 ?>

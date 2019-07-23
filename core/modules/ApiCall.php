@@ -1,15 +1,16 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class ApiCall extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/ApiCall/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/ApiCall/Default.html'
+	];
 
-    protected function getCall($id){
-        $sql = <<<SQL
+	protected function getCall( $id ) {
+		$sql = <<<SQL
 SELECT
     "a-smc"."IDServiceMethodCall" as "id",
     "a-smc"."ServiceMethodCallID" as "parent-id",
@@ -46,17 +47,17 @@ WHERE
     ("a-smc"."IDServiceMethodCall" = :id);
 SQL;
 
-        $stmt = Connections::getConnection('Api')->prepare($sql);
+		$stmt = Connections::getConnection( 'Api' )->prepare( $sql );
 
-        $stmt->execute([
-            'id' => $id
-        ]);
+		$stmt->execute( [
+			'id' => $id
+		] );
 
-        return $stmt->fetch();
-    }
+		return $stmt->fetch();
+	}
 
-    protected function getCallArguments($id){
-        $sql = <<<SQL
+	protected function getCallArguments( $id ) {
+		$sql = <<<SQL
 SELECT
     "IDServiceMethodCallArg" as "id",
     "Value" as "value"
@@ -68,41 +69,45 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Api')->prepare($sql);
+		$stmt = Connections::getConnection( 'Api' )->prepare( $sql );
 
-        $stmt->execute([
-            'callId' => $id
-        ]);
+		$stmt->execute( [
+			'callId' => $id
+		] );
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->view = static::AK_API_CALLS;
+	protected function main() {
+		$this->context->view = static::AK_API_CALLS;
 
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
+		$this->context->css[] = 'resources/css/ui-misc-form.css';
+		$this->context->css[] = 'resources/css/ui-misc-form-colored.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        $id = isset($_GET['id']) ? abs((int)$_GET['id']) : null;
+		$id = isset( $_GET['id'] ) ? abs( (int) $_GET['id'] ) : null;
 
-        if(!$id){
-            $this->variables->errors[] = 'Вызов не задан.';
-            return;
-        }
+		if ( ! $id ) {
+			$this->variables->errors[] = 'Вызов не задан.';
 
-        try {
-            $this->variables->call = $this->getCall($id);
-        } catch(\PDOException $e) {
-            $this->variables->errors[] = 'Произошла ошибка при получении информации о вызове.';
-        }
+			return;
+		}
 
-        try {
-            $this->variables->arguments = $this->getCallArguments($id);
-        } catch(\PDOException $e) {
-            $this->variables->errors[] = 'Произошла ошибка при получении списка аргументов вызова.';
-        }
-    }
+		try {
+			$this->variables->call = $this->getCall( $id );
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'Произошла ошибка при получении информации о вызове.';
+		}
+
+		try {
+			$this->variables->arguments = $this->getCallArguments( $id );
+		} catch ( \PDOException $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = 'Произошла ошибка при получении списка аргументов вызова.';
+		}
+	}
 }
+
 ?>

@@ -1,0 +1,286 @@
+<link rel="stylesheet" href="resources/css/style.css">
+
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/index.ui.js"></script>
+
+
+<?php if($errors): ?>
+    <?php foreach($errors as $error): ?>
+        <pre class="error"><?php
+            echo htmlspecialchars($error);
+        ?></pre>
+    <?php endforeach; ?>
+<?php else: ?>
+<div class="modes" id="divModes"></div>
+<form class="main" action="index.php?view=reregister&action=submit" method="POST" id="frmMain" target="_blank">
+    <input type="hidden" name="uid" value="">
+    <table class="requisites">
+        <caption>Основные сведения</caption>
+        <tbody>
+            <tr>
+                <th>ИНН</th>
+                <td><input required type="text" name="common-inn" placeholder="ИНН" maxlength="14"></td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="button" id="btnSearch" class="button" value="Поиск">
+    <input type="reset" class="button" id="btnReset" value="Очистить">
+    <table class="requisites">
+        <tbody>
+            <tr>
+                <th>ОКПО</th>
+                <td><input required type="text" name="common-okpo" placeholder="ОКПО" maxlength="8"></td>
+            </tr>
+            <tr>
+                <th>Регистрационный номер Cоциального Фонда</th>
+                <td><input required type="text" name="common-rnsf" maxlength="10" placeholder="Регистрационный номер СФ"></td>
+            </tr>
+            <tr>
+                <th class="attached">Наименование</th>
+                <td>
+                    <textarea required name="common-name" placeholder="Наименование"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th class="attached">Полное наименование</th>
+                <td>
+                    <textarea name="common-full-name" placeholder="Полное наименование с ОПФ"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th rowspan="2" class="attached">Основной вид деятельности</th>
+                <td>
+                    <input required type="text" id="txtCommonMainActivityGked" placeholder="ГКЭД">
+                    <input type="hidden" name="common-main-activity" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea disabled id="txtarCommonMainActivityText" placeholder="Укажите ГКЭД..."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>Форма собственности</th>
+                <td>
+                    <select required name="common-ownership-form"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Организационно-правовая форма</th>
+                <td>
+                    <select required disabled name="common-legal-form"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Гражданско-правовой статус</th>
+                <td>
+                    <select required name="common-civil-legal-status"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Форма участия в капитале</th>
+                <td>
+                    <select required name="common-capital-form"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Форма управления</th>
+                <td>
+                    <select required name="common-management-form"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Регистрационный номер Министерства Юстиции</th>
+                <td>
+                    <input required maxlength="20" type="text" name="common-rnmj" placeholder="XXXXXX-XXXX-XXX">
+                </td>
+            </tr>
+            <tr>
+                <th>БИК</th>
+                <td><input type="text" name="common-bank-bic" placeholder="БИК" maxlength="6"></td>
+            </tr>
+            <tr>
+                <th>Название банка</th>
+                <td><input disabled type="text" id="txtCommonBankName" placeholder="Название банка"></td>
+            </tr>
+            <tr>
+                <th>Расчетный счет</th>
+                <td><input required type="text" name="common-bank-account" placeholder="Расчетный счет"></td>
+            </tr>
+            <tr>
+                <th>Адрес электронной почты</th>
+                <td><input required type="email" name="common-email" placeholder="e-mail"></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="requisites">
+        <caption>Юридический адрес</caption>
+        <tbody>
+            <tr>
+                <th>Индекс</th>
+                <td><input required placeholder="Индекс" type="text" maxlength="6" name="common-juristic-post-code"></td>
+            </tr>
+            <tr>
+                <th>Населенный пункт</th>
+                <td>
+                    <textarea required name="common-juristic-location" placeholder="Щелкните, чтобы указать..." class="pointing"></textarea>
+                    <input type="hidden" name="common-juristic-settlement">
+                </td>
+            </tr>
+            <tr>
+                <th>Улица</th>
+                <td><input required placeholder="Улица" type="text" maxlength="255" name="common-juristic-street"></td>
+            </tr>
+            <tr>
+                <th>Дом</th>
+                <td><input required placeholder="Дом" type="text" maxlength="20" name="common-juristic-building"></td>
+            </tr>
+            <tr>
+                <th>Квартира</th>
+                <td><input placeholder="Квартира" type="text" maxlength="20" name="common-juristic-apartment"></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="requisites" id="tblPhysicalAddress">
+        <caption>Физический адрес (<input type="checkbox" id="chkbxCommonPhysicalAddressSameAsCommonJuristicAddress"> <label for="chkbxCommonPhysicalAddressSameAsCommonJuristicAddress">Такой же, как юридический</label>)</caption>
+        <tbody>
+            <tr>
+                <th>Индекс</th>
+                <td><input required placeholder="Индекс" type="text" maxlength="6" name="common-physical-post-code"></td>
+            </tr>
+            <tr>
+                <th>Населенный пункт</th>
+                <td>
+                    <textarea required name="common-physical-location" placeholder="Щелкните, чтобы указать..." class="pointing"></textarea>
+                    <input type="hidden" name="common-physical-settlement">
+                </td>
+            </tr>
+            <tr>
+                <th>Улица</th>
+                <td><input required placeholder="Улица" type="text" maxlength="255" name="common-physical-street"></td>
+            </tr>
+            <tr>
+                <th>Дом</th>
+                <td><input required placeholder="Дом" type="text" maxlength="20" name="common-physical-building"></td>
+            </tr>
+            <tr>
+                <th>Квартира</th>
+                <td><input placeholder="Квартира" type="text" maxlength="20" name="common-physical-apartment"></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="requisites" id="tblChief">
+        <caption>Руководитель</caption>
+        <tbody>
+            <tr>
+                <td class="section-name" colspan="2">Паспортные данные</td>
+            </tr>
+            <tr>
+                <th>Серия и номер</th>
+                <td>
+                    <div style="display: table; border-spacing: 0px; max-width: 305px;">
+                        <div style="display: table-cell;">
+                            <input maxlength="10" required type="text" name="common-chief-passport-series" style="width: 110px" placeholder="Серия">
+                        </div>
+                        <div style="display: table-cell; padding: 3px">№</div>
+                        <div style="display: table-cell; width: 100%;">
+                            <input maxlength="15" required type="text" name="common-chief-passport-number" style="width: 100%" placeholder="Номер">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="centered">
+                    <input type="button" class="button" id="btnChiefSearch" value="Поиск существующих данных">
+                </td>
+            </tr>
+            <tr>
+                <th>Выдавший орган</th>
+                <td><input required placeholder="Наименование выдавшего органа" type="text" name="common-chief-passport-issuing-authority"></td>
+            </tr>
+            <tr>
+                <th>Дата выдачи</th>
+                <td><input required placeholder="ДД.ММ.ГГГГ" type="text" name="common-chief-passport-issuing-date"></td>
+            </tr>
+            <tr>
+                <td class="section-name" colspan="2">Основные сведения</td>
+            </tr>
+            <tr>
+                <th>Фамилия</th>
+                <td><input required type="text" placeholder="Фамилия" name="common-chief-surname"></td>
+            </tr>
+            <tr>
+                <th>Имя</th>
+                <td><input required type="text" placeholder="Имя" name="common-chief-name"></td>
+            </tr>
+            <tr>
+                <th>Отчество</th>
+                <td><input type="text" placeholder="Отчество" name="common-chief-middle-name"></td>
+            </tr>
+            <tr>
+                <th>Должность</th>
+                <td>
+                    <select required name="common-chief-position"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Основание для занимаемой должности</th>
+                <td>
+                    <select required name="common-chief-basis"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Рабочий телефон</th>
+                <td><input required type="text" placeholder="Рабочий телефон" name="common-chief-work-phone"></td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="button" value="Добавить сотрудника" id="btnAddRepresentative" class="button">
+    <table class="requisites" id="tblSfData">
+        <caption>Отчетность для Социального Фонда КР</caption>
+        <tbody>
+            <tr>
+                <th>Вид тарифа</th>
+                <td>
+                    <select required name="sf-tariff"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Район</th>
+                <td>
+                    <select required name="sf-region"></select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="requisites" id="tblStiData">
+        <caption>Отчетность для Государственной Налоговой Службы КР</caption>
+        <tbody>
+            <tr>
+                <th>Район</th>
+                <td>
+                    <select required name="sti-region-default"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>Район предоставления</th>
+                <td>
+                    <select name="sti-region-receiver"></select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="Cохранить" id="btnSubmit" class="button">
+</form>
+<script type="text/javascript">
+window.utils.initializers.push(
+    function(){
+        window.utils.form.setup({
+            form: 'frmMain',
+            dictionaries: <?php echo json_encode($data, JSON_UNESCAPED_UNICODE); ?>
+        });
+    }
+);
+</script>
+<?php endif; ?>

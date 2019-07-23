@@ -1,15 +1,16 @@
 <?php
+
 namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class AggregateActivities extends \Environment\Core\Module {
-    protected $config = [
-        'template' => 'layouts/AggregateActivities/Default.html'
-    ];
+	protected $config = [
+		'template' => 'layouts/AggregateActivities/Default.html'
+	];
 
-    protected function getData(){
-        $sql = <<<SQL
+	protected function getData() {
+		$sql = <<<SQL
 SELECT
     "c-avt"."IDActivity" as "activity-id",
     "c-avt"."Name" as "activity-name",
@@ -32,23 +33,25 @@ ORDER BY
     1;
 SQL;
 
-        $stmt = Connections::getConnection('Requisites')->prepare($sql);
+		$stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
 
-        $stmt->execute();
+		$stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+		return $stmt->fetchAll();
+	}
 
-    protected function main(){
-        $this->context->css[] = 'resources/css/ui-aggregate-activities.css';
+	protected function main() {
+		$this->context->css[] = 'resources/css/ui-aggregate-activities.css';
 
-        $this->variables->errors = [];
+		$this->variables->errors = [];
 
-        try {
-            $this->variables->data = $this->getData();
-        } catch(\Exception $e) {
-            $this->variables->errors[] = $e->getMessage();
-        }
-    }
+		try {
+			$this->variables->data = $this->getData();
+		} catch ( \Exception $e ) {
+			\Sentry\captureException( $e );
+			$this->variables->errors[] = $e->getMessage();
+		}
+	}
 }
+
 ?>
