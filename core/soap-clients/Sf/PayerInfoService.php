@@ -11,7 +11,7 @@ class PayerInfoService extends \SoapClient {
             'trace'              => 1,
             'cache_wsdl'         => WSDL_CACHE_NONE,
             'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 60
+            'connection_timeout' => 10
         ];
 
         parent::__construct(self::WSDL, $options);
