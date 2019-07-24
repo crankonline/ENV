@@ -74,7 +74,7 @@ class Nwa extends \Environment\Core\Module {
 				$result = [];
 			}
 		} catch ( \SoapFault $f ) {
-			\Sentry\captureException( $e );
+			\Sentry\captureException( $f );
 			throw new \Exception( $f->faultstring );
 		}
 
