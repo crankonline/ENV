@@ -3,7 +3,7 @@ namespace Environment;
 
 require_once 'core/consts.php';
 require_once 'core/classes/AutoLoaders/Psr4.php';
-require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require 'vendor/autoload.php';
 
 use Unikum\Core\AutoLoaders\Psr4 as Loader,
     Unikum\Core\Dbms\ConnectionManager as Connections;
@@ -163,4 +163,5 @@ Connections::configure(
 	]
 );
 ?>
+
 
