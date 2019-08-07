@@ -94,7 +94,11 @@ class Nwa extends \Environment\Core\Module {
 		}
 
 		$div_cont   = $doc->getElementById( 'ByTin' );
-		$rows_table = $div_cont->getElementsByTagName( 'tr' );
+		if( $div_cont != null) {
+			$rows_table = $div_cont->getElementsByTagName( 'tr' );
+		} else {
+			throw new \Exception( 'TaxPayer --> Сервис вернул не действительное значение. (сервис не доступен)' );
+		}
 		if ( $rows_table->length != 2 ) {
 			throw new \Exception( 'TaxPayer --> Сервис вернул не действительное значение.' );
 		}
