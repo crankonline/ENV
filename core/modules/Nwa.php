@@ -90,17 +90,23 @@ class Nwa extends \Environment\Core\Module {
 		$code        = $this->getSslPage( $url );
 		$doc         = new \DOMDocument();
 		if ( ! @$doc->loadHTML( $code ) ) {
-			throw new \Exception( 'TaxPayer --> Невозможно обработать ответ.' );
+			$msg = 'TaxPayer --> Невозможно обработать ответ.';
+			\Sentry\captureMessage( $msg + " " + $value);
+			throw new \Exception( $msg );
 		}
 
 		$div_cont   = $doc->getElementById( 'ByTin' );
 		if( $div_cont != null) {
 			$rows_table = $div_cont->getElementsByTagName( 'tr' );
 		} else {
-			throw new \Exception( 'TaxPayer --> Сервис вернул не действительное значение. (сервис не доступен)' );
+			$msg = 'TaxPayer --> Сервис вернул не действительное значение. (сервис не доступен) ';
+			\Sentry\captureMessage( $msg);
+			throw new \Exception( $msg );
 		}
 		if ( $rows_table->length != 2 ) {
-			throw new \Exception( 'TaxPayer --> Сервис вернул не действительное значение.' );
+			$msg = 'TaxPayer --> Сервис вернул не действительное значение.';
+			\Sentry\captureMessage( $msg + " " + $value);
+			throw new \Exception( $msg );
 		}
 
 		foreach ( $rows_table as $key => $row ) {
