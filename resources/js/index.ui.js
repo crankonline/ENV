@@ -1595,8 +1595,8 @@
     var pasteChiefDictionariesFn = (function(){
         var completeTpl = [
             '<tr>',
-                '<th>Серийный номер устройства</th>',
-                '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-chief-device-serial"></td>',
+            '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-chief-device-serial\')">Прочитать</a>)</th>',
+            '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-chief-device-serial"></td>',
             '</tr>'
         ].join('');
 
@@ -2888,8 +2888,8 @@
             createConfigFn = (function(){
                 var completeTpl = [
                     '<tr>',
-                        '<th>Серийный номер устройства</th>',
-                        '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
+                    '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
+                    '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
                     '</tr>'
                 ].join('');
 
