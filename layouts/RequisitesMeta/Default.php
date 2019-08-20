@@ -22,122 +22,113 @@
 <script>
     $(function () {
         $("#accordion").accordion({ clearStyle: true, autoHeight: false, heightStyle: "content"  });
-        $( "#resizable" ).resizable();
-        $( "#example").resizable();
+        $( ".resizable" ).resizable();
+        $( "#legalForm").resizable();
+        $( "#bank").resizable();
 
 
 
 
 
-        var dialog, form,
-
-            // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-            emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-            name = $( "#name" ),
-            email = $( "#email" ),
-            password = $( "#password" ),
-            allFields = $( [] ).add( name ).add( email ).add( password ),
-            tips = $( ".validateTips" );
-
-        function updateTips( t ) {
-            tips
-                .text( t )
-                .addClass( "ui-state-highlight" );
-            setTimeout(function() {
-                tips.removeClass( "ui-state-highlight", 1500 );
-            }, 500 );
-        }
-
-        function checkLength( o, n, min, max ) {
-            if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "Length of " + n + " must be between " +
-                    min + " and " + max + "." );
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        function checkRegexp( o, regexp, n ) {
-            if ( !( regexp.test( o.val() ) ) ) {
-                o.addClass( "ui-state-error" );
-                updateTips( n );
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        function addUser() {
-            var valid = true;
-            allFields.removeClass( "ui-state-error" );
-
-            valid = valid && checkLength( name, "username", 3, 16 );
-            valid = valid && checkLength( email, "email", 6, 80 );
-            valid = valid && checkLength( password, "password", 5, 16 );
-
-            valid = valid && checkRegexp( name, /^[a-z]([0-9a-z_\s])+$/i, "Username may consist of a-z, 0-9, underscores, spaces and must begin with a letter." );
-            valid = valid && checkRegexp( email, emailRegex, "eg. ui@jquery.com" );
-            valid = valid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-
-            if ( valid ) {
-                $( "#users tbody" ).append( "<tr>" +
-                    "<td>" + name.val() + "</td>" +
-                    "<td>" + email.val() + "</td>" +
-                    "<td>" + password.val() + "</td>" +
-                    "</tr>" );
-                dialog.dialog( "close" );
-            }
-            return valid;
-        }
-
-        dialog = $( "#dialog-form" ).dialog({
-            autoOpen: false,
-            height: 400,
-            width: 350,
-            modal: true,
-            buttons: {
-                "Create an account": addUser,
-                Cancel: function() {
-                    dialog.dialog( "close" );
-                }
-            },
-            close: function() {
-                form[ 0 ].reset();
-                allFields.removeClass( "ui-state-error" );
-            }
-        });
-
-        form = dialog.find( "form" ).on( "submit", function( event ) {
-            event.preventDefault();
-            addUser();
-        });
-
-        $( "#create-user" ).button().on( "click", function() {
-            dialog.dialog( "open" );
-        });
 
 
 
     });
 
 
+
+
+    /**
+     * Обявление таблиц
+     **/
     $(document).ready(function() {
-        $('#example').DataTable( {
-            data:           <?php echo json_encode($legalForm); ?>,
+        $('#legalForm').DataTable( {
+            ajax: {
+                "dataType": 'json',
+                "contentType": "application/json; charset=utf-8",
+                "type": "POST",
+                "url":"index.php?view=requisitesMeta&action=getLegalFormJson",
+                "dataSrc": function (json) {
+                    return json;
+                }
+            },
             columns: [
                 {data: 'IDLegalForm'},
                 {data: 'OwnershipFormID'},
                 {data: 'Name'},
                 {data: 'ShortName'},
                 {data: 'Facet'}
-                ],
+            ],
             deferRender:    true,
             scrollY:        '50vh',
             scrollCollapse: true,
             scroller:       true
         } );
+
+        $('#bank').DataTable( {
+            ajax: {
+                "dataType": 'json',
+                "contentType": "application/json; charset=utf-8",
+                "type": "POST",
+                "url":"index.php?view=requisitesMeta&action=getBankJson",
+                "dataSrc": function (json) {
+                    return json;
+                }
+            },
+            columns: [
+                {data: 'IDBank'},
+                {data: 'Name'},
+                {data: 'Address'}
+            ],
+            deferRender:    true,
+            scrollY:        '50vh',
+            scrollCollapse: true,
+            scroller:       true
+        } );
+
+        $('#activity').DataTable( {
+            ajax: {
+                "dataType": 'json',
+                "contentType": "application/json; charset=utf-8",
+                "type": "POST",
+                "url":"index.php?view=requisitesMeta&action=getActivityJson",
+                "dataSrc": function (json) {
+                    return json;
+                }
+            },
+            columns: [
+                {data: 'IDActivity'},
+                {data: 'ActivityID'},
+                {data: 'Name'},
+                {data: 'Gked'}
+            ],
+            deferRender:    true,
+            scrollY:        '50vh',
+            scrollCollapse: true,
+            scroller:       true
+        } );
+
+        $('#chiefBasis').DataTable( {
+            ajax: {
+                "dataType": 'json',
+                "contentType": "application/json; charset=utf-8",
+                "type": "POST",
+                "url":"index.php?view=requisitesMeta&action=getChiefBasisJson",
+                "dataSrc": function (json) {
+                    return json;
+                }
+            },
+            columns: [
+                {data: 'IDChiefBasis'},
+                {data: 'Name'}
+            ],
+            deferRender:    true,
+            scrollY:        '50vh',
+            scrollCollapse: true,
+            scroller:       true
+        } );
+
+
 
         $("#accordion").click(function(){
 
@@ -148,49 +139,532 @@
 
         });
 
+        /**
+         * Обработка диалоговых окон
+         **/
 
-        $('#example').on('click', 'tbody td', function() {
+        /** правовая собственность **/
+        $('#legalForm').on('click', 'tbody td', function() {
+            $("#dialog-form-legalForm-save-message").text("");
 
-            //get textContent of the TD
-            console.log('TD cell textContent : ', this.textContent)
+            /** dialog */
+            var dialog, form,
 
-            //get the value of the TD using the API
-            //console.log('value by API : ', table.cell({ row: this.parentNode.rowIndex, column : this.cellIndex }).data());
+                name = $( "#name" ),
+                short = $( "#short" ),
+                id = $( "#id" ),
+                allFields = $( [] ).add( name ).add( short ).add( id ),
+                tips = $( ".validateTips" );
 
-            console.log('row index ', this.parentNode.rowIndex);
-        })
+            function updateTips( t ) {
+                tips
+                    .text( t )
+                    .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function editLaw() {
+                var valid = true;
+                allFields.removeClass( "ui-state-error" );
+
+                valid = valid && checkLength( name, "Name", 3, 100 );
+                valid = valid && checkLength( short, "ShortName", 1, 5 );
+                valid = valid && checkLength( id, "IdLegalForm", 1, 8 );
+
+                var jqxhr = $.ajax( {
+                    method: "POST",
+                    url: "index.php?view=requisitesMeta&action=editLegalForm",
+                    data: { id: id.val(), name: name.val(), short: short.val() }
+                } )
+                    .done(function(ret) {
+                        //location.reload();
+
+                        if($.parseJSON(ret)['return']) {
+                            var table = $('#legalForm').DataTable();
+                            table.ajax.reload();
+
+                            $("#dialog-form-legalForm-save-message").text("Сохранено - " + $.parseJSON(ret)['return']);
+                        } else {
+                            $("#dialog-form-legalForm-save-message").text("Ошибка - " + $.parseJSON(ret)['return']);
+                        }
+                    })
+                    .fail(function() {
+//                        alert( "error" );
+                    });
+
+                return valid;
+            }
+
+            dialog = $( "#dialog-form" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 650,
+                modal: true,
+                buttons: {
+                    "Сохранить": function() {console.log('dialog save'); editLaw(); },
+                    "Cancel": function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                }
+            });
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                console.log('form submit');
+                editLaw();
+            });
+
+            /** dialog end */
+
+            $("#id").val(this.parentNode.childNodes.item(0).textContent);
+            $("#name").val(this.parentNode.childNodes.item(2).textContent);
+            $("#short").val(this.parentNode.childNodes.item(3).textContent);
+
+
+            dialog.dialog( "open" );
+        });
+
+        /** банк **/
+        $('#bank').on('click', 'tbody td', function() {
+            $("#dialog-form-bank-save-message").text("");
+
+            /** dialog */
+            var dialog, form,
+
+                name = $( "#bank-name" ),
+                address = $( "#bank-address" ),
+                id = $( "#bank-id" ),
+                allFields = $( [] ).add( name ).add( address ).add( id ),
+                tips = $( ".validateTips" );
+
+            function updateTips( t ) {
+                tips
+                    .text( t )
+                    .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function edit() {
+                var valid = true;
+                allFields.removeClass( "ui-state-error" );
+
+                valid = valid && checkLength( name, "Name", 3, 100 );
+                valid = valid && checkLength( address, "ShortName", 1, 100 );
+                valid = valid && checkLength( id, "IdLegalForm", 1, 8 );
+
+                var jqxhr = $.ajax( {
+                    method: "POST",
+                    url: "index.php?view=requisitesMeta&action=editBank",
+                    data: { bankId: id.val(), bankName: name.val(), bankAddress: address.val() }
+                } )
+                    .done(function(ret) {
+                        //location.reload();
+                        if($.parseJSON(ret)['return']) {
+                            var table = $('#bank').DataTable();
+                            table.ajax.reload();
+
+                            $("#dialog-form-bank-save-message").text("Сохранено - " + $.parseJSON(ret)['return']);
+                        } else {
+                            $("#dialog-form-bank-save-message").text("Ошибка - " + $.parseJSON(ret)['return']);
+                        }
+
+                    })
+                    .fail(function() {
+//                        alert( "error" );
+                    });
+
+                return valid;
+            }
+
+            dialog = $( "#dialog-form-bank" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 650,
+                modal: true,
+                buttons: {
+                    "Сохранить": function() {console.log('dialog save'); edit(); },
+                    "Cancel": function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                }
+            });
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                console.log('form submit');
+                edit();
+            });
+
+            /** dialog end */
+
+//            console.log(this.parentNode.childNodes);
+            $("#bank-id").val(this.parentNode.childNodes.item(0).textContent);
+            $("#bank-name").val(this.parentNode.childNodes.item(1).textContent);
+            $("#bank-address").val(this.parentNode.childNodes.item(2).textContent);
+
+
+            dialog.dialog( "open" );
+        });
+
+        /** гкед  activity **/
+        $('#activity').on('click', 'tbody td', function() {
+            $("#dialog-form-activity-save-message").text("");
+
+            /** dialog */
+            var dialog, form,
+
+                name = $( "#activity-name" ),
+                gked = $( "#activity-gked" ),
+                id = $( "#activity-id-activity" ),
+                activity = $( "#activity-activity-id" ),
+                allFields = $( [] ).add( name ).add( gked ).add( id ).add( activity ),
+                tips = $( ".validateTips" );
+
+            function updateTips( t ) {
+                tips
+                    .text( t )
+                    .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function edit() {
+                var valid = true;
+                allFields.removeClass( "ui-state-error" );
+
+                valid = valid && checkLength( name, "Name", 3, 100 );
+                valid = valid && checkLength( gked, "GKED", 1, 100 );
+                valid = valid && checkLength( id, "ID", 1, 8 );
+                valid = valid && checkLength( activity, "ActivityID", 1, 8 );
+
+                var jqxhr = $.ajax( {
+                    method: "POST",
+                    url: "index.php?view=requisitesMeta&action=editActivity",
+                    data: { id: id.val(), activityId: activity.val(), activityName: name.val(), activityGked: gked.val() }
+                } )
+                    .done(function(ret) {
+                        //location.reload();
+                        if($.parseJSON(ret)['return']) {
+                            var table = $('#activity').DataTable();
+                            table.ajax.reload();
+
+                            $("#dialog-form-activity-save-message").text("Сохранено - " + $.parseJSON(ret)['return']);
+                        } else {
+                            $("#dialog-form-activity-save-message").text("Ошибка - " + $.parseJSON(ret)['return']);
+                        }
+
+                    })
+                    .fail(function() {
+//                        alert( "error" );
+                    });
+
+                return valid;
+            }
+
+            dialog = $( "#dialog-form-activity" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 650,
+                modal: true,
+                buttons: {
+                    "Сохранить": function() {console.log('dialog save'); edit(); },
+                    "Cancel": function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                }
+            });
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                console.log('form submit');
+                edit();
+            });
+
+            /** dialog end */
+
+//            console.log(this.parentNode.childNodes);
+            $("#activity-id-activity").val(this.parentNode.childNodes.item(0).textContent);
+            $("#activity-activity-id").val(this.parentNode.childNodes.item(1).textContent);
+            $("#activity-name").val(this.parentNode.childNodes.item(2).textContent);
+            $("#activity-gked").val(this.parentNode.childNodes.item(3).textContent);
+
+
+            dialog.dialog( "open" );
+        });
+
+        /** основание для занимаемой должности ChiefBasis **/
+        $('#chiefBasis').on('click', 'tbody td', function() {
+            $("#dialog-form-chiefBasis-save-message").text("");
+
+            /** dialog */
+            var dialog, form,
+
+                name = $( "#chiefBasis-name" ),
+                id = $( "#chiefBasis-id" ),
+                allFields = $( [] ).add( name ).add( id ),
+                tips = $( ".validateTips" );
+
+            function updateTips( t ) {
+                tips
+                    .text( t )
+                    .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function edit() {
+                var valid = true;
+                allFields.removeClass( "ui-state-error" );
+
+                valid = valid && checkLength( name, "Name", 3, 100 );
+                valid = valid && checkLength( id, "ID", 1, 8 );
+
+                var jqxhr = $.ajax( {
+                    method: "POST",
+                    url: "index.php?view=requisitesMeta&action=editChiefBasis",
+                    data: { id: id.val(), name: name.val() }
+                } )
+                    .done(function(ret) {
+                        //location.reload();
+                        if($.parseJSON(ret)['return']) {
+                            var table = $('#chiefBasis').DataTable();
+                            table.ajax.reload();
+
+                            $("#dialog-form-chiefBasis-save-message").text("Сохранено - " + $.parseJSON(ret)['return']);
+                        } else {
+                            $("#dialog-form-chiefBasis-save-message").text("Ошибка - " + $.parseJSON(ret)['return']);
+                        }
+
+                    })
+                    .fail(function() {
+//                        alert( "error" );
+                    });
+
+                return valid;
+            }
+
+            dialog = $( "#dialog-form-ChiefBasis" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 650,
+                modal: true,
+                buttons: {
+                    "Сохранить": function() {console.log('dialog save'); edit(); },
+                    "Cancel": function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                }
+            });
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                console.log('form submit');
+                edit();
+            });
+
+            /** dialog end */
+
+//            console.log(this.parentNode.childNodes);
+            $("#chiefBasis-id").val(this.parentNode.childNodes.item(0).textContent);
+            $("#chiefBasis-name").val(this.parentNode.childNodes.item(1).textContent);
+
+
+            dialog.dialog( "open" );
+        });
+
     } );
 
 </script>
 
-<div id="dialog-form" title="Create new user">
+<div id="dialog-form" title="Редактирование (LegalForm) Форма собственности" style="display: none">
     <p class="validateTips">All form fields are required.</p>
 
     <form>
         <fieldset>
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name" value="Jane Smith" class="text ui-widget-content ui-corner-all">
-            <label for="email">Email</label>
-            <input type="text" name="email" id="email" value="jane@smith.com" class="text ui-widget-content ui-corner-all">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" value="xxxxxxx" class="text ui-widget-content ui-corner-all">
+            <table width="100%">
+                <tr>
+                    <td><label for="id">IDLegalForm</label></td>
+                    <td><input type="text" name="id" id="id" value="" class="text ui-widget-content ui-corner-all" style="width: 100% " readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="name">Name</label></td>
+                    <td><input type="text" name="name" id="name" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
+                <tr>
+                    <td><label for="short">ShortName</label></td>
+                    <td><input type="text" name="short" id="short" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
 
-            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            </table>
+            <div id="dialog-form-legalForm-save-message"></div>
+
             <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
         </fieldset>
     </form>
 </div>
 
-<button id="create-user">Create new user</button>
+
+<div id="dialog-form-bank" title="Редактирование (Bank) Банка" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+
+    <form>
+        <fieldset>
+            <table width="100%">
+                <tr>
+                    <td><label for="bank-id">IDBank</label></td>
+                    <td><input type="text" name="bank-id" id="bank-id" value="" class="text ui-widget-content ui-corner-all" style="width: 100% "></td>
+                </tr>
+                <tr>
+                    <td><label for="bank-name">Name</label></td>
+                    <td><input type="text" name="bank-name" id="bank-name" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
+                <tr>
+                    <td><label for="bank-address">Address</label></td>
+                    <td><input type="text" name="bank-address" id="bank-address" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            </table>
+            <div id="dialog-form-bank-save-message"></div>
+
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
+        </fieldset>
+    </form>
+</div>
+
+<div id="dialog-form-activity" title="Редактирование (Activity) GKED" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+
+    <form>
+        <fieldset>
+            <table width="100%">
+                <tr>
+                    <td><label for="activity-id-activity">IDActivity</label></td>
+                    <td><input type="text" name="activity-id-activity" id="activity-id-activity" value="" class="text ui-widget-content ui-corner-all" style="width: 100%" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="activity-activity-id">ActivityID</label></td>
+                    <td><input type="text" name="activity-activity-id" id="activity-activity-id" value="" class="text ui-widget-content ui-corner-all" style="width: 100% "></td>
+                </tr>
+                <tr>
+                    <td><label for="activity-name">Name</label></td>
+                    <td><input type="text" name="activity-name" id="activity-name" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
+                <tr>
+                    <td><label for="activity-gked">Gked</label></td>
+                    <td><input type="text" name="activity-gked" id="activity-gked" value="" class="text ui-widget-content ui-corner-all" style="width: 100%"></td>
+                </tr>
+
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            </table>
+            <div id="dialog-form-activity-save-message"></div>
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
+        </fieldset>
+    </form>
+</div>
+
+<div id="dialog-form-ChiefBasis" title="Редактирование (ChiefBasis) Осн. для занимаемой должности" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+
+    <form>
+        <fieldset>
+            <table width="100%">
+                <tr>
+                    <td><label for="chiefBasis-id">IDChiefBasis</label></td>
+                    <td><input type="text" name="chiefBasis-id" id="chiefBasis-id" value="" class="text ui-widget-content ui-corner-all" style="width: 100%" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="chiefBasis-name">ActivityID</label></td>
+                    <td><input type="text" name="chiefBasis-name" id="chiefBasis-name" value="" class="text ui-widget-content ui-corner-all" style="width: 100% "></td>
+                </tr>
+
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            </table>
+            <div id="dialog-form-chiefBasis-save-message"></div>
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
+        </fieldset>
+    </form>
+</div>
+
+<!--button id="create-user">Create new user</button-->
 
 <div id="accordion">
-    <h3>Законная форма</h3>
-    <div id="resizable" >
-        <p>
-            данные таблицы
-        </p>
-
-        <table id="example" class="display nowrap" style="width:100%;">
+    <h3>Форма собственности (LegalForm)</h3>
+    <div class="resizable" >
+        <table id="legalForm" class="display nowrap" style="width:100%;">
             <thead>
             <tr>
                 <th>IDLegalForm</th>
@@ -201,49 +675,42 @@
             </tr>
             </thead>
         </table>
-        <pre>
-            <?php //print_r($legalForm);?>
-        </pre>
-        <p>
-            <?php //ёecho json_encode($legalForm);?>
-        </p>
     </div>
-    <h3>Section 2</h3>
-    <div>
-        <p>
-            Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-            purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
-            velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
-            suscipit faucibus urna.
-        </p>
+    <h3>Банки (Bank)</h3>
+    <div class="resizable">
+        <table id="bank" class="display nowrap" style="width:100%;">
+            <thead>
+            <tr>
+                <th>IDBank</th>
+                <th>Name</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+        </table>
     </div>
-    <h3>Section 3</h3>
-    <div>
-        <p>
-            Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
-            Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
-            ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
-            lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
-        </p>
-        <ul>
-            <li>List item one</li>
-            <li>List item two</li>
-            <li>List item three</li>
-        </ul>
+    <h3>ГКЕД (Activity)</h3>
+    <div class="resizable">
+        <table id="activity" class="display nowrap" style="width:100%;">
+            <thead>
+            <tr>
+                <th>IDActivity</th>
+                <th>ActivityID</th>
+                <th>Name</th>
+                <th>Gked</th>
+            </tr>
+            </thead>
+        </table>
     </div>
-    <h3>Section 4</h3>
-    <div>
-        <p>
-            Cras dictum. Pellentesque habitant morbi tristique senectus et netus
-            et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
-            faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
-            mauris vel est.
-        </p>
-        <p>
-            Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
-            Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-            inceptos himenaeos.
-        </p>
+    <h3>Основание для занимаемой должности (ChiefBasis)</h3>
+    <div class="resizable">
+        <table id="chiefBasis" class="display nowrap" style="width:100%;">
+            <thead>
+            <tr>
+                <th>IDChiefBasisy</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
