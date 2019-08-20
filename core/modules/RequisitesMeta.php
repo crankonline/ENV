@@ -128,7 +128,7 @@ class RequisitesMeta extends \Environment\Core\Module {
 	}
 
 	public function editChiefBasis() {
-		$dlChiefBasis = new ChiefBasis();
+		 $dlChiefBasis = new ChiefBasis();
 		if(isset($_POST['id']) &&
 		   isset($_POST['name'])) {
 			$id = $_POST['id'];
