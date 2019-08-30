@@ -79,6 +79,29 @@ class RequisitesMeta extends \Environment\Core\Module {
 
 	}
 
+	public function addBank() {
+		$dlBank = new Bank();
+		if(isset($_POST['bankId']) &&
+		   isset($_POST['bankName']) &&
+		   isset($_POST['bankAddress'])) {
+			$id = $_POST['bankId'];
+			$name = $_POST['bankName'];
+			$shortName = $_POST['bankAddress'];
+		}
+
+		$return = $dlBank->addBank($id, $name, $shortName);
+
+		$this->config->skipMain = true;
+
+		$this->suppress();
+
+		die( json_encode(["id"=>$id,
+		                  "name"=>$name,
+		                  "shortName"=>$shortName,
+		                  "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+
+	}
+
 	public function getActivityJson() {
 		$dlActivity = new Activity();
 		$return = $dlActivity->getActivity();

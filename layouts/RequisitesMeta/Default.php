@@ -280,7 +280,7 @@
 
                 valid = valid && checkLength( name, "Name", 3, 100 );
                 valid = valid && checkLength( address, "ShortName", 1, 100 );
-                valid = valid && checkLength( id, "IdLegalForm", 1, 8 );
+                valid = valid && checkLength( id, "IdLegalForm", 1, 6 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -538,6 +538,103 @@
             dialog.dialog( "open" );
         });
 
+        /** добавление банка **/
+        $('#add-bank-button').on('click', function(){
+            /** dialog */
+            var dialog, form,
+
+                name = $( "#bank-name" ),
+                address = $( "#bank-address" ),
+                id = $( "#bank-id" ),
+                allFields = $( [] ).add( name ).add( address ).add( id ),
+                tips = $( ".validateTips" );
+
+            function updateTips( t ) {
+                tips
+                    .text( t )
+                    .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function edit() {
+                var valid = true;
+                allFields.removeClass( "ui-state-error" );
+
+                valid = valid && checkLength( name, "Name", 3, 100 );
+                valid = valid && checkLength( address, "ShortName", 1, 100 );
+                valid = valid && checkLength( id, "IdLegalForm", 1, 6 );
+
+                var jqxhr = $.ajax( {
+                    method: "POST",
+                    url: "index.php?view=requisitesMeta&action=addBank",
+                    data: { bankId: id.val(), bankName: name.val(), bankAddress: address.val() }
+                } )
+                    .done(function(ret) {
+                        //location.reload();
+                        if($.parseJSON(ret)['return']) {
+                            var table = $('#bank').DataTable();
+                            table.ajax.reload();
+
+                            $("#dialog-form-bank-save-message").text("Сохранено - " + $.parseJSON(ret)['return']);
+                        } else {
+                            $("#dialog-form-bank-save-message").text("Ошибка - " + $.parseJSON(ret)['return']);
+                        }
+
+                    })
+                    .fail(function() {
+//                        alert( "error" );
+                    });
+
+                return valid;
+            }
+
+            dialog = $( "#dialog-form-bank" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 650,
+                modal: true,
+                buttons: {
+                    "Добавить": function() {console.log('dialog save'); edit(); },
+                    "Cancel": function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                }
+            });
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                console.log('form submit');
+                edit();
+            });
+
+            /** dialog end */
+
+//            console.log(this.parentNode.childNodes);
+//            $("#bank-id").val(this.parentNode.childNodes.item(0).textContent);
+//            $("#bank-name").val(this.parentNode.childNodes.item(1).textContent);
+//            $("#bank-address").val(this.parentNode.childNodes.item(2).textContent);
+
+
+            dialog.dialog( "open" );
+        });
+
     } );
 
 </script>
@@ -678,6 +775,7 @@
     </div>
     <h3>Банки (Bank)</h3>
     <div class="resizable">
+        <input type="button" id="add-bank-button" value="Добавить банк" style="">
         <table id="bank" class="display nowrap" style="width:100%;">
             <thead>
             <tr>

@@ -50,4 +50,23 @@ SQL;
 
 		return $stmt->execute($row);
 	}
+
+	public function addBank($id, $name, $address){
+		$row['id'] = $id;
+		$row['nameb'] = $name;
+		$row['address'] = $address;
+
+		$sql = <<<SQL
+INSERT INTO     "Common"."Bank" 
+(	"IDBank",     "Name",     "Address")
+VALUES (:id, :nameb, :address);
+    
+SQL;
+
+		$stmt = $this->dbms->prepare($sql);
+
+		return $stmt->execute($row);
+
+		//return $stmt->fetchColumn();
+	}
 }
