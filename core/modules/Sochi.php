@@ -146,6 +146,8 @@ FROM
                 SUM("b-b"."amount") as "wasted"
             FROM
                 "billing"."bill" as "b-b"
+            WHERE 
+                "b-b"."status" IN (1,2)
             GROUP BY
                 1
         ) as "b-b"
@@ -156,6 +158,8 @@ FROM
                 SUM("b-a"."amount") as "payed"
             FROM
                 "billing"."accrual" as "b-a"
+            WHERE 
+                "b-a"."status" IN (1,2)
             GROUP BY
                 1
         ) as "b-a"
