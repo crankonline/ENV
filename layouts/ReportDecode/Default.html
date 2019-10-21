@@ -1,0 +1,36 @@
+<?php if($errors): ?>
+<?php foreach($errors as $error): ?>
+<div class="failure"><?php echo $error; ?></div>
+<?php endforeach; ?>
+<?php return; ?>
+<?php endif; ?>
+
+<table>
+    <tr>
+        <td><b>OrgName</b></td>
+        <td><b>Inn</b></td>
+        <td><b>Owner</b></td>
+        <td><b>PassportN</b></td>
+        <td><b>Series</b></td>
+        <td><b>Title</b></td>
+        <td><b>DateStart</b></td>
+        <td><b>DateFinish</b></td>
+        <td><b>StatusMessage</b></td>
+    </tr>
+<?php foreach ($certs as $cert) { ?>
+    <tr>
+        <td><?php echo $cert[0]->OrgName; ?></td>
+        <td><?php echo $cert[0]->Inn; ?></td>
+        <td><?php echo $cert[0]->Owner; ?></td>
+        <td><?php echo $cert[0]->Passport->Number; ?></td>
+        <td><?php echo $cert[0]->Passport->Series; ?></td>
+        <td><?php echo $cert[0]->Title; ?></td>
+        <td><?php echo $cert[0]->DateStart; ?></td>
+        <td><?php echo $cert[0]->DateFinish; ?></td>
+        <td><?php echo $cert[0]->StatusMessage; ?></td>
+    </tr>
+<?php } ?>
+</table>
+<textarea style="width: 100%; height: 800px">
+<?php echo $report; ?>
+</textarea>
