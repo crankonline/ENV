@@ -68,20 +68,20 @@ SQL;
 		$sql = <<<SQL
 SELECT *
 FROM
-   "sti_reporting"."form-sys-name" as "f"
+   sti_reporting.$form as "f"
 
 WHERE
   ("f"."uin" = :uins);
 SQL;
 
-		$sql = str_replace("form-sys-name" , $form, $sql);
-		$sql = str_replace(":uins" , "'".$uin."'", $sql);
-
-
 		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-		$stmt->execute( [] );
-
+		try {
+			$stmt->execute( [
+				'uins' => $uin
+			] );
+		} catch (\Exception $ex) {
+		}
 		return $stmt->fetch();
 	}
 
@@ -89,11 +89,10 @@ SQL;
 		$sql = <<<SQL
 SELECT *
 FROM 
-	"stat_reporting"."form-sys-name" as "f"
+	"stat_reporting"."$form" as "f"
 WHERE
 	("f"."uin" = :uins)
 SQL;
-		$sql = str_replace("form-sys-name" , $form, $sql);
 		$sql = str_replace(":uins" , "'".$uin."'", $sql);
 
 
