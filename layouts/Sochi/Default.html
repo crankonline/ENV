@@ -160,7 +160,7 @@
             ?>
                 <tr class="<?php echo $class; ?>">
                     <td class="center">
-                        <?php echo htmlspecialchars($report['uin']); ?>
+                        <a href="index.php?view=<?php echo $this::AK_REPORT_DECODE; ?>&type=sf&uin=<?php echo $report['uin']; ?>" target="_blank"><?php echo htmlspecialchars($report['uin']); ?></a>
                         <br>
                         <?php if($isParsableUin): ?>
                             <?php if($isUinParser): ?>
@@ -234,7 +234,7 @@
             ?>
                     <tr class="<?php echo $class; ?>">
                         <td class="center">
-                            <?php echo htmlspecialchars($report['uin']); ?>
+                            <a href="index.php?view=<?php echo $this::AK_REPORT_DECODE; ?>&type=sti&uin=<?php echo $report['uin']; ?>&sys-name=<?php echo $report['form-sys-name']; ?>" target="_blank"><?php echo htmlspecialchars($report['uin']); ?></a>
                             <?php if($isParsableUin): ?>
                                 <br>
                                 <?php if($isUinParser): ?>
@@ -317,7 +317,7 @@
             ?>
                 <tr class="<?php echo $class; ?>">
                     <td class="center">
-                        <?php echo htmlspecialchars($report['uin']); ?>
+                        <a href="index.php?view=<?php echo $this::AK_REPORT_DECODE; ?>&type=nsc&uin=<?php echo $report['uin']; ?>&sys-name=<?php echo $report['form-sys-name']; ?>" target="_blank"><?php echo htmlspecialchars($report['uin']); ?></a>
                         <br>
                         <?php if($isParsableUin): ?>
                             <?php if($isUinParser): ?>

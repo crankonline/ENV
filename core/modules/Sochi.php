@@ -244,6 +244,7 @@ SQL;
 		$sql = <<<SQL
 SELECT
     "f"."form_name" as "form",
+    "f"."sys_name" as "form-sys-name",
     COALESCE("t"."name", '-') as "type",
     TO_CHAR("r"."input_date", 'DD.MM.YYYY HH24:MI:SS') as "input-date-time",
     "r"."uin" as "uin",
@@ -339,6 +340,7 @@ SQL;
 		$sql = <<<SQL
 SELECT
     "f"."form_name" as "form",
+    "f"."sys_name" as "form-sys-name",    
     TO_CHAR("r"."input_date", 'DD.MM.YYYY HH24:MI:SS') as "input-date-time",
     "r"."uin" as "uin",
     "r"."period_month" as "period-month",
