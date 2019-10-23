@@ -93,12 +93,12 @@ FROM
 WHERE
 	("f"."uin" = :uins)
 SQL;
-		$sql = str_replace(":uins" , "'".$uin."'", $sql);
-
 
 		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-		$stmt->execute( [] );
+		$stmt->execute( [
+			'uins' => $uin
+		] );
 
 		return $stmt->fetch();
 
