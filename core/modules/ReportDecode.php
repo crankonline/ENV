@@ -48,20 +48,18 @@ SQL;
 	}
 
 	private function parseXml($data) {
-	    if ($data != null) {
-            $dom = new \DOMDocument;
-            $dom->loadXML($data);
-            $report = $dom->getElementsByTagName('EncryptionData');
-            $serts = $dom->getElementsByTagName('CertNumber');
-            $sertsArr = [];
-            foreach ($serts as $sert) {
-                array_push($sertsArr, $sert->nodeValue);
-            }
-
-            return ['rep' => $report[0]->nodeValue, 'certs' => $sertsArr];
-        } else {
-	        return null;
+	    if (is_null($data)) { return null; }
+        $dom = new \DOMDocument;
+        $dom->loadXML($data);
+        $report = $dom->getElementsByTagName('EncryptionData');
+        $serts = $dom->getElementsByTagName('CertNumber');
+        $sertsArr = [];
+        foreach ($serts as $sert) {
+            array_push($sertsArr, $sert->nodeValue);
         }
+
+        return ['rep' => $report[0]->nodeValue, 'certs' => $sertsArr];
+
 	}
 
 	protected function getPkiCertificates( $cert ) {
