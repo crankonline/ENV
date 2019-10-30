@@ -47,17 +47,19 @@ SQL;
 	    return $stmt->fetch();
 	}
 
-	private function parseXmlSf($data) {
-		$dom = new \DOMDocument;
-		$dom->loadXML($data);
-		$report = $dom->getElementsByTagName('EncryptionData');
-		$serts = $dom->getElementsByTagName('CertNumber');
-		$sertsArr = [];
-		foreach ($serts as $sert) {
-			array_push($sertsArr, $sert->nodeValue);
-		}
+	private function parseXml($data) {
+	    if (is_null($data)) { return null; }
+        $dom = new \DOMDocument;
+        $dom->loadXML($data);
+        $report = $dom->getElementsByTagName('EncryptionData');
+        $serts = $dom->getElementsByTagName('CertNumber');
+        $sertsArr = [];
+        foreach ($serts as $sert) {
+            array_push($sertsArr, $sert->nodeValue);
+        }
 
-		return ['rep' => $report[0]->nodeValue, 'certs' => $sertsArr];
+        return ['rep' => $report[0]->nodeValue, 'certs' => $sertsArr];
+
 	}
 
 	protected function getPkiCertificates( $cert ) {
@@ -131,57 +133,41 @@ SQL;
 		}
 
 		try {
-			if($type=='sf') {
-				echo "sf ";
-				$data = $this->decodeSfReport($uin);
-				$report = $this->parseXmlSf($data['xml']);
-				$repXml = base64_decode($report['rep']);
-				$certs = $report['certs'];
-				$certsArr = [];
-				foreach ($certs as $cert) {
-					array_push($certsArr, $this->getPkiCertificates($cert));
-				}
+		    $report = null;
+            if ($type == 'sf') {
+                echo "sf ";
+                $data = $this->decodeSfReport($uin);
+                $report = $this->parseXml($data['xml']);
 
-				$this->variables->certs = $certsArr;
-				$this->variables->report = $this->formatXml($repXml);
-			}
-			if($type=='sti') {
-				echo "sti ";
-				$form_sys_name = isset( $_GET['sys-name'] ) ? $_GET['sys-name'] : null;
-				$data = $this->decodeStiReport($uin,lcfirst($form_sys_name));
-				$report = $this->parseXmlSf($data['form_data']);
-				$repXml = base64_decode($report['rep']);
-				$certs = $report['certs'];
-				//print_r($certs);
-				$certsArr = [];
-				foreach ($certs as $cert) {
-					array_push($certsArr, $this->getPkiCertificates($cert));
-				}
+            }
+            if ($type == 'sti') {
+                echo "sti ";
+                $form_sys_name = isset($_GET['sys-name']) ? $_GET['sys-name'] : null;
+                $data = $this->decodeStiReport($uin, lcfirst($form_sys_name));
+                $report = $this->parseXml($data['form_data']);
 
-				$this->variables->certs = $certsArr;
-				$this->variables->report = $this->formatXml($repXml);
+            }
+            if ($type == 'nsc') {
+                echo "nsc ";
+                $form_sys_name = isset($_GET['sys-name']) ? $_GET['sys-name'] : null;
+                $data = $this->decodeNscReport($uin, lcfirst($form_sys_name));
+                $report = $this->parseXml($data['form_data']);
+            }
+            if ($report != null) {
+                $repXml = base64_decode($report['rep']);
+                $certs = $report['certs'];
+                $certsArr = [];
+                foreach ($certs as $cert) {
+                    array_push($certsArr, $this->getPkiCertificates($cert));
+                }
 
-//				print_r($data);
-//				echo "f";
-			}
-			if($type=='nsc') {
-				echo "nsc ";
-				$form_sys_name = isset( $_GET['sys-name'] ) ? $_GET['sys-name'] : null;
-				$data = $this->decodeNscReport($uin,lcfirst($form_sys_name));
-//				print_r("1111",$data);
-				$report = $this->parseXmlSf($data['form_data']);
-				$repXml = base64_decode($report['rep']);
-				$certs = $report['certs'];
-				$certsArr = [];
-				foreach ($certs as $cert) {
-					array_push($certsArr, $this->getPkiCertificates($cert));
-				}
+                $this->variables->certs = $certsArr;
+                $this->variables->report = $this->formatXml($repXml);
+            } else {
+                $this->variables->errors[] = 'Контейнер по запрашиваемому uin отсутствует';
+            }
 
-				$this->variables->certs = $certsArr;
-				$this->variables->report = $this->formatXml($repXml);
-			}
-
-			echo "ok";
+//			echo "ok";
 
 		} catch ( \Exception $e ) {
 			\Sentry\captureException( $e );
