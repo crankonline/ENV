@@ -31,18 +31,22 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$id = $_POST['id'];
 			$name = $_POST['name'];
 			$shortName = $_POST['short'];
-		}
 
-		$return = $dlLegalForm->modifyLegalForm($id, $name, $shortName);
+            $return = $dlLegalForm->modifyLegalForm($id, $name, $shortName);
 
-		$this->config->skipMain = true;
+            $this->config->skipMain = true;
 
-		$this->suppress();
+            $this->suppress();
 
-		die( json_encode(["id"=>$id,
-		                  "name"=>$name,
-		                  "shortName"=>$shortName,
-		                  "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+            die( json_encode(["id"=>$id,
+                "name"=>$name,
+                "shortName"=>$shortName,
+                "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+		} else {
+		    die( json_encode(["error"=>"Неверные данные"]));
+        }
+
+
 
 	}
 
@@ -64,18 +68,21 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$id = $_POST['bankId'];
 			$name = $_POST['bankName'];
 			$shortName = $_POST['bankAddress'];
-		}
+            $return = $dlBank->modifyBank($id, $name, $shortName);
 
-		$return = $dlBank->modifyBank($id, $name, $shortName);
+            $this->config->skipMain = true;
 
-		$this->config->skipMain = true;
+            $this->suppress();
 
-		$this->suppress();
+            die( json_encode(["id"=>$id,
+                "name"=>$name,
+                "shortName"=>$shortName,
+                "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+		} else {
+            die( json_encode(["error"=>"Неверные данные"]));
+        }
 
-		die( json_encode(["id"=>$id,
-		                  "name"=>$name,
-		                  "shortName"=>$shortName,
-		                  "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+
 
 	}
 
@@ -87,22 +94,25 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$id = $_POST['bankId'];
 			$name = $_POST['bankName'];
 			$shortName = $_POST['bankAddress'];
-		}
+            try {
+                $return = $dlBank->addBank($id, $name, $shortName);
+                $this->config->skipMain = true;
 
-		try {
-            $return = $dlBank->addBank($id, $name, $shortName);
-            $this->config->skipMain = true;
+                $this->suppress();
 
-            $this->suppress();
+                die( json_encode(["id"=>$id,
+                    "name"=>$name,
+                    "shortName"=>$shortName,
+                    "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
 
-            die( json_encode(["id"=>$id,
-                "name"=>$name,
-                "shortName"=>$shortName,
-                "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
-
-        } catch (\Exception $ex) {
-            die( json_encode(["error"=>$ex]) );
+            } catch (\Exception $ex) {
+                die( json_encode(["error"=>$ex]) );
+            }
+		} else {
+            die( json_encode(["error"=>"Неверные данные"]));
         }
+
+
 
 
 	}
@@ -129,20 +139,19 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$activityGked = $_POST['activityGked'];
 
 			$return = $dlActivity->modifyActivity($id, $activityId, $activityName, $activityGked);
-		}
+            $this->config->skipMain = true;
 
+            $this->suppress();
 
+            die( json_encode(["id"=>$id,
+                "activityId"=>$activityId,
+                "activityName"=>$activityName,
+                "activityGked"=>$activityGked,
+                "return"=>$return] ) ); //чтоб не подгружался вышестоящий темплейт.
+		} else {
+            die( json_encode(["error"=>"Неверные данные"]));
+        }
 
-
-		$this->config->skipMain = true;
-
-		$this->suppress();
-
-		die( json_encode(["id"=>$id,
-		                  "activityId"=>$activityId,
-		                  "activityName"=>$activityName,
-		                  "activityGked"=>$activityGked,
-		                  "return"=>$return] ) ); //чтоб не подгружался вышестоящий темплейт.
 	}
 
 	public function getChiefBasisJson(){
@@ -163,15 +172,19 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$name = $_POST['name'];
 
 			$return = $dlChiefBasis->modifyChiefBasis($id, $name);
-		}
 
-		$this->config->skipMain = true;
+            $this->config->skipMain = true;
 
-		$this->suppress();
+            $this->suppress();
 
-		die( json_encode(["id"=>$id,
-		                  "name"=>$name,
-		                  "return"=>$return] ) ); //чтоб не подгружался вышестоящий темплейт.
+            die( json_encode(["id"=>$id,
+                "name"=>$name,
+                "return"=>$return] ) ); //чтоб не подгружался вышестоящий темплейт.
+		} else {
+            die( json_encode(["error"=>"Неверные данные"]));
+        }
+
+
 	}
 
 	protected function main() {
