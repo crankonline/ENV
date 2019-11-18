@@ -89,16 +89,21 @@ class RequisitesMeta extends \Environment\Core\Module {
 			$shortName = $_POST['bankAddress'];
 		}
 
-		$return = $dlBank->addBank($id, $name, $shortName);
+		try {
+            $return = $dlBank->addBank($id, $name, $shortName);
+            $this->config->skipMain = true;
 
-		$this->config->skipMain = true;
+            $this->suppress();
 
-		$this->suppress();
+            die( json_encode(["id"=>$id,
+                "name"=>$name,
+                "shortName"=>$shortName,
+                "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
 
-		die( json_encode(["id"=>$id,
-		                  "name"=>$name,
-		                  "shortName"=>$shortName,
-		                  "return"=>$return]) ); //чтоб не подгружался вышестоящий темплейт.
+        } catch (\Exception $ex) {
+            die( json_encode(["error"=>$ex]) );
+        }
+
 
 	}
 

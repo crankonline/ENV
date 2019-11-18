@@ -35,7 +35,26 @@
 
     });
 
+    // var tips = $( ".validateTips" );
+    $.fn.updateTips = function ( t ) {
+        $( ".validateTips" )
+            .text( t )
+            .addClass( "ui-state-highlight" );
+        setTimeout(function() {
+            $( ".validateTips" ).removeClass( "ui-state-highlight", 1500 );
+        }, 500 );
+    }
 
+    $.fn.checkLength = function ( o, n, min, max ) {
+        if ( o.val().length > max || o.val().length < min ) {
+            o.addClass( "ui-state-error" );
+            $.fn.updateTips( "Length of " + n + " must be between " +
+                min + " and " + max + "." );
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 
     /**
@@ -156,33 +175,13 @@
                 allFields = $( [] ).add( name ).add( short ).add( id ),
                 tips = $( ".validateTips" );
 
-            function updateTips( t ) {
-                tips
-                    .text( t )
-                    .addClass( "ui-state-highlight" );
-                setTimeout(function() {
-                    tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            }
-
-            function checkLength( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
             function editLaw() {
                 var valid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                valid = valid && checkLength( name, "Name", 3, 100 );
-                valid = valid && checkLength( short, "ShortName", 1, 5 );
-                valid = valid && checkLength( id, "IdLegalForm", 1, 8 );
+                valid = valid && $.fn.checkLength( name, "Name", 3, 100 );
+                valid = valid && $.fn.checkLength( short, "ShortName", 1, 5 );
+                valid = valid && $.fn.checkLength( id, "IdLegalForm", 1, 8 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -254,33 +253,13 @@
                 allFields = $( [] ).add( name ).add( address ).add( id ),
                 tips = $( ".validateTips" );
 
-            function updateTips( t ) {
-                tips
-                    .text( t )
-                    .addClass( "ui-state-highlight" );
-                setTimeout(function() {
-                    tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            }
-
-            function checkLength( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
             function edit() {
                 var valid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                valid = valid && checkLength( name, "Name", 3, 100 );
-                valid = valid && checkLength( address, "ShortName", 1, 100 );
-                valid = valid && checkLength( id, "IdLegalForm", 1, 6 );
+                valid = valid && $.fn.checkLength( name, "Name", 3, 100 );
+                valid = valid && $.fn.checkLength( address, "ShortName", 1, 100 );
+                valid = valid && $.fn.checkLength( id, "IdLegalForm", 1, 6 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -354,34 +333,14 @@
                 allFields = $( [] ).add( name ).add( gked ).add( id ).add( activity ),
                 tips = $( ".validateTips" );
 
-            function updateTips( t ) {
-                tips
-                    .text( t )
-                    .addClass( "ui-state-highlight" );
-                setTimeout(function() {
-                    tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            }
-
-            function checkLength( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
             function edit() {
                 var valid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                valid = valid && checkLength( name, "Name", 3, 100 );
-                valid = valid && checkLength( gked, "GKED", 1, 100 );
-                valid = valid && checkLength( id, "ID", 1, 8 );
-                valid = valid && checkLength( activity, "ActivityID", 1, 8 );
+                valid = valid && $.fn.checkLength( name, "Name", 3, 100 );
+                valid = valid && $.fn.checkLength( gked, "GKED", 1, 100 );
+                valid = valid && $.fn.checkLength( id, "ID", 1, 8 );
+                valid = valid && $.fn.checkLength( activity, "ActivityID", 1, 8 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -454,32 +413,12 @@
                 allFields = $( [] ).add( name ).add( id ),
                 tips = $( ".validateTips" );
 
-            function updateTips( t ) {
-                tips
-                    .text( t )
-                    .addClass( "ui-state-highlight" );
-                setTimeout(function() {
-                    tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            }
-
-            function checkLength( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
             function edit() {
                 var valid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                valid = valid && checkLength( name, "Name", 3, 100 );
-                valid = valid && checkLength( id, "ID", 1, 8 );
+                valid = valid && $.fn.checkLength( name, "Name", 3, 100 );
+                valid = valid && $.fn.checkLength( id, "ID", 1, 8 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -546,36 +485,16 @@
                 name = $( "#bank-name" ),
                 address = $( "#bank-address" ),
                 id = $( "#bank-id" ),
-                allFields = $( [] ).add( name ).add( address ).add( id ),
-                tips = $( ".validateTips" );
+                allFields = $( [] ).add( name ).add( address ).add( id );
 
-            function updateTips( t ) {
-                tips
-                    .text( t )
-                    .addClass( "ui-state-highlight" );
-                setTimeout(function() {
-                    tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            }
-
-            function checkLength( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            }
 
             function edit() {
                 var valid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                valid = valid && checkLength( name, "Name", 3, 100 );
-                valid = valid && checkLength( address, "ShortName", 1, 100 );
-                valid = valid && checkLength( id, "IdLegalForm", 1, 6 );
+                valid = valid && $.fn.checkLength( name, "Name", 3, 100 );
+                valid = valid && $.fn.checkLength( address, "ShortName", 1, 100 );
+                valid = valid && $.fn.checkLength( id, "IdLegalForm", 1, 6 );
 
                 var jqxhr = $.ajax( {
                     method: "POST",
@@ -670,7 +589,7 @@
 
 
 <div id="dialog-form-bank" title="Редактирование (Bank) Банка" style="display: none">
-    <p class="validateTips">All form fields are required.</p>
+    <p class="validateTips">Все поля должны быть заполнены.</p>
 
     <form>
         <fieldset>
