@@ -156,7 +156,7 @@ SQL;
     }
 
     protected function diffDateRequisitesAndPki($certificatesDate, $requisitesDate) {
-        usort( $requisitesDate, array( $this, 'date_sort2' ) );
+        usort( $requisitesDate, array( $this, 'date_sort' ) );
 
         $cerReqDate = [];
         foreach($certificatesDate as $cert) {
@@ -189,7 +189,7 @@ SQL;
         return $cerReqDate;
     }
 
-    private static function date_sort2($a, $b) {
+    private static function date_sort($a, $b) {
         return strtotime($a['DateTime']) - strtotime($b['DateTime']);
     }
 
@@ -244,11 +244,6 @@ SQL;
 
 	    return $reqArr;
     }
-
-    private static function date_sort($a, $b) {
-        return strtotime($a) - strtotime($b);
-    }
-
 
     protected function setUsageStatus( $uid, $status, $description ) {
 		$client = new SoapClients\Api\RequisitesData();
