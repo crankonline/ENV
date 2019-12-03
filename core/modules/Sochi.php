@@ -450,7 +450,7 @@ SQL;
 				$user['uid']
 			);
 		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
+//			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
 		}
 	}
