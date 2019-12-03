@@ -56,7 +56,7 @@ class Login extends \Unikum\Core\Module {
 				\Sentry\captureException( $e );
 				$this->variables->message = 'Произошла ошибка при работе с БД';
 			} catch ( \Exception $e ) {
-				\Sentry\captureException( $e );
+//				\Sentry\captureException( $e );
 				$this->variables->message = $e->getMessage();
 			}
 		}

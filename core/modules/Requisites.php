@@ -294,12 +294,12 @@ SQL;
             $requisitesAll = $this->getRequisites( $inn, $uid );
 			list( $requisites, $bindings ) = $requisitesAll;
 		} catch ( \SoapFault $e ) {
-			\Sentry\captureException( $e );
+//			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->faultstring;
 
 			return;
 		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
+//			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
 
 			return;
