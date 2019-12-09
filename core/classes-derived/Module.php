@@ -54,7 +54,8 @@ abstract class Module extends \Unikum\Core\Module {
 
         AK_DATA_HARVESTER                 = 'data-harvester',
 
-        AK_REPORT_DECODE                  = 'report-decode';
+        AK_REPORT_DECODE                  = 'report-decode',
+        AK_SF_ARCHIVE                     = 'sf-archive';
     const
         PMS_ACCESS = 'can-access';
 

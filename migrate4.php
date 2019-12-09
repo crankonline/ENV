@@ -10,7 +10,7 @@ require 'core/configuration.php';
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 
-class migrate3 {
+class migrate4 {
 
 
 	public function insertModule( ) {
@@ -35,10 +35,10 @@ SQL;
 
 		$stmt->execute( [
 			'moduleGroupId' => 8,
-			'accesKey' => "report-decode",
-			'handleClass' => "ReportDecode",
-			'namemg' => "Декодировка отчетов",
-			'isEntryPoint' => false
+			'accesKey' => "sf-archive",
+			'handleClass' => "SfArchive",
+			'namemg' => "Архив соцфонда",
+			'isEntryPoint' => true
 		] );
 
 		return $stmt->fetchColumn();
@@ -69,7 +69,7 @@ SQL;
 	}
 }
 
-$migrate = new migrate3();
+$migrate = new migrate4();
 
 $t = $migrate->insertModule();
 $migrate->insertModuleAccess($t);

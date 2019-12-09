@@ -162,6 +162,15 @@ Connections::configure(
 		'password' => '255c80917457f05fd8b936899116b58b'
 	]
 );
+
+Connections::configure(
+    'SfArchive',
+    [
+        'dsn'      => "pgsql:host=172.16.4.8;port=5432;dbname=seo_sf_base;options='--client_encoding=UTF8'",
+        'user'     => 'postgres',
+        'password' => '1qaz2WSX$$'
+    ]
+);
 ?>
 
 
