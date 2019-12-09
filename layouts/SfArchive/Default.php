@@ -39,7 +39,7 @@
        -moz-box-sizing: border-box;
             box-sizing: border-box;
 }">
-<textarea><?php echo $xml ?></textarea>
+<textarea style="width: 100%; height: 400px"><?php echo $xml ?></textarea>
 </div>
 <?php endif; ?>
 
