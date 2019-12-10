@@ -44,7 +44,10 @@ SELECT
     "c-rp"."Name" as "representative-name",
     "c-rp"."MiddleName" as "representative-middle-name",
     STRING_AGG("c-rq"."Inn", ',') as "company-inns",
-    COUNT("c-rq"."IDRequisites") as "company-count"
+    COUNT("c-rq"."IDRequisites") as "company-count",
+    string_agg("c-rr"."Phone", ' ' ) as "phone",
+    STRING_AGG("c-rq"."FullName", ',') as "full-name"
+    
 FROM
     "Common"."Passport" as "c-p"
         INNER JOIN "Common"."Representative" as "c-rp"
