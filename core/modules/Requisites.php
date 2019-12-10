@@ -172,17 +172,36 @@ SQL;
                 }
             }
 
-            if(count($reqOnlyDate)>2) {
+            $j = 0;
+            $firstExist = false;
+            /*if(count($reqOnlyDate)>2) {
                 $tempAr['Requisites'] = $reqOnlyDate[count($reqOnlyDate)-1];
-            } else {
+            } else {*/
                 foreach($requisitesDate as $req) {
-                    if(strtotime($cert->DateStart) < strtotime($req['DateTime'])) {
-                        $tempAr['Requisites'] = $req;
-                        break;
+                    if(strtotime($cert->DateStart) > strtotime($req['DateTime'])) {
+                        if(!$firstExist) {
+//                        echo strtotime($cert->DateStart) . " < " . strtotime($req['DateTime']) . " => ". (strtotime($cert->DateStart) < strtotime($req['DateTime']))."<br>";
+                            $tempAr['Requisites0'] = $req;
+                            $firstExist = true;
+                            if(array_key_exists($cert->Passport->Series.'|'.$cert->Passport->Number,$req)) {
+                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series.'|'.$cert->Passport->Number]['EdsName'];
+                                break;
+                            }
+                        } else {
+                            if(array_key_exists($cert->Passport->Series.'|'.$cert->Passport->Number,$req)) {
+                                $tempAr['Requisites-'.$j] = $req;
+                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series.'|'.$cert->Passport->Number]['EdsName'];
+                                break;
+                            } else {
+                                    $j++;
+                                    $tempAr['Requisites'.$j] = $req;
+                            }
+                        }
+
                     }
                 }
 
-            }
+//            }
             $cert->EdsUsage = $tempAr;
 
         }
@@ -190,7 +209,8 @@ SQL;
     }
 
     private static function date_sort($a, $b) {
-        return strtotime($a['DateTime']) - strtotime($b['DateTime']);
+//        return strtotime($a['DateTime']) - strtotime($b['DateTime']);
+        return strtotime($b['DateTime']) - strtotime($a['DateTime']);
     }
 
     private static function groupRequisitesDate($requisites) {
@@ -351,6 +371,20 @@ SQL;
             $requisitesDate = $this->getDateFromRequisites($inn);
             $requisitesDateFull = $this->groupRequisitesDate($requisitesDate);
             $cerReqDat = $this->diffDateRequisitesAndPki($certificates, $requisitesDateFull);
+
+
+            echo "<pre style='text-align: left;width: 100%;display:none'>";
+            echo "<h1>Сertificates</h1>";
+            print_r($certificates);
+////            echo "<h1>RequisitesDate</h1>";
+////            print_r($requisitesDate);
+////            echo "<h1>RequisitesDateFull</h1>";
+////            print_r($requisitesDateFull);
+//
+////            echo "<h1>CerReqDat </h1>";
+////            print_r($cerReqDat );
+            echo " </pre>";
+//            die();
 
             $this->variables->certificates = $certificates;
 		} catch ( \SoapFault $e ) {
