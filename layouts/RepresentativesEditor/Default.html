@@ -128,6 +128,18 @@
             <?php endif; ?>
         </div>
 
+        <div class="field">
+            <label for="phone" class="fixed">Телефон:</label>
+            <input id="phone" type="text" value="<?php echo htmlspecialchars($cRepresentative['phone']); ?>" readonly>
+
+        </div>
+
+        <div class="field">
+            <label for="full-name" class="fixed">Имя компании:</label>
+            <textarea id="full-name"><?php echo htmlspecialchars($cRepresentative['full-name']); ?></textarea>
+
+        </div>
+
         <div class="field buttons">
             <input type="submit" class="button" name="update" value="Изменить" />
             <input type="submit" class="button" name="remove" value="Удалить" onclick="return window.confirm('Вы осознанно хотите УДАЛИТЬ паспортные данные, представителя и его участие во всех организациях?')" />
