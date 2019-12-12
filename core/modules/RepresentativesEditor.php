@@ -45,8 +45,13 @@ SELECT
     "c-rp"."MiddleName" as "representative-middle-name",
     STRING_AGG("c-rq"."Inn", ',') as "company-inns",
     COUNT("c-rq"."IDRequisites") as "company-count",
-    string_agg("c-rr"."Phone", ' ' ) as "phone",
-    STRING_AGG("c-rq"."FullName", ',') as "full-name"
+    string_agg("c-rr"."Phone", ' | ' ) as "phone",
+    STRING_AGG("c-rq"."FullName", ' \n') as "full-name",
+--     ARRAY_AGG('[inn:''' || "c-rq"."Inn" || ''', name:''' || "c-rq"."FullName" || ''', phone:''' || "c-rr"."Phone" || ''']') as "company-inns2",
+    json_object_agg("c-rq"."Inn",
+                    json_build_object('idRep',"c-rr"."IDRequisitesRepresentative",'inn',"c-rq"."Inn",'name',"c-rq"."Name",'phone',"c-rr"."Phone")
+        )as "company-inns2"
+
     
 FROM
     "Common"."Passport" as "c-p"
