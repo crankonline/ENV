@@ -86,11 +86,11 @@
             <td class="left">
             <?php
                 if($representative['representative-companies']):
-                    $companies = explode(',', $representative['representative-companies']);
+                    $companies_count = explode(',', $representative['representative-companies']);
                     $companies = json_decode($representative['company-inns']);
 
             ?>
-                Всего: <b><?php echo count($companies); ?></b>
+                Всего: <b><?php echo count($companies_count); ?></b>
                 <br>
                 <?php foreach($companies as $company): ?>
                     <?php echo $company->inn; ?>
