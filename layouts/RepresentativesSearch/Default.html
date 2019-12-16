@@ -85,7 +85,7 @@
             ?></td>
             <td class="left">
             <?php
-                if($representative['representative-companies']){
+                if($representative['representative-companies']):
                     $companies = explode(',', $representative['representative-companies']);
                     $companies = json_decode($representative['company-inns']);
 
@@ -104,9 +104,9 @@
                     <?php echo $company->name; ?>
                     <br>
                 <?php endforeach; ?>
-            <?php } else { ?>
+            <?php else: ?>
                 -
-            <?php } ?>
+            <?php endif ?>
             </td>
         </tr>
     <?php endforeach; ?>
