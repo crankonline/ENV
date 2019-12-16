@@ -147,13 +147,14 @@
 
     </form>
 
-    <div style="text-align: left">
+    <div style="text-align: left; display: none">
         <table>
         <?php
             $json = json_decode($cRepresentative['company-inns2']);
             //print_r($json);
             foreach($json as $key => $company):
-                echo '<tr>  <td><div class="field">'.$company->idRep.'</div></td>
+                echo '<tr>  <td><div class="field">'.$company->idReqRep.'</div></td>
+                            <td><div class="field">'.$company->idRep.'</div></td>
                             <td><div class="field">'.$company->inn.'</div></td>
                             <td><div class="field">'.$company->name.'</div></td>
                             <td><div class="field">'.$company->phone.'</div></td></tr>';
@@ -172,22 +173,28 @@
 
                 <?php
                     if($cRepresentative['company-count']):
+                        $companies2 = json_decode($cRepresentative['company-inns2']);
+
                         $companies = explode(',', $cRepresentative['company-inns']);
 
                         $isRequisites = $this->isPermitted($this::AK_REQUISITES);
                         $isSochi      = $this->isPermitted($this::AK_SOCHI);
 
-                        foreach($companies as $company):
+                        //foreach($companies as $company):
+                        foreach($companies2 as $company):
                 ?>
                 <div class="field">
                     <span class="text">
-                        <?php echo $company; ?>
+                        <?php echo $company->inn ?>
                         <?php if($isRequisites): ?>
-                            <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $company; ?>" target="_blank">Реквизиты</a>
+                            <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $company->inn; ?>" target="_blank">Реквизиты</a>
                         <?php endif; ?>
                         <?php if($isSochi): ?>
-                            <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $company; ?>" target="_blank">СОчИ</a>
+                            <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $company->inn; ?>" target="_blank">СОчИ</a>
                         <?php endif; ?>
+                        ( <?php echo $company->phone; ?> )
+                        <?php echo $company->name; ?>
+
                     </span>
                 </div>
                 <?php
