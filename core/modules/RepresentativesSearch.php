@@ -49,7 +49,15 @@ SELECT
     "c-rp"."Surname" as "representative-surname",
     "c-rp"."Name" as "representative-name",
     "c-rp"."MiddleName" as "representative-middle-name",
-    STRING_AGG("c-rq"."Inn", ',') as "representative-companies"
+    STRING_AGG("c-rq"."Inn", ',') as "representative-companies",
+    json_object_agg("c-rq"."Inn",
+                    json_build_object(
+                        'idReqRep',"c-rr"."IDRequisitesRepresentative",
+                        'idRep', "c-rp"."IDRepresentative",
+                        'inn',"c-rq"."Inn",
+                        'name',"c-rq"."Name",
+                        'phone',"c-rr"."Phone")
+        )as "company-inns"
 FROM
     "Common"."Passport" as "c-p"
         INNER JOIN "Common"."Representative" as "c-rp"
