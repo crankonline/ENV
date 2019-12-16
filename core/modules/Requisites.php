@@ -7,58 +7,58 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 use Environment\Soap\Clients as SoapClients;
 
 class Requisites extends \Environment\Core\Module {
-	const
-		ROLES_CHIEF = 1,
-		ROLES_CONSULTING = 5,
-		ROLES_ROOT = 6;
+    const
+        ROLES_CHIEF = 1,
+        ROLES_CONSULTING = 5,
+        ROLES_ROOT = 6;
 
-	const
-		PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status';
+    const
+        PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status';
 
-	protected $config = [
-		'template' => 'layouts/Requisites/Default.html'
-	];
+    protected $config = [
+        'template' => 'layouts/Requisites/Default.html'
+    ];
 
-	protected function getRequisites( $inn, $uid ) {
-		$client = new SoapClients\Api\RequisitesData();
+    protected function getRequisites( $inn, $uid ) {
+        $client = new SoapClients\Api\RequisitesData();
 
-		$requisites = $uid
-			? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, null )
-			: $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, null );
+        $requisites = $uid
+            ? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, null )
+            : $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, null );
 
-		if ( ! ( $requisites && $requisites->common ) ) {
-			throw new \Exception( 'Клиент не найден' );
-		}
+        if ( ! ( $requisites && $requisites->common ) ) {
+            throw new \Exception( 'Клиент не найден' );
+        }
 
-		$consulting = null;
+        $consulting = null;
 
-		foreach ( $requisites->common->representatives as $rep ) {
-			foreach ( $rep->roles as $role ) {
-				switch ( $role->id ) {
-					case self::ROLES_CONSULTING:
-						$consulting = $rep->person->passport;
-						break 2;
+        foreach ( $requisites->common->representatives as $rep ) {
+            foreach ( $rep->roles as $role ) {
+                switch ( $role->id ) {
+                    case self::ROLES_CONSULTING:
+                        $consulting = $rep->person->passport;
+                        break 2;
 
-					case self::ROLES_ROOT:
-						$consulting = $rep->person->passport;
-						break 2;
-				}
-			}
-		}
+                    case self::ROLES_ROOT:
+                        $consulting = $rep->person->passport;
+                        break 2;
+                }
+            }
+        }
 
-		$bindings = $consulting
-			? $client->getConsultingBindingsByPassport(
-				$client::SUBSCRIBER_TOKEN,
-				$consulting->series,
-				$consulting->number
-			)
-			: null;
+        $bindings = $consulting
+            ? $client->getConsultingBindingsByPassport(
+                $client::SUBSCRIBER_TOKEN,
+                $consulting->series,
+                $consulting->number
+            )
+            : null;
 
-		return [ $requisites, $bindings ];
-	}
+        return [ $requisites, $bindings ];
+    }
 
-	protected function getSochiBillingBalance( $inn ) {
-		$sql = <<<SQL
+    protected function getSochiBillingBalance( $inn ) {
+        $sql = <<<SQL
 SELECT
     COALESCE("b-a"."payed", 0) - COALESCE("b-b"."wasted", 0)
 FROM
@@ -87,18 +87,18 @@ WHERE
     ("b-c"."inn" = :inn)
 SQL;
 
-		$stmt = Connections::getConnection( 'Billing' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Billing' )->prepare( $sql );
 
-		$stmt->execute( [
-			'inn' => $inn
-		] );
+        $stmt->execute( [
+            'inn' => $inn
+        ] );
 
-		return $stmt->fetchColumn();
-	}
+        return $stmt->fetchColumn();
+    }
 
-	protected function getPkiCertificates( $inn ) {
-		return ( new SoapClients\PkiService() )->search( $inn );
-	}
+    protected function getPkiCertificates( $inn ) {
+        return ( new SoapClients\PkiService() )->search( $inn );
+    }
 
     protected function getDateFromRequisites( $inn ) {
         $sql = <<<SQL
@@ -159,51 +159,70 @@ SQL;
         usort( $requisitesDate, array( $this, 'date_sort' ) );
 
         $cerReqDate = [];
-        foreach($certificatesDate as $cert) {
-            $tempAr = ['DateStart'=>$cert->DateStart,'DateFinish'=>$cert->DateFinish];
+        if(isset($certificatesDate)) {
+            foreach ($certificatesDate as $cert) {
+                $tempAr = ['DateStart' => $cert->DateStart, 'DateFinish' => $cert->DateFinish];
 
-            $i = 0;
-            $reqOnlyDate = [];
-            foreach($requisitesDate as $req) {
-                if(strtotime($cert->DateStart) < strtotime($req['DateTime']) &&
-                    strtotime($cert->DateFinish) > strtotime($req['DateTime'])) {
-                    $reqOnlyDate[] = $req;
-                    $i++;
+                $i = 0;
+                $reqOnlyDate = [];
+                foreach ($requisitesDate as $req) {
+                    if (strtotime($cert->DateStart) < strtotime($req['DateTime']) &&
+                        strtotime($cert->DateFinish) > strtotime($req['DateTime'])) {
+                        $reqOnlyDate[] = $req;
+                        $i++;
+                    }
                 }
-            }
 
-            $j = 0;
-            $firstExist = false;
-            /*if(count($reqOnlyDate)>2) {
-                $tempAr['Requisites'] = $reqOnlyDate[count($reqOnlyDate)-1];
-            } else {*/
-                foreach($requisitesDate as $req) {
-                    if(strtotime($cert->DateStart) > strtotime($req['DateTime'])) {
-                        if(!$firstExist) {
+                $j = 0;
+                $firstExist = false;
+                /*if(count($reqOnlyDate)>2) {
+                    $tempAr['Requisites'] = $reqOnlyDate[count($reqOnlyDate)-1];
+                } else {*/
+                foreach ($requisitesDate as $req) {
+                    if (strtotime($cert->DateStart) > strtotime($req['DateTime'])) {
+                        if (!$firstExist) {
 //                        echo strtotime($cert->DateStart) . " < " . strtotime($req['DateTime']) . " => ". (strtotime($cert->DateStart) < strtotime($req['DateTime']))."<br>";
                             $tempAr['Requisites0'] = $req;
                             $firstExist = true;
-                            if(array_key_exists($cert->Passport->Series.'|'.$cert->Passport->Number,$req)) {
-                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series.'|'.$cert->Passport->Number]['EdsName'];
+                            if (array_key_exists($cert->Passport->Series . '|' . $cert->Passport->Number, $req)) {
+                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series . '|' . $cert->Passport->Number]['EdsName'];
+                                $cert->Passport->ReqDate = $req['DateTime'];
                                 break;
                             }
                         } else {
-                            if(array_key_exists($cert->Passport->Series.'|'.$cert->Passport->Number,$req)) {
-                                $tempAr['Requisites-'.$j] = $req;
-                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series.'|'.$cert->Passport->Number]['EdsName'];
+                            if (array_key_exists($cert->Passport->Series . '|' . $cert->Passport->Number, $req)) {
+                                $tempAr['Requisites-' . $j] = $req;
+                                $cert->Passport->EdsUsage = $req[$cert->Passport->Series . '|' . $cert->Passport->Number]['EdsName'];
+                                $cert->Passport->ReqDate = $req['DateTime'];
                                 break;
                             } else {
-                                    $j++;
-                                    $tempAr['Requisites'.$j] = $req;
+                                $j++;
+                                $tempAr['Requisites' . $j] = $req;
                             }
                         }
 
                     }
                 }
 
-//            }
-            $cert->EdsUsage = $tempAr;
+                if (!isset($cert->Passport->EdsUsage)) {
+                    echo "hi";
+                    foreach ($requisitesDate as $req) {
+                        if (array_key_exists($cert->Passport->Series . '|' . $cert->Passport->Number, $req)) {
+                            $tempAr['Requisites-fail'] = $req;
 
+
+                            $cert->Passport->EdsUsage = $req[$cert->Passport->Series . '|' . $cert->Passport->Number]['EdsName'];
+                            $cert->Passport->ReqDate = $req['DateTime'];
+
+                            break;
+                        }
+                    }
+                }
+
+//            }
+                $cert->EdsUsage = $tempAr;
+
+            }
         }
         return $cerReqDate;
     }
@@ -214,18 +233,18 @@ SQL;
     }
 
     private static function groupRequisitesDate($requisites) {
-	    $reqArr = [];
-	    foreach ($requisites as $req) {
-	        if (array_key_exists($req['DateTime'] . '|' . $req['IDRequisites'],$reqArr)) {
-	            if(array_key_exists($req['Series'].'|'.$req['Number'],$reqArr[$req['DateTime'] . '|' . $req['IDRequisites']])) {
+        $reqArr = [];
+        foreach ($requisites as $req) {
+            if (array_key_exists($req['DateTime'] . '|' . $req['IDRequisites'],$reqArr)) {
+                if(array_key_exists($req['Series'].'|'.$req['Number'],$reqArr[$req['DateTime'] . '|' . $req['IDRequisites']])) {
                     $reqArr[$req['DateTime'] . '|' . $req['IDRequisites']]
-                        [$req['Series'].'|'.$req['Number']]
-                            [$req['RepresentativeRoleID']] = [
-                                'RepresentativeRoleID' => $req['RepresentativeRoleID'],
-                                'EdsName' => $req['EdsName'],
-                                'EdsUsageModelID' => $req['EdsUsageModelID'],
-                                'RoleName' => $req['RoleName']
-                            ];
+                    [$req['Series'].'|'.$req['Number']]
+                    [$req['RepresentativeRoleID']] = [
+                        'RepresentativeRoleID' => $req['RepresentativeRoleID'],
+                        'EdsName' => $req['EdsName'],
+                        'EdsUsageModelID' => $req['EdsUsageModelID'],
+                        'RoleName' => $req['RoleName']
+                    ];
                 } else {
                     $reqArr[$req['DateTime'] . '|' . $req['IDRequisites']][$req['Series'].'|'.$req['Number']] = [
                         'RepresentativeID' => $req['RepresentativeID'],
@@ -262,112 +281,112 @@ SQL;
             }
         }
 
-	    return $reqArr;
+        return $reqArr;
     }
 
     protected function setUsageStatus( $uid, $status, $description ) {
-		$client = new SoapClients\Api\RequisitesData();
+        $client = new SoapClients\Api\RequisitesData();
 
-		$success = $client->setUsageStatus(
-			$client::SUBSCRIBER_TOKEN,
-			$uid,
-			(bool) $status,
-			$description
-		);
+        $success = $client->setUsageStatus(
+            $client::SUBSCRIBER_TOKEN,
+            $uid,
+            (bool) $status,
+            $description
+        );
 
-		if ( $success ) {
-			$statuses = $client->getUsageStatuses( $client::SUBSCRIBER_TOKEN, $uid );
+        if ( $success ) {
+            $statuses = $client->getUsageStatuses( $client::SUBSCRIBER_TOKEN, $uid );
 
-			return array_pop( $statuses );
-		}
+            return array_pop( $statuses );
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	protected function main() {
-		$this->context->css[] = 'resources/css/ui-misc-form.css';
-		$this->context->css[] = 'resources/css/ui-misc-form-colored.css';
-		$this->context->css[] = 'resources/css/ui-requisites.css';
+    protected function main() {
+        $this->context->css[] = 'resources/css/ui-misc-form.css';
+        $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
+        $this->context->css[] = 'resources/css/ui-requisites.css';
 
-		$this->variables->errors = [];
+        $this->variables->errors = [];
 
-		$inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
-		$uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
+        $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
+        $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
 
-		if ( ! ( $inn || $uid ) ) {
-			return;
-		}
+        if ( ! ( $inn || $uid ) ) {
+            return;
+        }
 
-		if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
-			$this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
+        if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
+            $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
 
-			return;
-		}
+            return;
+        }
 
-		if ( $uid && ! preg_match( '/^\d{23,23}$/', $uid ) ) {
-			$this->variables->errors[] = 'UID должен состоять из 23 цифр';
+        if ( $uid && ! preg_match( '/^\d{23,23}$/', $uid ) ) {
+            $this->variables->errors[] = 'UID должен состоять из 23 цифр';
 
-			return;
-		}
+            return;
+        }
 
-		try {
+        try {
             $requisitesAll = $this->getRequisites( $inn, $uid );
-			list( $requisites, $bindings ) = $requisitesAll;
-		} catch ( \SoapFault $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->faultstring;
+            list( $requisites, $bindings ) = $requisitesAll;
+        } catch ( \SoapFault $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->faultstring;
 
-			return;
-		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->getMessage();
+            return;
+        } catch ( \Exception $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->getMessage();
 
-			return;
-		}
+            return;
+        }
 
-		try {
-			if ( $requisites && ! empty( $requisites->common ) ) {
-				$this->variables->balance = $this->getSochiBillingBalance(
-					$requisites->common->inn
-				);
-			} else {
-				$this->variables->balance = null;
-			}
-		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->getMessage();
-		}
+        try {
+            if ( $requisites && ! empty( $requisites->common ) ) {
+                $this->variables->balance = $this->getSochiBillingBalance(
+                    $requisites->common->inn
+                );
+            } else {
+                $this->variables->balance = null;
+            }
+        } catch ( \Exception $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->getMessage();
+        }
 
-		if ( isset( $_POST['setUsageStatus'] ) ) {
-			$status      = isset( $_POST['status'] ) ? (bool) $_POST['status'] : false;
-			$description = isset( $_POST['description'] ) ? $_POST['description'] : null;
+        if ( isset( $_POST['setUsageStatus'] ) ) {
+            $status      = isset( $_POST['status'] ) ? (bool) $_POST['status'] : false;
+            $description = isset( $_POST['description'] ) ? $_POST['description'] : null;
 
-			try {
-				$status = $this->setUsageStatus( $requisites->uid, $status, $description );
+            try {
+                $status = $this->setUsageStatus( $requisites->uid, $status, $description );
 
-				if ( is_object( $status ) ) {
-					$requisites->usageStatus = $status;
-				} else {
-					throw new \Exception( 'Не удалось назначить состояние обслуживания.' );
-				}
-			} catch ( \SoapFault $e ) {
-				\Sentry\captureException( $e );
-				$this->variables->errors[] = $e->faultstring;
+                if ( is_object( $status ) ) {
+                    $requisites->usageStatus = $status;
+                } else {
+                    throw new \Exception( 'Не удалось назначить состояние обслуживания.' );
+                }
+            } catch ( \SoapFault $e ) {
+                \Sentry\captureException( $e );
+                $this->variables->errors[] = $e->faultstring;
 
-				return;
-			} catch ( \Exception $e ) {
-				\Sentry\captureException( $e );
-				$this->variables->errors[] = $e->getMessage();
+                return;
+            } catch ( \Exception $e ) {
+                \Sentry\captureException( $e );
+                $this->variables->errors[] = $e->getMessage();
 
-				return;
-			}
-		}
+                return;
+            }
+        }
 
-		$this->variables->requisites = $requisites;
-		$this->variables->bindings   = $bindings;
+        $this->variables->requisites = $requisites;
+        $this->variables->bindings   = $bindings;
 
-		try {
-		    $certificates = $this->getPkiCertificates($requisites->common->inn);
+        try {
+            $certificates = $this->getPkiCertificates($requisites->common->inn);
             $requisitesDate = $this->getDateFromRequisites($inn);
             $requisitesDateFull = $this->groupRequisitesDate($requisitesDate);
             $cerReqDat = $this->diffDateRequisitesAndPki($certificates, $requisitesDateFull);
@@ -384,17 +403,27 @@ SQL;
 ////            echo "<h1>CerReqDat </h1>";
 ////            print_r($cerReqDat );
             echo " </pre>";
+
+            echo "<pre style='text-align: left;width: 100%;display:none'>";
+            echo "<h1>RequisitesDateFull</h1>";
+            print_r($requisitesDateFull);
+//
+////            echo "<h1>CerReqDat </h1>";
+////            print_r($cerReqDat );
+            echo " </pre>";
+
 //            die();
 
+
             $this->variables->certificates = $certificates;
-		} catch ( \SoapFault $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->faultstring;
-		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->getMessage();
-		}
-	}
+        } catch ( \SoapFault $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->faultstring;
+        } catch ( \Exception $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->getMessage();
+        }
+    }
 }
 
 ?>
