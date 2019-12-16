@@ -49,7 +49,12 @@ SELECT
     STRING_AGG("c-rq"."FullName", ' \n') as "full-name",
 --     ARRAY_AGG('[inn:''' || "c-rq"."Inn" || ''', name:''' || "c-rq"."FullName" || ''', phone:''' || "c-rr"."Phone" || ''']') as "company-inns2",
     json_object_agg("c-rq"."Inn",
-                    json_build_object('idRep',"c-rr"."IDRequisitesRepresentative",'inn',"c-rq"."Inn",'name',"c-rq"."Name",'phone',"c-rr"."Phone")
+                    json_build_object(
+                        'idReqRep',"c-rr"."IDRequisitesRepresentative",
+                        'idRep', "c-rp"."IDRepresentative",
+                        'inn',"c-rq"."Inn",
+                        'name',"c-rq"."Name",
+                        'phone',"c-rr"."Phone")
         )as "company-inns2"
 
     
