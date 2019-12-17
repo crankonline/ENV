@@ -14,3 +14,10 @@ core/soap-clients/PkiService\.php
 composer\.lock
 
 composer\.phar
+
+
+!./vendor/Hal9K/
+!./vendor/readme.txt
+!./vendor/.htaccess
+
+vendor/
