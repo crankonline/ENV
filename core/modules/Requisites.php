@@ -395,13 +395,24 @@ SQL;
             echo "<pre style='text-align: left;width: 100%;display:none'>";
             echo "<h1>Сertificates</h1>";
             print_r($certificates);
+////            echo "<h1>RequisitesDate</h1>";
+////            print_r($requisitesDate);
+////            echo "<h1>RequisitesDateFull</h1>";
+////            print_r($requisitesDateFull);
+//
+////            echo "<h1>CerReqDat </h1>";
+////            print_r($cerReqDat );
             echo " </pre>";
 
             echo "<pre style='text-align: left;width: 100%;display:none'>";
             echo "<h1>RequisitesDateFull</h1>";
             print_r($requisitesDateFull);
+//
+////            echo "<h1>CerReqDat </h1>";
+////            print_r($cerReqDat );
             echo " </pre>";
 
+//            die();
 
 
             $this->variables->certificates = $certificates;
