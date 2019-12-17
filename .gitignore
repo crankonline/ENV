@@ -14,3 +14,5 @@ core/soap-clients/PkiService\.php
 composer\.lock
 
 composer\.phar
+
+vendor/
