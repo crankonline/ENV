@@ -13,7 +13,7 @@ use Environment\Soap\Clients as SoapClients;
 
 class ReportDecode extends \Environment\Core\Module {
 	protected $config = [
-		'template' => 'layouts/ReportDecode/Default.html',
+		'template' => 'layouts/ReportDecode/Default.php',
 		'listen'   => 'action'
 	];
 
@@ -118,8 +118,14 @@ SQL;
 
 	protected function main() {
 		$this->variables->errors = [];
+        $this->context->css[] = 'resources/css/ui-requisites.css';
+        $this->context->css[] = 'resources/css/ui-misc-form.css';
+        $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
+        $this->context->css[] = '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/default.min.css';
+        $this->context->js[] = '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js';
 
-		$type = isset( $_GET['type'] ) ? $_GET['type'] : null;
+
+        $type = isset( $_GET['type'] ) ? $_GET['type'] : null;
 		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
 
 		if ( ! ( $type || $uin ) ) {
