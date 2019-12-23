@@ -38,6 +38,7 @@ SQL;
         return $stmt->fetchAll();
     }
 
+    /** TODO deprected     */
     public function deleteByStatement($statementId){
         $sql = <<<SQL
 DELETE FROM

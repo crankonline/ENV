@@ -19,6 +19,7 @@ class Statements extends \Unikum\Core\DataLayer {
         parent::__construct($dbms ?: self::DEFAULT_CONNECTION);
     }
 
+    /** TODO deprected     */
     public function getById($id){
         $sql = <<<SQL
 SELECT

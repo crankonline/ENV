@@ -19,10 +19,13 @@ use Environment\Soap\Types\Requisites\Data\Export\Data as ExportData,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Sf as ExportSf,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Sti as ExportSti,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Nsc as ExportNsc,
-	Environment\Soap\Types\Requisites\Data\Export\Data\Common\Address as ExportCommonAddress,
+//    Reregister\Soap\Types\Requisites\Data\Export\Data\UsageStatus as ExportCUsageStatus,
+    Environment\Soap\Types\Requisites\Data\Export\Data\Common\Address as ExportCommonAddress,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Common\Passport as ExportCommonPassport,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Common\Person as ExportCommonPerson,
 	Environment\Soap\Types\Requisites\Data\Export\Data\Common\Representative as ExportCommonRepresentative;
+
+//use Environment\Soap\Types\Requisites\Data\Export\Data\UsageStatus as ExportUsageStatus;
 
 use Environment\Soap\Types\Requisites\Shared\Common\Activity as ExportCommonActivity,
 	Environment\Soap\Types\Requisites\Shared\Common\CapitalForm as ExportCommonCapitalForm,
@@ -75,6 +78,7 @@ final class Data extends \SoapClient {
                 'ExportSf'     => ExportSf::class,
                 'ExportSti'    => ExportSti::class,
                 'ExportNsc'    => ExportNsc::class,
+//                'ExportUsageStatus' => ExportUsageStatus::class,
 
                 'ExportCommonPassport'       => ExportCommonPassport::class,
                 'ExportCommonPerson'         => ExportCommonPerson::class,

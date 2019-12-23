@@ -106,7 +106,10 @@ class Reregister extends \Environment\Core\Module {
 
 				'sti-region' => $client->getStiRegions( API_SUBSCRIBER_TOKEN )
 			];
-		} catch ( \Exception $e ) {
+		} catch(\SoapFault $f) {
+            \Sentry\captureException( $f );
+            $this->variables->errors[] = $f->faultstring;
+        } catch ( \Exception $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
 		}

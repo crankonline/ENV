@@ -47,11 +47,11 @@ class Representative {
         $isEdsRequired = (
             in_array(self::ROLES_CHIEF, $self->roles)
             ||
-            in_array(self::ROLES_ACCOUNTANT, $self->roles)
+            in_array(self::ROLES_ACCOUNTANT, $self->roles)/*
             ||
             in_array(self::ROLES_EDS_RECEIVER, $self->roles)
             ||
-            in_array(self::ROLES_EDS_USER, $self->roles)
+            in_array(self::ROLES_EDS_USER, $self->roles)*/
         );
 
         if($isEdsRequired){

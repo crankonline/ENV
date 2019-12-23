@@ -134,65 +134,42 @@ window.PluginManager = function () {
         };
 
         return self.plugin.enumerateDevices()
-            .then(function (devices) {
-                var dLen = devices.length, k, promises = [];
-                if (dLen)
-                    for (k = 0; k < dLen; k++) {
-                        var promise = self.plugin.getDeviceInfo(k, self.plugin.TOKEN_INFO_DEVICE_TYPE)
-                            .then(createFn(k)
+                .then(function (devices) {
+                    var dLen = devices.length, k, promises = [];
+                    if (dLen)
+                        for (k = 0; k < dLen; k++) {
+                            var promise = self.plugin.getDeviceInfo(k, self.plugin.TOKEN_INFO_DEVICE_TYPE)
+                                .then(createFn(k)
                                 //, function (err) {
-                                //console.log.apply(console, arguments);
+                                    //console.log.apply(console, arguments);
                                 //}
-                            );
-                        promises.push(promise);
-                    }
-                return Promise.all(promises);
-            }, function (error) {
-                console.log(error);
-            });
+                                );
+                            promises.push(promise);
+                        }
+                    return Promise.all(promises);
+                }, function (error) {
+                    console.log(error);
+                });
     };
 
     this.onPluginLoadedPromises = function (pluginObject) {
-        if (!pluginObject) return;
-        return pluginObject.enumerateDevices()
-            .then(function (devices) {
-                return pluginObject.getDeviceInfo(devices[0], pluginObject.TOKEN_INFO_SERIAL);
-            }).then(function (info) {
-                return Promise.resolve(info);
-            }, function (err) {
-                console.log(err);
-            });
+        return pluginObject.enumerateDevices().then(function (devices) {
+            return pluginObject.getDeviceInfo(devices[0], pluginObject.TOKEN_INFO_SERIAL);
+        }).then(function (info) {
+            return Promise.resolve(info);
+        }, function (err) {
+            console.log(err);
+        });
     };
 
     this.getDeviceInfo = function () {
-        /* try {
-             await this.getPlugin();
- 
-             let devices = await self.plugin.enumerateDevices();
-             let info = await self.plugin.getDeviceInfo(devices[0], self.plugin.TOKEN_INFO_SERIAL);
-             return info;
- 
-         } catch (err) {
-             console.log(err);
-         }*/
         return this.getPlugin()
-            .then(function () {
-                return self.plugin.enumerateDevices();
-            })
-            .then(function (devices) {
-                return self.plugin.getDeviceInfo(devices[0], self.plugin.TOKEN_INFO_SERIAL);
-            })
-            .then(function (info) {
-                return Promise.resolve(info);
-            }, function (err) {
-                console.log(err);
+            .then(function (pluginObject) {
+                return self.onPluginLoadedPromises(pluginObject);
             });
     };
 
     this.getPlugin = function () {
-        if (self.plugin != null)
-            return Promise.resolve(self.plugin);
-
         return rutoken.ready.then(function () {
             if (window.chrome && window.chrome.webstore) {
                 return rutoken.isExtensionInstalled();
@@ -231,35 +208,35 @@ window.PluginManager = function () {
 
     this.login = function (token, pin) {
         return this.getPlugin()
-            .then(function () {
-                return self.plugin.enumerateDevices();
-            })
-            .then(function (devices) {
-                if (devices.length == 0) {
-                    var error = { message: 'Устройство не найдено' };
-                    console.log('Устройство не найдено');
-                    return Promise.reject(error);
-                }
-                if (!pin) {
-                    var error = { message: 'Не введен пин' };
-                    console.log('Не введен пин');
-                    return Promise.reject(error);
-                }
-                return self.plugin.login(token, pin);
-            })
-            .then(function () {
-                return self.plugin.enumerateCertificates(token, 0);
-            })
-            .then(function (certNumber) {
-                if (certNumber.length == 0) {
-                    var error = { message: 'Cертификаты не найдены на устройстве' };
-                    console.log('Cертификаты не найдены на устройстве');
-                    return Promise.reject(error);
-                }
-                self.certNumber = certNumber[0];
-                self.certs = certNumber;
-                return self.plugin.authenticate(token, self.certNumber, "test");
-            })
+             .then(function () {
+                 return self.plugin.enumerateDevices();
+             })
+             .then(function (devices) {
+                 if (devices.length == 0) {
+                     var error = { message: 'Устройство не найдено' };
+                     console.log('Устройство не найдено');
+                     return Promise.reject(error);
+                 }
+                 if (!pin) {
+                     var error = { message: 'Не введен пин' };
+                     console.log('Не введен пин');
+                     return Promise.reject(error);
+                 }
+                 return self.plugin.login(token, pin);
+             })
+             .then(function () {
+                 return self.plugin.enumerateCertificates(token, 0);
+             })
+             .then(function (certNumber) {
+                 if (certNumber.length == 0) {
+                     var error = { message: 'Cертификаты не найдены на устройстве' };
+                     console.log('Cертификаты не найдены на устройстве');
+                     return Promise.reject(error);
+                 }
+                 self.certNumber = certNumber[0];
+                 self.certs = certNumber;
+                 return self.plugin.authenticate(token, self.certNumber, "test");
+             })
             .catch(function (error) {
                 var resultError = {
                     message: ''
@@ -281,33 +258,33 @@ window.PluginManager = function () {
     this.sign = function (device, data, pin) {
         this.data = data;
         return this.login(device, pin)
-            .then(function () {
-                var options = {
-                    detached: true,
-                    addUserCertificate: true,
-                    addSignTime: true,
-                    useHardwareHash: false
-                };
-                return self.plugin.sign(device, self.certNumber, self.data, false, options);
-            });
+           .then(function () {
+               var options = {
+                   detached: true,
+                   addUserCertificate: true,
+                   addSignTime: true,
+                   useHardwareHash: false
+               };
+               return self.plugin.sign(device, self.certNumber, self.data, false, options);
+           });
     };
 
     this.doubleSign = function (device, data, pin) {
         this.data = data;
         return this.login(device, pin)
-            .then(function () {
-                var certsCount = self.certs.length, j, promises = [],
-                    options = {
-                        detached: true,
-                        addUserCertificate: true,
-                        addSignTime: true,
-                        useHardwareHash: false
-                    };
-                for (j = 0; j < certsCount; j++) {
-                    var promise = self.plugin.sign(device, self.certs[j], self.data, false, options);
-                    promises.push(promise);
-                }
-                return Promise.all(promises);
-            });
+           .then(function () {
+               var certsCount = self.certs.length, j, promises = [],
+               options = {
+                   detached: true,
+                   addUserCertificate: true,
+                   addSignTime: true,
+                   useHardwareHash: false
+               };
+               for (j = 0; j < certsCount; j++) {
+                   var promise = self.plugin.sign(device, self.certs[j], self.data, false, options);
+                   promises.push(promise);
+               }
+               return Promise.all(promises);
+           });
     };
 };

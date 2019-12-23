@@ -1,5 +1,8 @@
 function insertSerial(name) {
 
-  $("[name='" + name + "']").val(window.tokenNumber || '');
+  window.writeSerialNumber()
+    .then(function () {
+      $("[name='" + name + "']").val(window.tokenNumber || '');
+    });
 
 }
