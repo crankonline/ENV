@@ -4,23 +4,13 @@ $(window).load(function () {
     var pluginManager = new PluginManager();
 
     var writeSerialNumber = function () {
-
-        var createOpt = function (id, name) {
-            window.tokenNumber = name;
-        };
-
-        pluginManager.getDeviceInfo()
+        window.tokenNumber = "";
+        return pluginManager.getDeviceInfo()
             .then(function (vals) {
                 if (vals) {
-                    createOpt(0, vals);
+                    window.tokenNumber = vals;
                 }
-
-                watches = setTimeout(function () {
-                    writeSerialNumber();
-                }, 2000);
             });
     };
-
-    writeSerialNumber();
-
+    window.writeSerialNumber = writeSerialNumber;
 });

@@ -4,6 +4,7 @@ namespace Environment\Soap\Clients\OneC;
 final class Registration extends \SoapClient {
     const WSDL  = 'http://1c.dostek.kg:8080/dtb/ws/SOCHI/?wsdl';
 
+    /** TODO soap version 1_2     */
     public function __construct(){
         $options = [
             'soap_version'       => SOAP_1_1,

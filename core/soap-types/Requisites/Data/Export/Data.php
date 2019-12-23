@@ -10,6 +10,7 @@ class Data {
         $common,
         $sf,
         $sti,
-        $nsc;
+        $nsc;/*,
+        $usageStatus;*/
 }
 ?>
