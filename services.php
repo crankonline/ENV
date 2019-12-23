@@ -21,6 +21,7 @@ switch($_GET['service']){
     case 'Representatives':
     case 'Tokens':
     case 'Statements':
+    case 'Nwa':
         break;
 
     default:
