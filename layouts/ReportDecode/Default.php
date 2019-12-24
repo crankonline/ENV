@@ -176,7 +176,7 @@
         </div>
     <?php endforeach;
 endforeach; ?>
-<pre><?php print_r($length);?></pre>
+<pre style=" display:none;"><?php print_r($length);?></pre>
 
 <?php if ($length['rep_xml_length'] > $available_size) : ?>
     Превышен размер для отображения - <a href="index.php?view=<?php echo $this::AK_REPORT_DECODE; ?>&type=<?php echo $_GET['type']; ?>&uin=<?php echo $_GET['uin']; ?>&sys-name=<?php echo $_GET['sys-name'];?>&download=true" >скачать</a>
