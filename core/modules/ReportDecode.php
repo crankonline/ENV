@@ -12,6 +12,7 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 use Environment\Soap\Clients as SoapClients;
 
 class ReportDecode extends \Environment\Core\Module {
+    const available_size = 200000;
 	protected $config = [
 		'template' => 'layouts/ReportDecode/Default.php',
 		'listen'   => 'action'
@@ -77,8 +78,7 @@ WHERE
 SQL;
 
 		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
-
-		try {
+        try {
 			$stmt->execute( [
 				'uins' => $uin
 			] );
@@ -127,6 +127,7 @@ SQL;
 
         $type = isset( $_GET['type'] ) ? $_GET['type'] : null;
 		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
+		$download = isset( $_GET['download'] ) ? $_GET['download'] : null;
 
 		if ( ! ( $type || $uin ) ) {
 			return;
@@ -140,9 +141,11 @@ SQL;
 
 		try {
 		    $report = null;
+		    $length = array();
             if ($type == 'sf') {
                 echo "sf ";
                 $data = $this->decodeSfReport($uin);
+                $length ['dtg_cont_length'] = strlen($data['form_data']);
                 $report = $this->parseXml($data['xml']);
 
             }
@@ -150,6 +153,7 @@ SQL;
                 echo "sti ";
                 $form_sys_name = isset($_GET['sys-name']) ? $_GET['sys-name'] : null;
                 $data = $this->decodeStiReport($uin, lcfirst($form_sys_name));
+                $length ['dtg_cont_length']= strlen($data['form_data']);
                 $report = $this->parseXml($data['form_data']);
 
             }
@@ -157,16 +161,28 @@ SQL;
                 echo "nsc ";
                 $form_sys_name = isset($_GET['sys-name']) ? $_GET['sys-name'] : null;
                 $data = $this->decodeNscReport($uin, lcfirst($form_sys_name));
+                $length ['dtg_cont_length']= strlen($data['form_data']);
                 $report = $this->parseXml($data['form_data']);
             }
             if ($report != null) {
                 $repXml = base64_decode($report['rep']);
+                if($download) {
+                    header('Content-Type: text/plain');
+                    header("Content-disposition: attachment; filename=\"" . $uin . ".xml\"");
+                    echo $repXml;
+                    exit;
+
+                }
+                $length ['rep_code_length'] = strlen($report['rep']);
+                $length ['rep_xml_length'] = strlen($repXml);
                 $certs = $report['certs'];
                 $certsArr = [];
                 foreach ($certs as $cert) {
                     array_push($certsArr, $this->getPkiCertificates($cert));
                 }
 
+                $this->variables->available_size = $this::available_size;
+                $this->variables->length = $length;
                 $this->variables->certs = $certsArr;
                 $this->variables->report = $this->formatXml($repXml);
             } else {
