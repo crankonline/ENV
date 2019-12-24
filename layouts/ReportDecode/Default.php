@@ -32,9 +32,9 @@
         </tr>
     <?php endforeach; ?>
 </table>
-<?php echo "<pre style='text-align:left; display: none;'>";
-print_r($certs);
-echo "</pre>"; ?>
+<pre style='text-align:left; display: none;'>
+<?php print_r($certs); ?>
+</pre>
 <?php foreach ($certs as $certss) : ?>
     <?php foreach ($certss as $certificate) :
         $start = strtotime($certificate->DateStart);
@@ -176,10 +176,17 @@ echo "</pre>"; ?>
         </div>
     <?php endforeach;
 endforeach; ?>
+<pre><?php print_r($length);?></pre>
 
-<pre style="text-align: left;"><code class="xml hljs">
+<?php if ($length['rep_xml_length'] > $available_size) : ?>
+    Превышен размер для отображения - <a href="index.php?view=<?php echo $this::AK_REPORT_DECODE; ?>&type=<?php echo $_GET['type']; ?>&uin=<?php echo $_GET['uin']; ?>&sys-name=<?php echo $_GET['sys-name'];?>&download=true" >скачать</a>
+<?php else : ?>
+<pre style="text-align: left;">
+    <code class="xml hljs">
 <?php echo str_replace(">","&gt;",str_replace("<","&lt;",$report)); ?>
-</code></pre>
+    </code>
+</pre>
 <textarea style="width: 100%; height: 800px; display:none;">
 <?php echo $report; ?>
 </textarea>
+<?php endif; ?>
