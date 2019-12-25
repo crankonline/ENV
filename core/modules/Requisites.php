@@ -205,7 +205,6 @@ SQL;
                 }
 
                 if (!isset($cert->Passport->EdsUsage)) {
-                    echo "hi";
                     foreach ($requisitesDate as $req) {
                         if (array_key_exists($cert->Passport->Series . '|' . $cert->Passport->Number, $req)) {
                             $tempAr['Requisites-fail'] = $req;
