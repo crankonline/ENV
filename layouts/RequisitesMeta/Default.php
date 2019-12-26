@@ -48,7 +48,7 @@
     $.fn.checkLength = function ( o, n, min, max ) {
         if ( o.val().length > max || o.val().length < min ) {
             o.addClass( "ui-state-error" );
-            $.fn.updateTips( "Длина " + n + " должен быть между " +
+            $.fn.updateTips( "Длина " + n + " должна быть между " +
                 min + " и " + max + "." );
             return false;
         } else {
