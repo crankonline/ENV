@@ -48,8 +48,8 @@
     $.fn.checkLength = function ( o, n, min, max ) {
         if ( o.val().length > max || o.val().length < min ) {
             o.addClass( "ui-state-error" );
-            $.fn.updateTips( "Length of " + n + " must be between " +
-                min + " and " + max + "." );
+            $.fn.updateTips( "Длина " + n + " должен быть между " +
+                min + " и " + max + "." );
             return false;
         } else {
             return true;
@@ -165,6 +165,7 @@
         /** правовая собственность **/
         $('#legalForm').on('click', 'tbody td', function() {
             $("#dialog-form-legalForm-save-message").text("");
+            $(".validateTips").text("Все поля должны быть заполнены.");
 
             /** dialog */
             var dialog, form,
@@ -243,6 +244,7 @@
         /** банк **/
         $('#bank').on('click', 'tbody td', function() {
             $("#dialog-form-bank-save-message").text("");
+            $(".validateTips").text("Все поля должны быть заполнены.");
 
             /** dialog */
             var dialog, form,
@@ -322,6 +324,7 @@
         /** гкед  activity **/
         $('#activity').on('click', 'tbody td', function() {
             $("#dialog-form-activity-save-message").text("");
+            $(".validateTips").text("Все поля должны быть заполнены.");
 
             /** dialog */
             var dialog, form,
@@ -404,6 +407,7 @@
         /** основание для занимаемой должности ChiefBasis **/
         $('#chiefBasis').on('click', 'tbody td', function() {
             $("#dialog-form-chiefBasis-save-message").text("");
+            $(".validateTips").text("Все поля должны быть заполнены.");
 
             /** dialog */
             var dialog, form,
@@ -559,7 +563,7 @@
 </script>
 
 <div id="dialog-form" title="Редактирование (LegalForm) Форма собственности" style="display: none">
-    <p class="validateTips">All form fields are required.</p>
+    <p class="validateTips">Все поля должны быть заполнены.</p>
 
     <form>
         <fieldset>
@@ -618,7 +622,7 @@
 </div>
 
 <div id="dialog-form-activity" title="Редактирование (Activity) GKED" style="display: none">
-    <p class="validateTips">All form fields are required.</p>
+    <p class="validateTips">Все поля должны быть заполнены.</p>
 
     <form>
         <fieldset>
@@ -651,7 +655,7 @@
 </div>
 
 <div id="dialog-form-ChiefBasis" title="Редактирование (ChiefBasis) Осн. для занимаемой должности" style="display: none">
-    <p class="validateTips">All form fields are required.</p>
+    <p class="validateTips">Все поля должны быть заполнены.</p>
 
     <form>
         <fieldset>
