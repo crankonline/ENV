@@ -709,7 +709,7 @@
             </thead>
         </table>
     </div>
-    <h3>ГКЕД (Activity)</h3>
+    <h3>ГКЭД (Activity)</h3>
     <div class="resizable">
         <table id="activity" class="display nowrap" style="width:100%;">
             <thead>
