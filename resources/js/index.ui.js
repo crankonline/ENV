@@ -1595,7 +1595,7 @@
     var pasteChiefDictionariesFn = (function(){
         var completeTpl = [
             '<tr>',
-                '<th>Серийный номер устройства</th>',
+                '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-chief-device-serial\')">Прочитать</a>)</th>',
                 '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-chief-device-serial"></td>',
             '</tr>'
         ].join('');
@@ -2324,24 +2324,65 @@
                         }
 
                     } else {
+
+                        // IF NOT FIND
+
+                        var inn = elements['common-inn'].value;
+
+                        console.log(inn);
+
+
                         delete u.data;
 
                         elements['uid'].value = '';
 
-                        var inn = elements['common-inn'].value;
 
                         reset();
 
-                        u.dialog.showMessage(
-                            u.string.format(
-                                ajaxNotFoundTpl,
-                                inn
-                            )
-                        );
 
                         elements['common-inn'].value = inn;
+
+                        $.ajax({
+                            url: 'services.php',
+                            data: {
+                                service: "Nwa",
+                                inn: $('[name="common-inn"]').val()
+                            },
+                            success: function (response) {
+                                u.dialog.showMessage(
+                                    u.string.format(
+                                        ajaxNotFoundTpl,
+                                        $('[name="common-inn"]').val()
+                                    )
+                                );
+
+                                $('[name="common-okpo"]').val(response.data.okpo);
+                                $('[name="common-rnsf"]').val(response.data.rnsf);
+                                $('[name="common-full-name"]').val(response.data.name);
+                                $('[name="common-full-name"]').keyup();
+                                $('[name="common-rnmj"]').val(response.data.mj);
+
+
+                                console.log('success');
+                                //u.dialog.hide();
+                            },
+                            error: function (response) {
+                                u.dialog.showMessage(
+                                    u.string.format(
+                                        ajaxNotFoundTpl,
+                                        $('[name="common-inn"]').val()
+                                    )
+                                );
+                                //u.dialog.hide();
+                            },
+                            complete: function (response) {
+                                console.log(response);
+                            }
+                        });
                     }
                 } else {
+
+
                     u.dialog.showError(
                         u.string.format(
                             ajaxCommonErrorTpl,
@@ -2352,6 +2393,7 @@
                 }
             },
             ajaxErrorHandlerFn = function(response){
+
                 if(response.status != 200){
                     u.dialog.showError(
                         u.string.format(
@@ -2888,7 +2930,7 @@
             createConfigFn = (function(){
                 var completeTpl = [
                     '<tr>',
-                        '<th>Серийный номер устройства</th>',
+                        '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
                         '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
                     '</tr>'
                 ].join('');
@@ -3350,7 +3392,7 @@
             ].join(''),
             ajaxSuccessTpl = '<p class="caption"><i>Данные сохранены успешно.</i></p>',
             config = {
-                url: 'index.php?view=reregister&action=submit',
+                url: 'index.php?action=submit',
                 type: 'POST'
             },
             ajaxSuccessHandlerFn = function(response){

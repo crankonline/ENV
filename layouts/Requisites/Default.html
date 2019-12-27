@@ -723,6 +723,27 @@ if($bindings !== null):
                     <b>Сообщение о состоянии:</b>
                     <?php echo htmlspecialchars($certificate->StatusMessage); ?>
                 </span>
+
+                <span>
+                    <b>Тип сертификата:</b>
+                    <?php
+                        echo (
+                            isset ($certificate->Passport->EdsUsage)
+                            ? htmlspecialchars($certificate->Passport->EdsUsage)
+                            : (
+                                isset ($certificate->EdsUsage['Requisites-'][$certificate->Passport->Series.'|'.$certificate->Passport->Number]['EdsName'])
+                                ? htmlspecialchars($certificate->EdsUsage['Requisites-'][$certificate->Passport->Series.'|'.$certificate->Passport->Number]['EdsName'])
+                                : htmlspecialchars("не удалось сопоставить реквизиты")
+                            )
+                        );
+
+                        /*echo (
+                            isset ($certificate->EdsUsage['Requisites1'][$certificate->Passport->Series.'|'.$certificate->Passport->Number])
+                            ? htmlspecialchars($certificate->EdsUsage['Requisites1'][$certificate->Passport->Series.'|'.$certificate->Passport->Number]['EdsName'])
+                            : htmlspecialchars("не удалось сопоставить реквизиты")
+                        );*/
+                    ?>
+                </span>
             </div>
         </div>
     <?php endforeach; ?>

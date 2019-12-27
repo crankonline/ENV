@@ -105,7 +105,7 @@ class Nwa extends \Environment\Core\Module {
 		}
 		if ( $rows_table->length != 2 ) {
 			$msg = 'TaxPayer --> Сервис вернул не действительное значение.';
-			\Sentry\captureMessage( $msg + " " + $value);
+			\Sentry\captureMessage( $msg );
 			throw new \Exception( $msg );
 		}
 

@@ -4,6 +4,12 @@
 <script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="resources/js/index.ui.js"></script>
 
+<!-- why removed plugins? -->
+<script type="text/javascript" src="resources/js/token/insert.js"></script>
+<script type="text/javascript" src="resources/js/token/PluginManager.js"></script>
+<script type="text/javascript" src="resources/js/token/rutoken.js"></script>
+<script type="text/javascript" src="resources/js/token/token-auth.js"></script>
+
 
 <?php if($errors): ?>
     <?php foreach($errors as $error): ?>
@@ -34,7 +40,7 @@
             </tr>
             <tr>
                 <th>Регистрационный номер Cоциального Фонда</th>
-                <td><input required type="text" name="common-rnsf" maxlength="10" placeholder="Регистрационный номер СФ"></td>
+                <td><input required type="text" name="common-rnsf" maxlength="12" placeholder="Регистрационный номер СФ"></td>
             </tr>
             <tr>
                 <th class="attached">Наименование</th>

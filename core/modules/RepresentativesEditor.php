@@ -44,7 +44,20 @@ SELECT
     "c-rp"."Name" as "representative-name",
     "c-rp"."MiddleName" as "representative-middle-name",
     STRING_AGG("c-rq"."Inn", ',') as "company-inns",
-    COUNT("c-rq"."IDRequisites") as "company-count"
+    COUNT("c-rq"."IDRequisites") as "company-count",
+    string_agg("c-rr"."Phone", ' | ' ) as "phone",
+    STRING_AGG("c-rq"."FullName", ' \n') as "full-name",
+--     ARRAY_AGG('[inn:''' || "c-rq"."Inn" || ''', name:''' || "c-rq"."FullName" || ''', phone:''' || "c-rr"."Phone" || ''']') as "company-inns2",
+    json_object_agg("c-rq"."Inn",
+                    json_build_object(
+                        'idReqRep',"c-rr"."IDRequisitesRepresentative",
+                        'idRep', "c-rp"."IDRepresentative",
+                        'inn',"c-rq"."Inn",
+                        'name',"c-rq"."Name",
+                        'phone',"c-rr"."Phone")
+        )as "company-inns2"
+
+    
 FROM
     "Common"."Passport" as "c-p"
         INNER JOIN "Common"."Representative" as "c-rp"
