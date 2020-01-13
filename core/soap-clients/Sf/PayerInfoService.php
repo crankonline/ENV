@@ -2,8 +2,6 @@
 namespace Environment\Soap\Clients\Sf;
 
 class PayerInfoService extends \SoapClient {
-    const WSDL = 'http://eleed.sf.kg:8041/PayerInfoService?wsdl';
-
     public function __construct(Array $addOptions = []){
         $options = [
             'soap_version'       => SOAP_1_1,
@@ -19,7 +17,7 @@ class PayerInfoService extends \SoapClient {
         }
         ini_set('default_socket_timeout', $options['connection_timeout']);
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_sf_payerInfoService_wsdl'], $options);
     }
 }
 ?>
