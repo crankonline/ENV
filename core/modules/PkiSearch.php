@@ -35,9 +35,7 @@ class PkiSearch extends \Environment\Core\Module {
 				}
 			}
 
-			$this->variables->certificates = array_merge(
-				is_null( $certificatesDTG ) ? [] : $certificatesDTG
-			);
+			$this->variables->certificates = is_null( $certificatesDTG ) ? [] : $certificatesDTG;
 
 			// var_dump($this->variables->certificates);
 
