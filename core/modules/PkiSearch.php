@@ -26,10 +26,8 @@ class PkiSearch extends \Environment\Core\Module {
 
 		try {
 			$clientDTG = new SoapClients\PkiService();
-			$clientUBR = new SoapClients\PkiServiceUBR();
 
 			$certificatesDTG = $clientDTG->search( $value );
-			$certificatesUBR = $clientUBR->search( $value );
 
 			if ( ! is_null( $certificatesDTG ) ) {
 				foreach ( $certificatesDTG as $record ) {
@@ -37,15 +35,8 @@ class PkiSearch extends \Environment\Core\Module {
 				}
 			}
 
-			if ( ! is_null( $certificatesUBR ) ) {
-				foreach ( $certificatesUBR as $record ) {
-					$record->CA = 'UBR';
-				}
-			}
-
 			$this->variables->certificates = array_merge(
-				is_null( $certificatesDTG ) ? [] : $certificatesDTG,
-				is_null( $certificatesUBR ) ? [] : $certificatesUBR
+				is_null( $certificatesDTG ) ? [] : $certificatesDTG
 			);
 
 			// var_dump($this->variables->certificates);
