@@ -3,8 +3,6 @@ namespace Environment\Soap\Clients;
 
 class PkiService extends \SoapClient {
 
-    const WSDL = 'http://pkiservice.dostek.test/pkiservice.php?wsdl';
-
     public function __construct(){
         $options = [
             'soap_version'       => SOAP_1_1,
@@ -15,7 +13,7 @@ class PkiService extends \SoapClient {
             'connection_timeout' => 60
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_pkiService_wsdl'], $options);
     }
 }
 ?>

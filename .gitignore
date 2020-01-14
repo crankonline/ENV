@@ -3,14 +3,6 @@ core/configuration\.php
 
 \.idea/
 
-core/soap-clients/Api/RequisitesData\.php
-
-core/soap-clients/Api/RequisitesMeta\.php
-
-core/soap-clients/PkiServiceUBR\.php
-
-core/soap-clients/PkiService\.php
-
 composer\.lock
 
 composer\.phar
@@ -21,3 +13,6 @@ composer\.phar
 !./vendor/.htaccess
 
 vendor/
+
+
+core/.env

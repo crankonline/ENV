@@ -2,8 +2,6 @@
 namespace Environment\Soap\Clients\Sf;
 
 class PinInfoService extends \SoapClient {
-    const WSDL = 'http://eleed.sf.kg:8010/PinInfoService?wsdl';
-
     public function __construct(){
         $options = [
             'soap_version'       => SOAP_1_1,
@@ -14,7 +12,7 @@ class PinInfoService extends \SoapClient {
             'connection_timeout' => 10
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_sf_pinInfoService_wsdl'], $options);
     }
 }
 ?>

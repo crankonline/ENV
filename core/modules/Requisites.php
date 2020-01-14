@@ -391,7 +391,7 @@ SQL;
             $cerReqDat = $this->diffDateRequisitesAndPki($certificates, $requisitesDateFull);
 
 
-            echo "<pre style='text-align: left;width: 100%;display:none'>";
+            echo "<pre style='text-align: left;width: 100%;display:none'> ";
             echo "<h1>Сertificates</h1>";
             print_r($certificates);
 ////            echo "<h1>RequisitesDate</h1>";

@@ -1,5 +1,9 @@
 {
+    "autoload": {
+        "psr-4": {"": "core/"}
+    },
     "require": {
+        "vlucas/phpdotenv": "^3.3",
         "sentry/sdk": "2.0.0"
     }
 }
