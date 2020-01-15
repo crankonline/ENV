@@ -145,7 +145,7 @@ SQL;
             if ($type == 'sf') {
                 echo "sf ";
                 $data = $this->decodeSfReport($uin);
-                $length ['dtg_cont_length'] = strlen($data['form_data']);
+                $length ['dtg_cont_length'] = strlen($data['xml']);
                 $report = $this->parseXml($data['xml']);
 
             }
@@ -160,6 +160,9 @@ SQL;
             if ($type == 'nsc') {
                 echo "nsc ";
                 $form_sys_name = isset($_GET['sys-name']) ? $_GET['sys-name'] : null;
+                if($form_sys_name == "Form1Tv1") {
+                    $form_sys_name = "Form1tv1";
+                }
                 $data = $this->decodeNscReport($uin, lcfirst($form_sys_name));
                 $length ['dtg_cont_length']= strlen($data['form_data']);
                 $report = $this->parseXml($data['form_data']);
