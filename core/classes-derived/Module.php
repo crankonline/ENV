@@ -42,7 +42,6 @@ abstract class Module extends \Unikum\Core\Module {
         AK_UIN_PARSER                     = 'uin-parser',
         AK_UID_PARSER                     = 'uid-parser',
         AK_ACTIVITY_LIST                  = 'activity-list',
-        AK_COUNTRY_PASSPORTS              = 'country-passports',
 
         AK_SERVICE_ZERO_REPORT            = 'service-zero-report',
 
