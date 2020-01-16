@@ -3392,7 +3392,7 @@
             ].join(''),
             ajaxSuccessTpl = '<p class="caption"><i>Данные сохранены успешно.</i></p>',
             config = {
-                url: 'index.php?action=submit',
+                url: 'index.php?view=reregister&action=submit',
                 type: 'POST'
             },
             ajaxSuccessHandlerFn = function(response){

@@ -36,7 +36,9 @@
 <?php print_r($certs); ?>
 </pre>
 <?php foreach ($certs as $certss) : ?>
-    <?php foreach ($certss as $certificate) :
+    <?php
+    if ($certss ?? null)
+    foreach ($certss as $certificate) :
         $start = strtotime($certificate->DateStart);
         $finish = strtotime($certificate->DateFinish);
 

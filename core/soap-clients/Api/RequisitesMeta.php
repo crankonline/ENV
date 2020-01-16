@@ -1,9 +1,9 @@
 <?php
 namespace Environment\Soap\Clients\Api;
 
-class RequisitesData extends \SoapClient {
+class RequisitesMeta extends \SoapClient {
     const
-        WSDL = 'http://api.dostek.kg/RequisitesData.php?wsdl';
+        WSDL = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
 
     const
         SUBSCRIBER_TOKEN = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
@@ -24,7 +24,7 @@ class RequisitesData extends \SoapClient {
             'password' => $password
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soap_clients-api-requisites_meta-wsdl'], $options);
     }
 }
 ?>
