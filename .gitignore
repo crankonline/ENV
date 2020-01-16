@@ -1,5 +1,6 @@
 
 core/configuration\.php
+core/\.env
 
 \.idea/
 
