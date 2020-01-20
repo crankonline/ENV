@@ -24,7 +24,7 @@ class RequisitesMeta extends \SoapClient {
             'password' => $password
         ];
 
-        parent::__construct($_ENV['soap_clients-api-requisites_meta-wsdl'], $options);
+        parent::__construct($_ENV['soapClients_api_requisitesMeta_wsdl'], $options);
     }
 }
 ?>
