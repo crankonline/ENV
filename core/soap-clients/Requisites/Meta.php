@@ -62,7 +62,7 @@ final class Meta extends \SoapClient {
             'password' => $password
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_requisites_meta_wsdl'], $options);
     }
 }
 ?>
