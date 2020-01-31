@@ -17,7 +17,7 @@ final class Registration extends \SoapClient {
             'password' => HTTP_AUTH_1C_PWD
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_oneC_Registartion_wsdl'], $options);
     }
 }
 ?>

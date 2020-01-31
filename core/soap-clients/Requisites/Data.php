@@ -111,7 +111,7 @@ final class Data extends \SoapClient {
             'password' => $password
         ];
 
-        parent::__construct(self::WSDL, $options);
+        parent::__construct($_ENV['soapClients_requisites_data_wsdl'], $options);
     }
 }
 ?>
