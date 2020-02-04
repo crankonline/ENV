@@ -47,7 +47,7 @@ class Nwa extends \Unikum\Core\Module {
 		'connection_timeout' => 5
 	]);
 
-            $result = $client->GetPayersInfo($payerInfo)->GetPayersInfoResult;
+            $result = $client->GetPayersInfo($payerInfo);
 
             $result = is_object($result->PayerInfo)
                 ? [ $result->PayerInfo ]
