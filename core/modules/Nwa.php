@@ -64,7 +64,7 @@ class Nwa extends \Environment\Core\Module {
 		try {
 			$client = new SoapClients\Sf\PayerInfoService();
 
-			$result = $client->GetPayersInfo( $payerInfo )->GetPayersInfoResult;
+			$result = $client->GetPayersInfo( $payerInfo );
 
 			$result = is_object( $result->PayerInfo )
 				? [ $result->PayerInfo ]
