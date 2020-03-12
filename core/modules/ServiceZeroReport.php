@@ -51,17 +51,17 @@ ORDER BY
     "zpp"."protocol",
     "u"."inn" DESC;
 SQL;
-		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-		$stmt->execute( [
-			'option' => self::ZERO_REPORT_CODE
-		] );
+        $stmt->execute( [
+            'option' => self::ZERO_REPORT_CODE
+        ] );
 
-		return $stmt->fetchAll();
-	}
+        return $stmt->fetchAll();
+    }
 
-	private function getForms( $uid ) {
-		$sql  = <<<SQL
+    private function getForms( $uid ) {
+        $sql  = <<<SQL
 SELECT
     'СФ' as "section",
     "f"."name" as "name",
@@ -98,17 +98,17 @@ FROM
 WHERE
     ("ur"."uid" = :uid);
 SQL;
-		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-		$stmt->execute( [
-			'uid' => $uid
-		] );
+        $stmt->execute( [
+            'uid' => $uid
+        ] );
 
-		return $stmt->fetchAll();
-	}
+        return $stmt->fetchAll();
+    }
 
-	private function getProtocol( $uid ) {
-		$sql = <<<SQL
+    private function getProtocol( $uid ) {
+        $sql = <<<SQL
 SELECT
     "zp"."form_code" as "form",
     "zp"."date_time" as "date-time",
@@ -119,19 +119,19 @@ WHERE
     ("zp"."uid" = :uid);
 SQL;
 
-		$stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
-		$stmt->execute( [
-			'uid' => $uid
-		] );
+        $stmt->execute( [
+            'uid' => $uid
+        ] );
 
-		return $stmt->fetchAll();
-	}
+        return $stmt->fetchAll();
+    }
 
-	private function getUidByInn( $inn ) {
-		$connection = Connections::getConnection( 'Sochi' );
+    private function getUidByInn( $inn ) {
+        $connection = Connections::getConnection( 'Sochi' );
 
-		$sql  = <<<SQL
+        $sql  = <<<SQL
 SELECT
     "u"."uid" as "uid"
 FROM
@@ -139,52 +139,73 @@ FROM
 WHERE
     ("u"."inn" = :inn);
 SQL;
-		$stmt = $connection->prepare( $sql );
-		$stmt->execute( [
-			'inn' => $inn
-		] );
+        $stmt = $connection->prepare( $sql );
+        $stmt->execute( [
+            'inn' => $inn
+        ] );
 
-		return $stmt->fetchAll();
-	}
+        return $stmt->fetchAll();
+    }
 
-	protected function main() {
-		$this->context->css[] = 'resources/css/ui-misc-form.css';
-		$this->context->css[] = 'resources/css/ui-sochi.css';
-		$this->context->css[] = 'resources/css/ui-service-zero-report.css';
+    private function getDateStart( $uid ) {
+        $connection = Connections::getConnection( 'Sochi' );
 
-		$this->variables->errors = [];
+        $sql = <<<SQL
+select "z"."uid", "u"."inn", min("date_time") as "dates"
+from "options"."zero_protocol" as "z"
+inner join "billing"."users" AS "u" ON "z"."uid" = "u"."uid"
+where "z"."uid" = :uid
+group by "z"."uid", "u"."inn"
+order by "dates";
+SQL;
+        $stmt = $connection->prepare( $sql );
+        $stmt->execute( [
+            'uid' => $uid
+        ] );
 
-		$inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
-		$uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
+        return $stmt->fetchAll();
 
-		if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
-			$this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
+    }
 
-			return;
-		}
+    protected function main() {
+        $this->context->css[] = 'resources/css/ui-misc-form.css';
+        $this->context->css[] = 'resources/css/ui-sochi.css';
+        $this->context->css[] = 'resources/css/ui-service-zero-report.css';
 
-		if ( $uid && ! preg_match( '/^\d{23,23}$/', $uid ) ) {
-			$this->variables->errors[] = 'UID должен состоять из 23 цифр';
+        $this->variables->errors = [];
 
-			return;
-		}
+        $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
+        $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
 
-		if ( $inn ) {
-			$uid = $this->getUidByInn( $inn )[0]['uid'];
-		}
+        if ( $inn && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $inn ) ) {
+            $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
 
-		$this->variables->uid = $uid;
+            return;
+        }
 
-		try {
-			if ( $uid ) {
-				$this->variables->forms    = $this->getForms( $uid );
-				$this->variables->protocol = $this->getProtocol( $uid );
-			}
+        if ( $uid && ! preg_match( '/^\d{23,23}$/', $uid ) ) {
+            $this->variables->errors[] = 'UID должен состоять из 23 цифр';
 
-			$this->variables->users = $this->getUsers();
-		} catch ( \Exception $e ) {
-			\Sentry\captureException( $e );
-			$this->variables->errors[] = $e->getMessage();
-		}
-	}
+            return;
+        }
+
+        if ( $inn ) {
+            $uid = $this->getUidByInn( $inn )[0]['uid'];
+        }
+
+        $this->variables->uid = $uid;
+
+        try {
+            if ( $uid ) {
+                $this->variables->forms     = $this->getForms( $uid );
+                $this->variables->protocol  = $this->getProtocol( $uid );
+                $this->variables->dateStart = $this->getDateStart( $uid );
+            }
+
+            $this->variables->users = $this->getUsers();
+        } catch ( \Exception $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->getMessage();
+        }
+    }
 }
