@@ -57,6 +57,44 @@ class Requisites extends \Environment\Core\Module {
         return [ $requisites, $bindings ];
     }
 
+    protected function getRequisitesData( $inn, $uid, $data ) {
+        $client = new SoapClients\Api\RequisitesData();
+
+        $requisites = $uid
+            ? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, $data )
+            : $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, $data );
+
+        if ( ! ( $requisites && $requisites->common ) ) {
+            throw new \Exception( 'Клиент не найден' );
+        }
+
+        $consulting = null;
+
+        foreach ( $requisites->common->representatives as $rep ) {
+            foreach ( $rep->roles as $role ) {
+                switch ( $role->id ) {
+                    case self::ROLES_CONSULTING:
+                        $consulting = $rep->person->passport;
+                        break 2;
+
+                    case self::ROLES_ROOT:
+                        $consulting = $rep->person->passport;
+                        break 2;
+                }
+            }
+        }
+
+        $bindings = $consulting
+            ? $client->getConsultingBindingsByPassport(
+                $client::SUBSCRIBER_TOKEN,
+                $consulting->series,
+                $consulting->number
+            )
+            : null;
+
+        return [ $requisites, $bindings ];
+    }
+
     protected function getSochiBillingBalance( $inn ) {
         $sql = <<<SQL
 SELECT
@@ -98,6 +136,30 @@ SQL;
 
     protected function getPkiCertificates( $inn ) {
         return ( new SoapClients\PkiService() )->search( $inn );
+    }
+
+    protected function getAllRequisitesSaves( $inn ) {
+        $sql = <<<SQL
+        
+        SELECT
+    "Requisites"."IDRequisites",
+    "Requisites"."DateTime"
+    
+FROM
+    "Common"."Requisites"
+WHERE
+      ("Requisites"."Inn" = :inn)
+ORDER BY "Requisites"."IDRequisites"; 
+SQL;
+
+
+        $stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
+
+        $stmt->execute( [
+            'inn' => $inn
+        ] );
+
+        return $stmt->fetchAll();
     }
 
     protected function getDateFromRequisites( $inn ) {
@@ -311,6 +373,7 @@ SQL;
 
         $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
         $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
+        $data = isset( $_GET['data'] ) ? $_GET['data'] : null;
 
         if ( ! ( $inn || $uid ) ) {
             return;
@@ -329,8 +392,13 @@ SQL;
         }
 
         try {
-            $requisitesAll = $this->getRequisites( $inn, $uid );
-			list( $requisites, $bindings ) = $requisitesAll;
+            if(is_null($data)) {
+                $requisitesAll = $this->getRequisites($inn, $uid);
+                list($requisites, $bindings) = $requisitesAll;
+            } else {
+                $requisitesAll = $this->getRequisitesData($inn, $uid, $data);
+                list($requisites, $bindings) = $requisitesAll;
+            }
 		} catch ( \SoapFault $e ) {
 //			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->faultstring;
@@ -383,6 +451,20 @@ SQL;
 
         $this->variables->requisites = $requisites;
         $this->variables->bindings   = $bindings;
+
+        try {
+            $this->variables->allRequisitesDataSaves = $this->getAllRequisitesSaves($requisites->common->inn);
+        } catch ( \SoapFault $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->faultstring;
+
+            return;
+        } catch ( \Exception $e ) {
+            \Sentry\captureException( $e );
+            $this->variables->errors[] = $e->getMessage();
+
+            return;
+        }
 
         try {
             $certificates = $this->getPkiCertificates($requisites->common->inn);
