@@ -167,5 +167,5 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_SfArchive_password']
     ]
 );
-?>
+
 

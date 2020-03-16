@@ -285,7 +285,6 @@ SQL;
 
     protected function setUsageStatus( $uid, $status, $description ) {
         $client = new SoapClients\Api\RequisitesData();
-
         $success = $client->setUsageStatus(
             $client::SUBSCRIBER_TOKEN,
             $uid,
@@ -302,12 +301,90 @@ SQL;
         return null;
     }
 
+
+
+    protected function setTunduk( $inn) {
+        $client = new SoapClients\Tunduk\RequisitesData();
+
+        $request = [
+                'subscriber' => [
+                    'id'           =>   $client::SUBSCRIBER_ID,
+                    'token'        =>   $client::SUBSCRIBER_TOKEN,
+                    'name'         =>   $client::SUBSCRIBER_NAME,
+                    'responsible'  =>   $client::SUBSCRIBER_RESPONSIBLE,
+                    'phones'       =>   $client::SUBSCRIBER_PHONES,
+
+                ],
+
+                'dateTime'   => date('c'),
+                'ipAddress'  =>  $_SERVER['REMOTE_ADDR'],
+
+        ];
+
+        $success = $client->send(
+            $request,
+            $inn
+        );
+
+            return $success;
+
+    }
+
+
     protected function main() {
+
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
         $this->context->css[] = 'resources/css/ui-requisites.css';
 
         $this->variables->errors = [];
+
+/*        $fgc = file_get_contents("php://input");
+        var_dump ($_FILES);
+        if (isset($fgc)) {
+
+            var_dump($fgc);exit;
+        }*/
+
+        if (isset($_POST['inn-tunduk'])) {
+//var_dump("success"); exit;
+            $innTunduk = $_POST['inn-tunduk'];
+
+           if ( $innTunduk && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $innTunduk ) ) {
+                $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
+               var_dump("error"); exit;
+                return;
+            }
+
+            $resaultTunduk =  $this->setTunduk($innTunduk);
+
+            if ( $resaultTunduk ) {
+
+                //$this->variables->errors[] = 'Компания успешно отправлена в Тундук';;
+
+                if ($resaultTunduk->success == true) {
+                    var_dump("success"); exit;
+                    return;
+
+                } else {
+
+                    var_dump("error"); exit;
+                    return;
+                }
+
+
+            } else {
+
+               // $this->variables->errors[] = 'Не удалось отправить в Тундук';
+                var_dump("error"); exit;
+                return;
+            }
+
+
+        }
+
+
+
 
         $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
         $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;

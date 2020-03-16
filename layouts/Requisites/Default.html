@@ -5,7 +5,7 @@
 
     <div class="field">
         <label for="inn" class="fixed">ИНН:</label>
-        <input type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
+        <input onkeyup="checkParams()" type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
         <span class="hint">10 или 14 цифр</span>
     </div>
 
@@ -16,10 +16,123 @@
     </div>
 
     <div class="field buttons">
-        <input type="submit" class="button" value="Поиск" />
+        <input type="submit" id="search" class="button" value="Поиск" />
     </div>
 
 </form>
+
+<!--<form class="form" action="index.php?view=requisites" method="POST">
+
+    <div class="field">
+        <label for="inn-tunduk" class="fixed">ИНН:</label>
+        <input type="text" name="inn-tunduk" id="inn-tunduk" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_POST['inn-tunduk']) ? htmlspecialchars($_POST['inn-tunduk']) : '' ?>">
+        <span class="hint">10 или 14 цифр</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Выгрузка компании в Тундук" />
+    </div>
+
+</form>-->
+
+<form class="form" id="ajax_form" method="POST" action="">
+    <div class="field buttons">
+        <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузка компании в Тундук" disabled/>
+    </div>
+
+</form>
+
+
+
+<style>
+    .button.disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+</style>
+
+<div class="empty-resultset" id="tunduk-success"style="display: none">Компания успешно отправлена в Тундук</div>
+<div class="failure" id="tunduk-error"style="display: none">Ошибка отправки в Тундук. Пожалуйста повторите позже.</div>
+
+<div id="result_form"></div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+    function checkParams() {
+
+        var inputInn = $('#inn').val();
+        /*var button = document.querySelector("input[value='Выгрузка компании в Тундук']");*/
+
+        if(inputInn.length >= 10) {
+            $("#btn-tunduk").css("opacity", "3");
+            $("#btn-tunduk").attr('disabled',false);
+
+        } else {
+            $("#btn-tunduk").css("opacity", "0.65");
+            $("#btn-tunduk").attr('disabled',true);
+        }
+    }
+
+    $( document ).ready(checkParams);
+
+    $("#btn-tunduk").click(function() {
+
+            sendAjaxForm();
+            return false;
+
+    });
+
+    function sendAjaxForm() {
+
+        var postForm = {
+            'inn-tunduk'     : $('#inn').val()
+        };
+
+        $.ajax({
+
+            type:'POST',
+            url:'index.php?view=requisites',
+            dataType:'json',
+            data: postForm
+        })
+            .done(function(ret) {
+                result = ret.responseText.substr(11);
+                result = result.replace('"', '');
+                result = result.trim();
+                res = "success";
+                if (result == res) {
+                    $("#tunduk-success").css('display', 'block');
+                    $("#tunduk-error").css('display', 'none');
+
+                } else {
+                    $("#tunduk-success").css('display', 'none');
+                    $("#tunduk-error").css('display', 'block');
+
+                }
+
+            })
+
+            .fail(function(ret) {
+                result = ret.responseText.substr(11);
+                result = result.replace('"', '');
+                result = result.trim();
+                res = "success";
+                if (result == res) {
+                    $("#tunduk-success").css('display', 'block');
+                    $("#tunduk-error").css('display', 'none');
+                } else {
+                    $("#tunduk-success").css('display', 'none');
+                    $("#tunduk-error").css('display', 'block');
+                }
+            })
+        ;
+    };
+
+</script>
 
 <?php if($errors): ?>
     <?php foreach($errors as $error): ?>
@@ -750,3 +863,4 @@ if($bindings !== null):
 <?php else: ?>
     <div class="empty-resultset">В PKI сведений не найдено</div>
 <?php endif; ?>
+
