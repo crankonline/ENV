@@ -27,7 +27,7 @@ Loader::map(__NAMESPACE__ . '\\Soap\\Clients', PATH_SOAP_CLIENTS);
 Loader::map(__NAMESPACE__ . '\\Soap\\Services', PATH_SOAP_SERVICES);
 Loader::map(__NAMESPACE__ . '\\Soap\\Types', PATH_SOAP_TYPES);
 
-\Sentry\init(['dsn' => 'http://'.$_ENV['configuration_sentry_dsn'].'@sentry.dostek.kg/5' ]);
+\Sentry\init(['dsn' => $_ENV['configuration_sentry_dsn'] ]);
 
 
 

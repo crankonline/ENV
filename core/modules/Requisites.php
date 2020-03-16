@@ -2,6 +2,7 @@
 
 namespace Environment\Modules;
 
+use DateTime;
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 use Environment\Soap\Clients as SoapClients;
@@ -58,14 +59,27 @@ class Requisites extends \Environment\Core\Module {
     }
 
     protected function getRequisitesData( $inn, $uid, $data ) {
+//        print_r($data);
+//        echo "<br/>";
+        if ($data != null) {
+            $datetime = new DateTime($data);
+//            $data = $datetime->format(DateTime::ATOM);
+            $data = $datetime->format(DateTime::ISO8601);
+        }
+//        print_r($data);
+//        die();
         $client = new SoapClients\Api\RequisitesData();
 
         $requisites = $uid
             ? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, $data )
             : $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, $data );
 
+//        echo "<pre>";
+//        print_r($requisites);
+//        echo "</pre>";
         if ( ! ( $requisites && $requisites->common ) ) {
-            throw new \Exception( 'Клиент не найден' );
+            $this->variables->allRequisitesDataSaves = $this->getAllRequisitesSaves($inn);
+            throw new \Exception( 'Данные реквизитов не полные' );
         }
 
         $consulting = null;
@@ -365,6 +379,11 @@ SQL;
     }
 
     protected function main() {
+        if (isset($_POST["innTunduk"])) {
+            //fun
+            $this->variables->errors[] = 'тун';
+        }
+
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
         $this->context->css[] = 'resources/css/ui-requisites.css';

@@ -23,8 +23,21 @@
 
 <?php if($errors): ?>
     <?php foreach($errors as $error): ?>
-    <div class="failure"><?php echo $error; ?></div>
+    <div class="failure">!!<?php echo $error; ?></div>
     <?php endforeach; ?>
+<table class="data requisites">
+    <caption>История реквизитов</caption>
+    <tr>
+        <th>ID</th>
+        <th>Date</th>
+    </tr>
+    <?php foreach($allRequisitesDataSaves as $reqData) : ?>
+    <tr>
+        <th><?=$reqData['IDRequisites'];?></th>
+        <td><a href="index.php?view=requisites&inn=<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>&uid=<?php echo isset($_GET['uid']) ? htmlspecialchars($_GET['uid']) : '' ?>&data=<?=$reqData['DateTime']; ?>"><?=$reqData['DateTime'];?></a></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
     <?php return; ?>
 <?php endif; ?>
 
