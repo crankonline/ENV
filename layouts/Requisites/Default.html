@@ -88,6 +88,13 @@
         tunSuc.css('display', 'none');
         tunErr.css('display', 'none');
 
+        function tuErr () {
+            tunSuc.css('display', 'none');
+            tunErr.css('display', 'block');
+            tunWacc.css('display', 'none');
+
+        };
+
 
         let postForm = {
             'inn-tunduk'     : $('#inn').val()
@@ -113,24 +120,18 @@
                 } else if (obj == 'noINN') {
 
                     tunErr.text("ИНН должен состоять из 10 или 14 цифр.");
-                    tunSuc.css('display', 'none');
-                    tunErr.css('display', 'block');
-                    tunWacc.css('display', 'none');
+                    tuErr();
 
                 } else if (obj == 'noConn') {
 
                     tunErr.text("Ошибка отправки в Тундук. Пожалуйста повторите позже.");
-                    tunSuc.css('display', 'none');
-                    tunErr.css('display', 'block');
-                    tunWacc.css('display', 'none');
+                    tuErr();
                 }
 
                 else {
 
                     tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                    tunSuc.css('display', 'none');
-                    tunErr.css('display', 'block');
-                    tunWacc.css('display', 'none');
+                    tuErr();
 
                 }
 
@@ -139,9 +140,7 @@
             .fail(function() {
 
                 tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                tunSuc.css('display', 'none');
-                tunErr.css('display', 'block');
-                tunWacc.css('display', 'none');
+                tuErr();
             })
         ;
     };
