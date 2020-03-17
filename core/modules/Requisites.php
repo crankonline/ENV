@@ -16,7 +16,8 @@ class Requisites extends \Environment\Core\Module {
         PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status';
 
     protected $config = [
-        'template' => 'layouts/Requisites/Default.html'
+        'template' => 'layouts/Requisites/Default.html',
+        'listen'   => 'action'
     ];
 
     protected function getRequisites( $inn, $uid ) {
@@ -304,12 +305,13 @@ SQL;
 
 
     protected function setTunduk( $inn) {
+
         $client = new SoapClients\Tunduk\RequisitesData();
 
         $request = [
                 'subscriber' => [
                     'id'           =>   $client::SUBSCRIBER_ID,
-                    'token'        =>   $client::SUBSCRIBER_TOKEN,
+                    'token'        =>   TUNDUK_SUBSCRIBER_TOKEN,
                     'name'         =>   $client::SUBSCRIBER_NAME,
                     'responsible'  =>   $client::SUBSCRIBER_RESPONSIBLE,
                     'phones'       =>   $client::SUBSCRIBER_PHONES,
@@ -321,17 +323,58 @@ SQL;
 
         ];
 
-        $success = $client->send(
-            $request,
-            $inn
-        );
+            return $client->send(
+                $request,
+                $inn
+            );
 
-            return $success;
+    }
+    public function tunduk() {
+
+        if (!isset($_POST['inn-tunduk'])) return $this->main();
+
+            $innTunduk = $_POST['inn-tunduk'];
+
+            try {
+
+                if ($innTunduk && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $innTunduk)) {
+
+                    throw new \Exception( 'incINN' );
+
+                }
+
+                $resaultTunduk = $this->setTunduk($innTunduk);
+
+                if ($resaultTunduk->success) {
+                    if ($resaultTunduk->success == true) {
+
+                        echo json_encode(['result' => 'success']);
+
+                    } else {
+
+                        throw new \Exception( 'noINN' );
+
+                    }
+
+
+                } else {
+
+                    throw new \Exception( 'noConn' );
+
+                }
+
+            } catch (\Exception $e ){
+
+                echo json_encode(['result' => $e->getMessage()]);
+
+            }
+
+        exit;
 
     }
 
-
     protected function main() {
+
 
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
@@ -339,55 +382,9 @@ SQL;
 
         $this->variables->errors = [];
 
-/*        $fgc = file_get_contents("php://input");
-        var_dump ($_FILES);
-        if (isset($fgc)) {
+        $inn = $_GET['inn'] ?? null;
+        $uid = $_GET['uid'] ?? null;
 
-            var_dump($fgc);exit;
-        }*/
-
-        if (isset($_POST['inn-tunduk'])) {
-//var_dump("success"); exit;
-            $innTunduk = $_POST['inn-tunduk'];
-
-           if ( $innTunduk && ! preg_match( '/^(\d{10,10})|(\d{14,14})$/', $innTunduk ) ) {
-                $this->variables->errors[] = 'ИНН должен состоять из 10 или 14 цифр';
-               var_dump("error"); exit;
-                return;
-            }
-
-            $resaultTunduk =  $this->setTunduk($innTunduk);
-
-            if ( $resaultTunduk ) {
-
-                //$this->variables->errors[] = 'Компания успешно отправлена в Тундук';;
-
-                if ($resaultTunduk->success == true) {
-                    var_dump("success"); exit;
-                    return;
-
-                } else {
-
-                    var_dump("error"); exit;
-                    return;
-                }
-
-
-            } else {
-
-               // $this->variables->errors[] = 'Не удалось отправить в Тундук';
-                var_dump("error"); exit;
-                return;
-            }
-
-
-        }
-
-
-
-
-        $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
-        $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
 
         if ( ! ( $inn || $uid ) ) {
             return;

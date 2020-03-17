@@ -21,28 +21,12 @@
 
 </form>
 
-<!--<form class="form" action="index.php?view=requisites" method="POST">
-
-    <div class="field">
-        <label for="inn-tunduk" class="fixed">ИНН:</label>
-        <input type="text" name="inn-tunduk" id="inn-tunduk" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_POST['inn-tunduk']) ? htmlspecialchars($_POST['inn-tunduk']) : '' ?>">
-        <span class="hint">10 или 14 цифр</span>
-    </div>
-
-    <div class="field buttons">
-        <input type="submit" class="button" value="Выгрузка компании в Тундук" />
-    </div>
-
-</form>-->
-
-<form class="form" id="ajax_form" method="POST" action="">
+<form class="form" id="ajax_form" method="POST" action="" style="display: none">
     <div class="field buttons">
         <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузка компании в Тундук" disabled/>
     </div>
 
 </form>
-
-
 
 <style>
     .button.disabled {
@@ -52,32 +36,40 @@
 
 </style>
 
-<div class="empty-resultset" id="tunduk-success"style="display: none">Компания успешно отправлена в Тундук</div>
-<div class="failure" id="tunduk-error"style="display: none">Ошибка отправки в Тундук. Пожалуйста повторите позже.</div>
+<div id="fountainG" style="display: none">
+    <div id="fountainG_1" class="fountainG"></div>
+    <div id="fountainG_2" class="fountainG"></div>
+    <div id="fountainG_3" class="fountainG"></div>
+    <div id="fountainG_4" class="fountainG"></div>
+    <div id="fountainG_5" class="fountainG"></div>
+    <div id="fountainG_6" class="fountainG"></div>
+    <div id="fountainG_7" class="fountainG"></div>
+    <div id="fountainG_8" class="fountainG"></div>
+</div>
+<div class="empty-resultset" id="tunduk-success"style="display: none"></div>
+<div class="failure" id="tunduk-error"style="display: none"></div>
 
-<div id="result_form"></div>
-
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
 
 <script type="text/javascript">
 
     function checkParams() {
 
         var inputInn = $('#inn').val();
-        /*var button = document.querySelector("input[value='Выгрузка компании в Тундук']");*/
+        var button =  $("#btn-tunduk");
 
         if(inputInn.length >= 10) {
-            $("#btn-tunduk").css("opacity", "3");
-            $("#btn-tunduk").attr('disabled',false);
-
+            button.css("opacity", "3");
+            button.attr('disabled',false);
         } else {
-            $("#btn-tunduk").css("opacity", "0.65");
-            $("#btn-tunduk").attr('disabled',true);
+            button.css("opacity", "0.65");
+            button.attr('disabled',true);
         }
     }
 
     $( document ).ready(checkParams);
+
 
     $("#btn-tunduk").click(function() {
 
@@ -88,46 +80,68 @@
 
     function sendAjaxForm() {
 
-        var postForm = {
+        let tunWacc = $("#fountainG");
+        let tunSuc = $("#tunduk-success");
+        let tunErr = $("#tunduk-error");
+
+        tunWacc.css('display', 'block');
+        tunSuc.css('display', 'none');
+        tunErr.css('display', 'none');
+
+
+        let postForm = {
             'inn-tunduk'     : $('#inn').val()
         };
 
         $.ajax({
 
             type:'POST',
-            url:'index.php?view=requisites',
+            url:'index.php?view=requisites&action=tunduk',
             dataType:'json',
             data: postForm
         })
-            .done(function(ret) {
-                result = ret.responseText.substr(11);
-                result = result.replace('"', '');
-                result = result.trim();
-                res = "success";
-                if (result == res) {
-                    $("#tunduk-success").css('display', 'block');
-                    $("#tunduk-error").css('display', 'none');
+             .done(function(ret) {
+                let obj = ret['result'];
 
-                } else {
-                    $("#tunduk-success").css('display', 'none');
-                    $("#tunduk-error").css('display', 'block');
+                if (obj == 'success') {
+
+                    tunSuc.text("Компания успешно отправлена в Тундук.");
+                    tunSuc.css('display', 'block');
+                    tunErr.css('display', 'none');
+                    tunWacc.css('display', 'none');
+
+                } else if (obj == 'noINN') {
+
+                    tunErr.text("ИНН должен состоять из 10 или 14 цифр.");
+                    tunSuc.css('display', 'none');
+                    tunErr.css('display', 'block');
+                    tunWacc.css('display', 'none');
+
+                } else if (obj == 'noConn') {
+
+                    tunErr.text("Ошибка отправки в Тундук. Пожалуйста повторите позже.");
+                    tunSuc.css('display', 'none');
+                    tunErr.css('display', 'block');
+                    tunWacc.css('display', 'none');
+                }
+
+                else {
+
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
+                    tunSuc.css('display', 'none');
+                    tunErr.css('display', 'block');
+                    tunWacc.css('display', 'none');
 
                 }
 
             })
 
-            .fail(function(ret) {
-                result = ret.responseText.substr(11);
-                result = result.replace('"', '');
-                result = result.trim();
-                res = "success";
-                if (result == res) {
-                    $("#tunduk-success").css('display', 'block');
-                    $("#tunduk-error").css('display', 'none');
-                } else {
-                    $("#tunduk-success").css('display', 'none');
-                    $("#tunduk-error").css('display', 'block');
-                }
+            .fail(function() {
+
+                tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
+                tunSuc.css('display', 'none');
+                tunErr.css('display', 'block');
+                tunWacc.css('display', 'none');
             })
         ;
     };
@@ -162,15 +176,22 @@ endif;
 <?php $usageStatus = empty($requisites->usageStatus) ? null : $requisites->usageStatus; ?>
 
 <?php
-if($usageStatus):
+if($usageStatus):?>
 
-    if($usageStatus->isActive):
+
+<?php   if($usageStatus->isActive):
         $class = 'successful';
-        $name  = 'ведется';
-    else:
-        $class = 'failed';
-        $name  = 'не ведется';
-    endif;
+        $name  = 'ведется';?>
+<script>
+$("#ajax_form").css('display', 'block');
+</script>
+<?php       else:
+      $class = 'failed';
+       $name  = 'не ведется';  ?>
+<script>
+    $("#ajax_form").css('display', 'block');
+</script>
+<?php   endif;
 
 else:
     $class = 'default';
