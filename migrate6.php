@@ -31,7 +31,7 @@ VALUES
 
 SQL;
 
-		$stmt = Connections::getConnection( 'Local' )->prepare( $sql );
+		$stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
 		$stmt->execute( [
 			'moduleGroupId' => 2,
@@ -59,7 +59,7 @@ VALUES
 
 SQL;
 
-		$stmt = Connections::getConnection( 'Local' )->prepare( $sql );
+		$stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
 		$stmt->execute( [
 			'id' => $id,

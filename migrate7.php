@@ -10,7 +10,7 @@ require 'core/configuration.php';
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 
-class migrate6 {
+class migrate7 {
 
 
 	public function insertModule( ) {
@@ -69,7 +69,7 @@ SQL;
 	}
 }
 
-$migrate = new migrate6();
+$migrate = new migrate7();
 
 $t = $migrate->insertModule();
 $migrate->insertModuleAccess($t);
