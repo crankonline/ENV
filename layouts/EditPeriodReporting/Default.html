@@ -345,11 +345,76 @@
     </div>
 </div>
 
+
+
 </form>
 
 <script type="text/javascript">
+    let d = new Date();
+    let YearP = d.getFullYear();
 
-/*BEGIN СХЕМА Sf_reporting*/
+
+    console.log(YearP+5);
+
+        function limitDay(element)
+    {
+
+        if (element.value >=31) {
+            element.value = 31;
+        } else if (element.value <=0) {
+            element.value = 1;
+        }
+
+    }
+
+        function limitMonth(element)
+        {
+
+            if (element.value >=12) {
+                element.value = 12;
+            } else if (element.value <=0) {
+                element.value = 1;
+            }
+
+        }
+
+    function limitYear(element)
+    {
+
+        if (element.value >=(YearP+5)) {
+            element.value = (YearP+5);
+        } else if (element.value <=(YearP-5)) {
+            element.value = (YearP-5);
+        }
+
+    }
+
+
+    /*BEGIN СХЕМА Sf_reporting*/
+
+function updateStatus(sys_name, value) {
+    let postForm = {
+        'sys_name'     : sys_name,
+        'valid'        : value
+    };
+    $.ajax({
+        type:'POST',
+        url:'index.php?view=edit-period-reporting&action=updateFormsSF',
+        dataType:'json',
+        data: postForm
+    })
+        .done(function(ret) {
+            console.log(ret);
+
+        })
+
+        .fail(function(ret) {
+            console.log(ret);
+        });
+
+}
+
+
     function updateDateSf(sys_name, value, definition) {
         let postForm = {
             'sys_name'     : sys_name,
@@ -397,18 +462,29 @@
                                         <td class="tdName">
                                             <span class="tab" style="margin-left: 2%">${value['sys_name']}</span>
                                         </td>
+
+
                                         <td >
-                                            <input type="text" id="Year_${value['sys_name']}" value="${value['year']}" onchange="updateDateSf('${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
+                                             <label class="switch">
+                                                <input type="checkbox" class="chkSfReport" id="${value['sys_name']}" onclick="updateStatus('${value['sys_name']}', this.checked);">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+
+
+
+                                        <td >
+                                            <input type="number" min="${YearP-5}" max="${YearP+5}" id="Year_${value['sys_name']}" onchange="limitYear(this); updateDateSf('${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
                                                 Год
                                             </input>
                                         </td>
                                         <td >
-                                           <input type="text" id="Month_${value['sys_name']}" value="${value['month']}" onchange="updateDateSf('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                           <input type="number" min="1" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSf('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
                                                 Месяц
                                             </input>
                                         </td>
                                         <td >
-                                            <input type="text" id="Day_${value['sys_name']}" value="${value['day']}" onchange="updateDateSf('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                            <input type="number" min="1" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSf('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
                                                 День
                                             </input>
                                         </td>
@@ -418,7 +494,7 @@
                     </li>`
                     );
 
-                    if (value['status']) {
+                    if (value['valid']) {
                         $('#'+value['sys_name']).prop('checked',true);
                     }
 
@@ -437,6 +513,29 @@
 /*END СХЕМА Sf_reporting*/
 
 /*BEGIN СХЕМА Stat_reporting*/
+
+function updateStatusStat(sys_name, status) {
+    let postForm = {
+        'sys_name'     : sys_name,
+        'status'        : status
+    };
+    $.ajax({
+        type:'POST',
+        url:'index.php?view=edit-period-reporting&action=updateFormsStat',
+        dataType:'json',
+        data: postForm
+    })
+        .done(function(ret) {
+            console.log(ret);
+
+        })
+
+        .fail(function(ret) {
+            console.log(ret);
+        });
+
+}
+
 function updateDateStat(sys_name, value, definition) {
     let postForm = {
         'sys_name'     : sys_name,
@@ -484,13 +583,20 @@ function sendAjaxFormStat() {
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
+
+                                        <td>
+                                            <label class="switch" >
+                                                <input type="checkbox" class="chkStatReport" id="${value['sys_name']}" onclick="updateStatusStat('${value['sys_name']}', this.checked);">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
                                         <td >
-                                            <input type="text" id="Month_${value['sys_name']}" value="${value['month']}" onchange="updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                            <input type="text" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
                                                 Месяц
                                             </input>
                                         </td>
                                         <td >
-                                           <input type="text" id="Day_${value['sys_name']}" value="${value['day']}" onchange="updateDateStat('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                           <input type="text" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateStat('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
                                                 День
                                             </input>
                                         </td>
@@ -520,6 +626,29 @@ function sendAjaxFormStat() {
 
 
 /*BEGIN СХЕМА Sti_reporting*/
+
+function updateStatusSti(sys_name, status) {
+    let postForm = {
+        'sys_name'     : sys_name,
+        'status'        : status
+    };
+    $.ajax({
+        type:'POST',
+        url:'index.php?view=edit-period-reporting&action=updateFormsSti',
+        dataType:'json',
+        data: postForm
+    })
+        .done(function(ret) {
+            console.log(ret);
+
+        })
+
+        .fail(function(ret) {
+            console.log(ret);
+        });
+
+}
+
 function updateDateSti(sys_name, value, definition) {
     let postForm = {
         'sys_name'     : sys_name,
@@ -567,27 +696,21 @@ function sendAjaxFormSti() {
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
+                                        <td>
+                                            <label class="switch" >
+                                                <input type="checkbox" class="chkStiReport" id="${value['sys_name']}" onclick="updateStatusSti('${value['sys_name']}', this.checked);">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
                                         <td >
-                                            <input type="text" id="Month_${value['sys_name']}" value="${value['month']}" onchange="updateDateSti('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                            <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSti('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
                                                 Месяц
                                             </input>
                                         </td>
                                         <td >
-                                           <input type="text" id="Day_${value['sys_name']}" value="${value['day']}" onchange="updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                           <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
                                                 День
                                             </input>
-                                        </td>
-                                        <td >
-                                            <input type="text" id="Start_date_${value['sys_name']}" value="${value['start_date']}" onchange="updateDateSti('${value['sys_name']}', $('#Start_date_${value['sys_name']}').val(), 'start_date');">
-                                                Дата начала
-                                            </input>
-                                        </td>
-                                        <td >
-                                           <input type="text" id="End_date_${value['sys_name']}" value="${value['end_date']}" onchange="updateDateSti('${value['sys_name']}', $('#End_date_${value['sys_name']}').val(), 'end_date');">
-                                                Дата окончания
-                                            </input>
-                                        </td>
-
 
                             </tbody>
                         </table>
