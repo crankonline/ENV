@@ -23,7 +23,7 @@ FROM
     "sf_reporting"."forms" as "f"
 
 SQL;
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
 
         echo json_encode($stmt->fetchAll());exit;
@@ -41,7 +41,7 @@ FROM
     "stat_reporting"."forms" as "f"
 
 SQL;
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
 
         echo json_encode($stmt->fetchAll());exit;
@@ -59,7 +59,7 @@ FROM
     "sti_reporting"."forms" as "f"
 
 SQL;
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
 
         echo json_encode($stmt->fetchAll());exit;
@@ -79,7 +79,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute([
             'valid' => $valid,
             'sys_name' => $sys_name
@@ -105,7 +105,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute([
             'status' => $status,
             'sys_name' => $sys_name
@@ -131,7 +131,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute([
             'status' => $status,
             'sys_name' => $sys_name
