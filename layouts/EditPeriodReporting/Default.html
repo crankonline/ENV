@@ -350,11 +350,46 @@
 </form>
 
 <script type="text/javascript">
+    function DonePer(css_inpt_Sf,Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+css_inpt_Sf).css('border-color', '#008d00');
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'block');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+    function ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+css_inpt_Sf).css('border-color', 'darkred');
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'block');
+    }
+
+    function clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+css_inpt_Sf).css('border-color', 'white');
+        $('#'+Labl_Opred_Sf).css('display', 'block');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+
+    function clearStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'block');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+
+    function doneStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'block');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+
+    function errorStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'block');
+    }
+
     let d = new Date();
     let YearP = d.getFullYear();
-
-
-    console.log(YearP+5);
 
         function limitDay(element)
     {
@@ -393,6 +428,10 @@
     /*BEGIN СХЕМА Sf_reporting*/
 
 function updateStatus(sys_name, value) {
+    let Labl_Stat = 'Lab_Stat_'+sys_name;
+    let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
+    let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
+
     let postForm = {
         'sys_name'     : sys_name,
         'valid'        : value
@@ -404,18 +443,42 @@ function updateStatus(sys_name, value) {
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            function Clr(){
+                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            }
+            setTimeout(Clr, 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
         });
 
 }
 
 
     function updateDateSf(sys_name, value, definition) {
+    let css_inpt_Sf = '';
+    let Labl_Done_Sf = '';
+    let Labl_Error_Sf = '';
+    let Labl_Opred_Sf = '';
+    if (definition == 'year') {
+        css_inpt_Sf = 'Year_'+sys_name;
+        Labl_Done_Sf = 'Lab_Done_Year_'+sys_name;
+        Labl_Error_Sf = 'Lab_Error_Year_'+sys_name;
+        Labl_Opred_Sf = 'Lab_Year_'+sys_name;
+    } else if (definition == 'month') {
+        css_inpt_Sf = 'Month_'+sys_name;
+        Labl_Done_Sf = 'Lab_Done_Month_'+sys_name;
+        Labl_Error_Sf = 'Lab_Error_Month_'+sys_name;
+        Labl_Opred_Sf = 'Lab_Month_'+sys_name;
+    } else {
+        css_inpt_Sf = 'Day_'+sys_name;
+        Labl_Done_Sf = 'Lab_Done_Day_'+sys_name;
+        Labl_Error_Sf = 'Lab_Error_Day_'+sys_name;
+        Labl_Opred_Sf = 'Lab_Day_'+sys_name;
+    }
         let postForm = {
             'sys_name'     : sys_name,
             'value'        : value,
@@ -429,13 +492,18 @@ function updateStatus(sys_name, value) {
             data: postForm
         })
             .done(function(ret) {
-                console.log(ret);
+                DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+                function Clr(){
+                    clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+                }
+                setTimeout(Clr, 3000);
 
             })
 
             .fail(function(ret) {
-                console.log(ret);
+                ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
             });
+
 
     }
 
@@ -464,28 +532,38 @@ function updateStatus(sys_name, value) {
                                         </td>
 
 
-                                        <td >
+                                        <td style="text-align: center">
                                              <label class="switch">
                                                 <input type="checkbox" class="chkSfReport" id="${value['sys_name']}" onclick="updateStatus('${value['sys_name']}', this.checked);">
                                                 <span class="slider round"></span>
                                             </label>
+                                             <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px">Статус</label>
+                                             <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;"">Сохранено</label>
+                                             <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
                                         </td>
 
 
 
-                                        <td >
+                                        <td style="text-align: center">
+
                                             <input type="number" min="${YearP-5}" max="${YearP+5}" id="Year_${value['sys_name']}" onchange="limitYear(this); updateDateSf('${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
-                                                Год
-                                            </input>
+                                                <label id="Lab_Done_Year_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Lab_Error_Year_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Lab_Year_${value['sys_name']}">Год</label>
+                                           </input>
                                         </td>
-                                        <td >
+                                       <td style="text-align: center">
                                            <input type="number" min="1" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSf('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
-                                                Месяц
+                                                <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Lab_Month_${value['sys_name']}">Месяц</label>
                                             </input>
                                         </td>
-                                        <td >
+                                       <td style="text-align: center">
                                             <input type="number" min="1" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSf('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
-                                                День
+                                                <label id="Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Lab_Day_${value['sys_name']}">Месяц</label>
                                             </input>
                                         </td>
                                     </tr>
@@ -515,6 +593,10 @@ function updateStatus(sys_name, value) {
 /*BEGIN СХЕМА Stat_reporting*/
 
 function updateStatusStat(sys_name, status) {
+    let Labl_Stat = 'Lab_Stat_Stat_'+sys_name;
+    let Labl_Done_Stat = 'Lab_Done_Stat_Stat_'+sys_name;
+    let Labl_Error_Stat = 'Lab_Error_Stat_Stat_'+sys_name;
+
     let postForm = {
         'sys_name'     : sys_name,
         'status'        : status
@@ -526,17 +608,37 @@ function updateStatusStat(sys_name, status) {
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            function Clr(){
+                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            }
+            setTimeout(Clr, 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
         });
 
 }
 
 function updateDateStat(sys_name, value, definition) {
+    let css_inpt_Sf = '';
+    let Labl_Done_Sf = '';
+    let Labl_Error_Sf = '';
+    let Labl_Opred_Sf = '';
+
+    if (definition == 'month') {
+        css_inpt_Sf = 'Month_'+sys_name;
+        Labl_Done_Sf = 'Stat_Lab_Done_Month_'+sys_name;
+        Labl_Error_Sf = 'Stat_Lab_Error_Month_'+sys_name;
+        Labl_Opred_Sf = 'Stat_Lab_Month_'+sys_name;
+    } else {
+        css_inpt_Sf = 'Day_'+sys_name;
+        Labl_Done_Sf = 'Stat_Lab_Done_Day_'+sys_name;
+        Labl_Error_Sf = 'Stat_Lab_Error_Day_'+sys_name;
+        Labl_Opred_Sf = 'Stat_Lab_Day_'+sys_name;
+    }
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -550,14 +652,17 @@ function updateDateStat(sys_name, value, definition) {
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            function Clr(){
+                clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            }
+            setTimeout(Clr, 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
         });
-
 }
 
 $("#item-14-label").one("click", function() {
@@ -584,20 +689,27 @@ function sendAjaxFormStat() {
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
 
-                                        <td>
+                                        <td style="text-align: center">
                                             <label class="switch" >
                                                 <input type="checkbox" class="chkStatReport" id="${value['sys_name']}" onclick="updateStatusStat('${value['sys_name']}', this.checked);">
                                                 <span class="slider round"></span>
                                             </label>
-                                        </td>
-                                        <td >
-                                            <input type="text" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
-                                                Месяц
+                                             <label id="Lab_Stat_Stat_${value['sys_name']}" style="font-size: 11px">Статус</label>
+                                             <label id="Lab_Done_Stat_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;"">Сохранено</label>
+                                             <label id="Lab_Error_Stat_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
+                                       </td>
+                                       <td style="text-align: center">
+                                            <input type="number"   min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                                <label id="Stat_Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Stat_Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Stat_Lab_Month_${value['sys_name']}">Месяц</label>
                                             </input>
                                         </td>
-                                        <td >
-                                           <input type="text" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateStat('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
-                                                День
+                                        <td style="text-align: center">
+                                           <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateStat('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                                 <label id="Stat_Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Stat_Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Stat_Lab_Day_${value['sys_name']}">День</label>
                                             </input>
                                         </td>
                             </tbody>
@@ -628,6 +740,10 @@ function sendAjaxFormStat() {
 /*BEGIN СХЕМА Sti_reporting*/
 
 function updateStatusSti(sys_name, status) {
+    let Labl_Stat = 'Lab_Stat_'+sys_name;
+    let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
+    let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
+
     let postForm = {
         'sys_name'     : sys_name,
         'status'        : status
@@ -639,17 +755,35 @@ function updateStatusSti(sys_name, status) {
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            function Clr(){
+                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            }
+            setTimeout(Clr, 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
         });
-
 }
 
 function updateDateSti(sys_name, value, definition) {
+    let css_inpt_Sf = '';
+    let Labl_Done_Sf = '';
+    let Labl_Error_Sf = '';
+    let Labl_Opred_Sf = '';
+    if (definition == 'month') {
+        css_inpt_Sf = 'Month_'+sys_name;
+        Labl_Done_Sf = 'Lab_Done_Month_'+sys_name;
+        Labl_Error_Sf = 'Lab_Error_Month_'+sys_name;
+        Labl_Opred_Sf = 'Lab_Month_'+sys_name;
+    } else {
+        css_inpt_Sf = 'Day_'+sys_name;
+        Labl_Done_Sf = 'Lab_Done_Day_'+sys_name;
+        Labl_Error_Sf = 'Lab_Error_Day_'+sys_name;
+        Labl_Opred_Sf = 'Lab_Day_'+sys_name;
+    }
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -663,14 +797,17 @@ function updateDateSti(sys_name, value, definition) {
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            function Clr(){
+                clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            }
+            setTimeout(Clr, 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
         });
-
 }
 
 $("#item-2-label").one("click", function() {
@@ -692,26 +829,32 @@ function sendAjaxFormSti() {
                     `<li>
                         <table class="sfData">
                             <tbody>
-                                <tr class="active">
+                                <tr class="active" >
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
-                                        <td>
+                                        <td style="text-align: center">
                                             <label class="switch" >
                                                 <input type="checkbox" class="chkStiReport" id="${value['sys_name']}" onclick="updateStatusSti('${value['sys_name']}', this.checked);">
                                                 <span class="slider round"></span>
                                             </label>
-                                        </td>
-                                        <td >
-                                            <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSti('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
-                                                Месяц
+                                             <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px">Статус</label>
+                                             <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;"">Сохранено</label>
+                                             <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
+                                        </td>                                       <td style="text-align: center">
+                                           <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSti('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                                <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Lab_Month_${value['sys_name']}">Месяц</label>
                                             </input>
                                         </td>
-                                        <td >
-                                           <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
-                                                День
-                                            </input>
-
+                                        <td style="text-align: center">
+                                          <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                                <label id="Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
+                                                <label id="Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
+                                                <label id="Lab_Day_${value['sys_name']}">День</label>
+                                           </input>
+                                        </td>
                             </tbody>
                         </table>
                     </li>`

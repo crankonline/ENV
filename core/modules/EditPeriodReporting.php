@@ -205,13 +205,9 @@ WHERE
 SQL;
 
         $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
-        $stmt->execute([
-            'status' => $status,
-            'sys_name' => $sys_name
-        ]);
 
         echo json_encode($stmt->execute([
-            'valid' => $status,
+            'status' => $status,
             'sys_name' => $sys_name
         ]));exit;
     }
@@ -231,13 +227,9 @@ WHERE
 SQL;
 
         $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
-        $stmt->execute([
-            'status' => $status,
-            'sys_name' => $sys_name
-        ]);
 
         echo json_encode($stmt->execute([
-            'valid' => $status,
+            'status' => $status,
             'sys_name' => $sys_name
         ]));exit;
     }
