@@ -345,7 +345,6 @@ SQL;
 
                 $resaultTunduk = $this->setTunduk($innTunduk);
 
-                if ($resaultTunduk->success) {
                     if ($resaultTunduk->success == true) {
 
                         echo json_encode(['result' => 'success']);
@@ -355,13 +354,6 @@ SQL;
                         throw new \Exception( 'noINN' );
 
                     }
-
-
-                } else {
-
-                    throw new \Exception( 'noConn' );
-
-                }
 
             } catch (\Exception $e ){
 
