@@ -444,11 +444,7 @@ function updateStatus(sys_name, value) {
     })
         .done(function(ret) {
             doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            function Clr(){
-                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            }
-            setTimeout(Clr, 3000);
-
+            setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
         })
 
         .fail(function(ret) {
@@ -459,10 +455,10 @@ function updateStatus(sys_name, value) {
 
 
     function updateDateSf(sys_name, value, definition) {
-    let css_inpt_Sf = '';
-    let Labl_Done_Sf = '';
-    let Labl_Error_Sf = '';
-    let Labl_Opred_Sf = '';
+    let css_inpt_Sf;
+    let Labl_Done_Sf;
+    let Labl_Error_Sf;
+    let Labl_Opred_Sf;
     if (definition == 'year') {
         css_inpt_Sf = 'Year_'+sys_name;
         Labl_Done_Sf = 'Lab_Done_Year_'+sys_name;
@@ -492,12 +488,8 @@ function updateStatus(sys_name, value) {
             data: postForm
         })
             .done(function(ret) {
-                DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-                function Clr(){
-                    clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-                }
-                setTimeout(Clr, 3000);
-
+               DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+               setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
             })
 
             .fail(function(ret) {
@@ -528,7 +520,7 @@ function updateStatus(sys_name, value) {
                                 <tbody>
                                     <tr class="active">
                                         <td class="tdName">
-                                            <span class="tab" style="margin-left: 2%">${value['sys_name']}</span>
+                                            <span class="tab" style="margin-left: 2%">${value['name']}</span>
                                         </td>
 
 
@@ -541,12 +533,8 @@ function updateStatus(sys_name, value) {
                                              <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;"">Сохранено</label>
                                              <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
                                         </td>
-
-
-
                                         <td style="text-align: center">
-
-                                            <input type="number" min="${YearP-5}" max="${YearP+5}" id="Year_${value['sys_name']}" onchange="limitYear(this); updateDateSf('${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
+                                            <input type="number" min="${YearP-5}" max="${YearP+5}" id="Year_${value['sys_name']}" value="${value['year']}"  onchange="limitYear(this); updateDateSf('${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
                                                 <label id="Lab_Done_Year_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
                                                 <label id="Lab_Error_Year_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
                                                 <label id="Lab_Year_${value['sys_name']}">Год</label>
@@ -563,7 +551,7 @@ function updateStatus(sys_name, value) {
                                             <input type="number" min="1" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); updateDateSf('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
                                                 <label id="Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
                                                 <label id="Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Day_${value['sys_name']}">Месяц</label>
+                                                <label id="Lab_Day_${value['sys_name']}">День</label>
                                             </input>
                                         </td>
                                     </tr>
@@ -609,10 +597,7 @@ function updateStatusStat(sys_name, status) {
     })
         .done(function(ret) {
             doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            function Clr(){
-                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            }
-            setTimeout(Clr, 3000);
+            setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
 
         })
 
@@ -623,22 +608,13 @@ function updateStatusStat(sys_name, status) {
 }
 
 function updateDateStat(sys_name, value, definition) {
-    let css_inpt_Sf = '';
-    let Labl_Done_Sf = '';
-    let Labl_Error_Sf = '';
-    let Labl_Opred_Sf = '';
 
-    if (definition == 'month') {
-        css_inpt_Sf = 'Month_'+sys_name;
-        Labl_Done_Sf = 'Stat_Lab_Done_Month_'+sys_name;
-        Labl_Error_Sf = 'Stat_Lab_Error_Month_'+sys_name;
-        Labl_Opred_Sf = 'Stat_Lab_Month_'+sys_name;
-    } else {
-        css_inpt_Sf = 'Day_'+sys_name;
-        Labl_Done_Sf = 'Stat_Lab_Done_Day_'+sys_name;
-        Labl_Error_Sf = 'Stat_Lab_Error_Day_'+sys_name;
-        Labl_Opred_Sf = 'Stat_Lab_Day_'+sys_name;
-    }
+    let uDefinition = (definition === 'month') ? 'Month' : 'Day';
+    let css_inpt_Sf = `${uDefinition}_${sys_name}`;
+    let Labl_Done_Sf = `Stat_Lab_Done_${uDefinition}_${sys_name}`;
+    let Labl_Error_Sf = `Stat_Lab_Error_${uDefinition}_${sys_name}`;
+    let Labl_Opred_Sf = `Stat_Lab_${uDefinition}_${sys_name}`;
+
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -653,11 +629,7 @@ function updateDateStat(sys_name, value, definition) {
     })
         .done(function(ret) {
             DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            function Clr(){
-                clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            }
-            setTimeout(Clr, 3000);
-
+            setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
         })
 
         .fail(function(ret) {
@@ -756,10 +728,7 @@ function updateStatusSti(sys_name, status) {
     })
         .done(function(ret) {
             doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            function Clr(){
-                clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            }
-            setTimeout(Clr, 3000);
+            setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
 
         })
 
@@ -769,21 +738,11 @@ function updateStatusSti(sys_name, status) {
 }
 
 function updateDateSti(sys_name, value, definition) {
-    let css_inpt_Sf = '';
-    let Labl_Done_Sf = '';
-    let Labl_Error_Sf = '';
-    let Labl_Opred_Sf = '';
-    if (definition == 'month') {
-        css_inpt_Sf = 'Month_'+sys_name;
-        Labl_Done_Sf = 'Lab_Done_Month_'+sys_name;
-        Labl_Error_Sf = 'Lab_Error_Month_'+sys_name;
-        Labl_Opred_Sf = 'Lab_Month_'+sys_name;
-    } else {
-        css_inpt_Sf = 'Day_'+sys_name;
-        Labl_Done_Sf = 'Lab_Done_Day_'+sys_name;
-        Labl_Error_Sf = 'Lab_Error_Day_'+sys_name;
-        Labl_Opred_Sf = 'Lab_Day_'+sys_name;
-    }
+    let uDefinition = (definition === 'month') ? 'Month' : 'Day';
+    let css_inpt_Sf = `${uDefinition}_${sys_name}`;
+    let Labl_Done_Sf = `Lab_Done_${uDefinition}_${sys_name}`;
+    let Labl_Error_Sf = `Lab_Error_${uDefinition}_${sys_name}`;
+    let Labl_Opred_Sf = `Lab_${uDefinition}_${sys_name}`;
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -798,10 +757,7 @@ function updateDateSti(sys_name, value, definition) {
     })
         .done(function(ret) {
             DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            function Clr(){
-                clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            }
-            setTimeout(Clr, 3000);
+            setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
 
         })
 

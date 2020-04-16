@@ -24,6 +24,8 @@ SELECT
     "f"."day" as "day"
 FROM
     "sf_reporting"."forms" as "f"
+ORDER BY
+    "f"."sys_name";
 
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
@@ -44,7 +46,8 @@ SELECT
     "f"."day" as "day"
 FROM
     "stat_reporting"."forms" as "f"
-
+ORDER BY
+    "f"."sys_name";
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
@@ -66,7 +69,8 @@ SELECT
     "f"."end_date" as "end_date"
 FROM
     "sti_reporting"."forms" as "f"
-
+ORDER BY
+    "f"."sys_name";
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
@@ -102,10 +106,7 @@ SQL;
             'val' => $val
         ]));exit;
 
-
-
     }
-
 
     public function updateFormsStatDate() {
 
@@ -129,7 +130,6 @@ SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
         echo json_encode($stmt->execute([
-
             'sys_name' => $sys_name,
             'val' => $val
         ]));exit;
@@ -233,9 +233,6 @@ SQL;
             'sys_name' => $sys_name
         ]));exit;
     }
-
-
-
 
     protected function main() {
         $this->variables->errors = [];
