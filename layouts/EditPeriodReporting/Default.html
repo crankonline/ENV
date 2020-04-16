@@ -611,9 +611,9 @@ function updateDateStat(sys_name, value, definition) {
 
     let uDefinition = (definition === 'month') ? 'Month' : 'Day';
     let css_inpt_Sf = `${uDefinition}_${sys_name}`;
-    let Labl_Done_Sf = `Stat_Lab_Done_${uDefinition}_${sys_name}`;
-    let Labl_Error_Sf = `Stat_Lab_Error_${uDefinition}_${sys_name}`;
-    let Labl_Opred_Sf = `Stat_Lab_${uDefinition}_${sys_name}`;
+    let Labl_Done_Sf = `Stat_Lab_Done_${css_inpt_Sf}`;
+    let Labl_Error_Sf = `Stat_Lab_Error_${css_inpt_Sf}`;
+    let Labl_Opred_Sf = `Stat_Lab_${css_inpt_Sf}`;
 
     let postForm = {
         'sys_name'     : sys_name,
@@ -740,9 +740,9 @@ function updateStatusSti(sys_name, status) {
 function updateDateSti(sys_name, value, definition) {
     let uDefinition = (definition === 'month') ? 'Month' : 'Day';
     let css_inpt_Sf = `${uDefinition}_${sys_name}`;
-    let Labl_Done_Sf = `Lab_Done_${uDefinition}_${sys_name}`;
-    let Labl_Error_Sf = `Lab_Error_${uDefinition}_${sys_name}`;
-    let Labl_Opred_Sf = `Lab_${uDefinition}_${sys_name}`;
+    let Labl_Done_Sf = `Lab_Done_${css_inpt_Sf}`;
+    let Labl_Error_Sf = `Lab_Error_${css_inpt_Sf}`;
+    let Labl_Opred_Sf = `Lab_${css_inpt_Sf}`;
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
