@@ -373,17 +373,6 @@ class Statement extends \Environment\Core\Module {
                 header( 'Content-Disposition: inline; filename="' . $alias . '"' );
                 echo isset($isNotBase64File) ? $file['content'] : base64_decode( $file['content'] );
                 exit;
-                $alias = addslashes( $file['name'] );
-
-                header( 'Content-Length: ' . $file['size'] );
-                header( 'Accept-Ranges: bytes' );
-                header( 'Connection: close' );
-                header( 'Content-Type: image/jpeg' );
-                header( 'Content-Disposition: inline; filename="' . $alias . '"' );
-
-                echo base64_decode( $file['content'] );
-                exit;
-
 		} catch ( \PDOException $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors[] = 'Про получении файла произошла ошибка БД.';
