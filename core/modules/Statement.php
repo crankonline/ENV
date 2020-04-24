@@ -362,16 +362,19 @@ class Statement extends \Environment\Core\Module {
 				ob_end_clean();
 			}
 
-			$alias = addslashes( $file['name'] );
+            if (filter_var($file['content'], FILTER_VALIDATE_URL)) {
+                $file['content'] = file_get_contents($file['content']); $isNotBase64File = true;
+            }
 
-			header( 'Content-Length: ' . $file['size'] );
-			header( 'Accept-Ranges: bytes' );
-			header( 'Connection: close' );
-			header( 'Content-Type: image/jpeg' );
-			header( 'Content-Disposition: inline; filename="' . $alias . '"' );
+            $alias = addslashes( $file['name'] );
+            header( 'Content-Length: ' . $file['size'] );
+            header( 'Accept-Ranges: bytes' );
+            header( 'Connection: close' );
+            header( 'Content-Type: image/jpeg' );
+            header( 'Content-Disposition: inline; filename="' . $alias . '"' );
+            echo isset($isNotBase64File) ? $file['content'] : base64_decode( $file['content'] );
+            exit;
 
-			echo base64_decode( $file['content'] );
-			exit;
 		} catch ( \PDOException $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors[] = 'Про получении файла произошла ошибка БД.';
