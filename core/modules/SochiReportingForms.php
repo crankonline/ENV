@@ -4,10 +4,10 @@ namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
-class ReportingForms extends \Environment\Core\Module {
+class SochiReportingForms extends \Environment\Core\Module {
 
 	protected $config = [
-		'template' => 'layouts/ReportingForms/Default.html',
+		'template' => 'layouts/SochiReportingForms/Default.html',
 		'listen'   => 'action'
 	];
 
