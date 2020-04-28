@@ -4,10 +4,10 @@ namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
-class EditPeriodReporting extends \Environment\Core\Module {
+class SochiEditPeriodReporting extends \Environment\Core\Module {
 
     protected $config = [
-        'template' => 'layouts/EditPeriodReporting/Default.html',
+        'template' => 'layouts/SochiEditPeriodReporting/Default.html',
         'listen'   => 'action'
     ];
 

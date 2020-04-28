@@ -12,8 +12,28 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class migrate6 {
 
+    public function insertModuleGroupSochi() {
+        $sql = <<<SQL
+INSERT INTO "Core"."ModuleGroup"
+    ("IDModuleGroup", "Name")
+VALUES
+    (
+        DEFAULT,
+        'Сочи'
+    )RETURNING
+    "IDModuleGroup";
 
-	public function insertModule( ) {
+
+SQL;
+
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+	public function insertModuleSochiReportingForms( $moduleGroup ) {
 		$sql = <<<SQL
 INSERT INTO "Core"."Module"
     ("IDModule", "ModuleGroupID", "AccessKey", "HandlerClass", "Name", "IsEntryPoint")
@@ -34,7 +54,7 @@ SQL;
 		$stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
 		$stmt->execute( [
-			'moduleGroupId' => 2,
+			'moduleGroupId' => $moduleGroup,
 			'accesKey' => "reporting-forms",
 			'handleClass' => "ReportingForms",
 			'namemg' => "Окрытие и закрытие форм отчетности",
@@ -44,8 +64,70 @@ SQL;
 		return $stmt->fetchColumn();
 	}
 
-	public function insertModuleAccess( $id ) {
-		$sql = <<<SQL
+    public function insertModuleSochiEditPeriodReporting( $moduleGroup ) {
+        $sql = <<<SQL
+INSERT INTO "Core"."Module"
+    ("IDModule", "ModuleGroupID", "AccessKey", "HandlerClass", "Name", "IsEntryPoint")
+VALUES
+    (
+        DEFAULT,
+        :moduleGroupId,
+        :accesKey,
+        :handleClass,
+        :namemg,
+        :isEntryPoint
+    )RETURNING
+    "IDModule";
+
+
+SQL;
+
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+
+        $stmt->execute( [
+            'moduleGroupId' => $moduleGroup,
+            'accesKey' => "edit-period-reporting",
+            'handleClass' => "EditPeriodReporting",
+            'namemg' => "Редактирование периодов сдачи отчетов",
+            'isEntryPoint' => true
+        ] );
+
+        return $stmt->fetchColumn();
+    }
+
+    public function insertModuleSochiZeroReport( $moduleGroup ) {
+        $sql = <<<SQL
+INSERT INTO "Core"."Module"
+    ("IDModule", "ModuleGroupID", "AccessKey", "HandlerClass", "Name", "IsEntryPoint")
+VALUES
+    (
+        DEFAULT,
+        :moduleGroupId,
+        :accesKey,
+        :handleClass,
+        :namemg,
+        :isEntryPoint
+    )RETURNING
+    "IDModule";
+
+
+SQL;
+
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+
+        $stmt->execute( [
+            'moduleGroupId' => $moduleGroup,
+            'accesKey' => "zero-report-admin",
+            'handleClass' => "EditPeriodReporting",
+            'namemg' => "Отправка нулевых отчетов",
+            'isEntryPoint' => true
+        ] );
+
+        return $stmt->fetchColumn();
+    }
+
+    public function insertModuleAccess( $id ) {
+        $sql = <<<SQL
 INSERT INTO "Core"."ModulePermission"
     ("IDModulePermission", "ModuleID", "Mark", "Name")
 VALUES
@@ -59,24 +141,33 @@ VALUES
 
 SQL;
 
-		$stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
-		$stmt->execute( [
-			'id' => $id,
-		] );
+        $stmt->execute( [
+            'id' => $id,
+        ] );
 
-		return $stmt->fetchColumn();
-	}
+        return $stmt->fetchColumn();
+    }
+
 }
 
 $migrate = new migrate6();
 
-$t = $migrate->insertModule();
-$migrate->insertModuleAccess($t);
+$mg = $migrate->insertModuleGroupSochi();
+$m = $migrate->insertModuleSochiReportingForms($mg);
+$m2 = $migrate->insertModuleSochiEditPeriodReporting($mg);
+$m3 = $migrate->insertModuleSochiZeroReport($mg);
+$ma = $migrate->insertModuleAccess($m);
+$ma2 = $migrate->insertModuleAccess($m2);
+$ma3 = $migrate->insertModuleAccess($m3);
 
-if(isset($t)) {
-	print_r( "migrate succes - " . $t );
-}
+
+
+print_r( "migrate succes - \n" . $mg ."\n");
+print_r($m.":".$m2.":".$m3."\n");
+print_r($ma. ":". $ma2. ":".$ma3);
+
 
 
 
