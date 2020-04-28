@@ -3,12 +3,10 @@ namespace Environment\Soap\Clients\Tunduk;
 
 class RequisitesData extends \SoapClient {
 
-    const SUBSCRIBER_ID = '1';
-    const SUBSCRIBER_NAME = 'XXX';
-    const SUBSCRIBER_RESPONSIBLE = 'YYY';
-    const SUBSCRIBER_PHONES = '974 99 92';
-
     public function __construct(){
+
+        $login    = 'api-' . date('z') . '-user';
+        $password = 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$';
 
 
         $options = [
@@ -19,7 +17,11 @@ class RequisitesData extends \SoapClient {
             'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
             'connection_timeout' => 60,
 
+            'login'    => $login,
+            'password' => $password
         ];
+
+
 
         parent::__construct($_ENV['soapClients_Tunduk_RequisitesData_wsdl'], $options);
     }
