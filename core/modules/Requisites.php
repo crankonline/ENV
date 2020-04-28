@@ -308,27 +308,15 @@ SQL;
 
         $client = new SoapClients\Tunduk\RequisitesData();
 
-        $request = [
-                'subscriber' => [
-                    'id'           =>   $client::SUBSCRIBER_ID,
-                    'token'        =>   TUNDUK_SUBSCRIBER_TOKEN,
-                    'name'         =>   $client::SUBSCRIBER_NAME,
-                    'responsible'  =>   $client::SUBSCRIBER_RESPONSIBLE,
-                    'phones'       =>   $client::SUBSCRIBER_PHONES,
+        $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
 
-                ],
-
-                'dateTime'   => date('c'),
-                'ipAddress'  =>  $_SERVER['REMOTE_ADDR'],
-
-        ];
-
-            return $client->send(
-                $request,
-                $inn
-            );
+        return $client->send(
+            $token,
+            $inn
+        );
 
     }
+
     public function tunduk() {
 
         if (!isset($_POST['inn-tunduk'])) return $this->main();
