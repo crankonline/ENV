@@ -56,7 +56,7 @@ SQL;
 		$stmt->execute( [
 			'moduleGroupId' => $moduleGroup,
 			'accesKey' => "reporting-forms",
-			'handleClass' => "ReportingForms",
+			'handleClass' => "SochiReportingForms",
 			'namemg' => "Окрытие и закрытие форм отчетности",
 			'isEntryPoint' => true
 		] );
@@ -87,7 +87,7 @@ SQL;
         $stmt->execute( [
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "edit-period-reporting",
-            'handleClass' => "EditPeriodReporting",
+            'handleClass' => "SochiEditPeriodReporting",
             'namemg' => "Редактирование периодов сдачи отчетов",
             'isEntryPoint' => true
         ] );
@@ -118,7 +118,7 @@ SQL;
         $stmt->execute( [
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "zero-report-admin",
-            'handleClass' => "EditPeriodReporting",
+            'handleClass' => "SochiZeroReport",
             'namemg' => "Отправка нулевых отчетов",
             'isEntryPoint' => true
         ] );
