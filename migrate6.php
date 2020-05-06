@@ -55,8 +55,8 @@ SQL;
 
 		$stmt->execute( [
 			'moduleGroupId' => $moduleGroup,
-			'accesKey' => "reporting-forms",
-			'handleClass' => "ReportingForms",
+			'accesKey' => "sochi-reporting-forms",
+			'handleClass' => "SochiReportingForms",
 			'namemg' => "Окрытие и закрытие форм отчетности",
 			'isEntryPoint' => true
 		] );
@@ -86,8 +86,8 @@ SQL;
 
         $stmt->execute( [
             'moduleGroupId' => $moduleGroup,
-            'accesKey' => "edit-period-reporting",
-            'handleClass' => "EditPeriodReporting",
+            'accesKey' => "sochi-edit-period-reporting",
+            'handleClass' => "SochiEditPeriodReporting",
             'namemg' => "Редактирование периодов сдачи отчетов",
             'isEntryPoint' => true
         ] );
@@ -117,9 +117,40 @@ SQL;
 
         $stmt->execute( [
             'moduleGroupId' => $moduleGroup,
-            'accesKey' => "zero-report-admin",
-            'handleClass' => "EditPeriodReporting",
+            'accesKey' => "sochi-zero-report-admin",
+            'handleClass' => "SochiZeroReport",
             'namemg' => "Отправка нулевых отчетов",
+            'isEntryPoint' => true
+        ] );
+
+        return $stmt->fetchColumn();
+    }
+
+    public function insertModuleSochiEditStiReport( $moduleGroup ) {
+        $sql = <<<SQL
+INSERT INTO "Core"."Module"
+    ("IDModule", "ModuleGroupID", "AccessKey", "HandlerClass", "Name", "IsEntryPoint")
+VALUES
+    (
+        DEFAULT,
+        :moduleGroupId,
+        :accesKey,
+        :handleClass,
+        :namemg,
+        :isEntryPoint
+    )RETURNING
+    "IDModule";
+
+
+SQL;
+
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+
+        $stmt->execute( [
+            'moduleGroupId' => $moduleGroup,
+            'accesKey' => "sochi-edit-sti-report",
+            'handleClass' => "SochiEditStiReport",
+            'namemg' => "Редактирование отчетов Sti кураторского приложения",
             'isEntryPoint' => true
         ] );
 
@@ -136,7 +167,8 @@ VALUES
         :id,
         'can-access',
         'Доступ к модулю'
-    );
+    )RETURNING
+    "IDModulePermission";
 
 
 SQL;
@@ -154,19 +186,25 @@ SQL;
 
 $migrate = new migrate6();
 
-$mg = $migrate->insertModuleGroupSochi();
-$m = $migrate->insertModuleSochiReportingForms($mg);
-$m2 = $migrate->insertModuleSochiEditPeriodReporting($mg);
-$m3 = $migrate->insertModuleSochiZeroReport($mg);
-$ma = $migrate->insertModuleAccess($m);
-$ma2 = $migrate->insertModuleAccess($m2);
-$ma3 = $migrate->insertModuleAccess($m3);
+$mg = 11; //Sochi
+//$mg = $migrate->insertModuleGroupSochi();
+//$m = $migrate->insertModuleSochiReportingForms($mg);
+//$m2 = $migrate->insertModuleSochiEditPeriodReporting($mg);
+//$m3 = $migrate->insertModuleSochiZeroReport($mg);
+$m4 = $migrate->insertModuleSochiEditStiReport($mg);
+//$ma = $migrate->insertModuleAccess($m);
+//$ma2 = $migrate->insertModuleAccess($m2);
+//$ma3 = $migrate->insertModuleAccess($m3);
+$ma4 = $migrate->insertModuleAccess($m4);
 
 
 
+//print_r( "migrate succes - \n" . $mg ."\n");
+//print_r($m.":".$m2.":".$m3.":".$m4."\n");
+//print_r($ma. ":". $ma2. ":".$ma3.":".$ma4);
 print_r( "migrate succes - \n" . $mg ."\n");
-print_r($m.":".$m2.":".$m3."\n");
-print_r($ma. ":". $ma2. ":".$ma3);
+print_r($m4."\n");
+print_r($ma4);
 
 
 
