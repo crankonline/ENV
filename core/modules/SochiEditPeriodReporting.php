@@ -178,7 +178,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute([
             'valid' => $valid,
             'sys_name' => $sys_name
@@ -204,7 +204,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
         echo json_encode($stmt->execute([
             'status' => $status,
@@ -226,7 +226,7 @@ WHERE
     ("sys_name" = :sys_name);
 SQL;
 
-        $stmt = Connections::getConnection( 'SfExmp' )->prepare( $sql );
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
         echo json_encode($stmt->execute([
             'status' => $status,

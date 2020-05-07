@@ -17,10 +17,15 @@ class SochiReportingForms extends \Environment\Core\Module {
 SELECT
     "f"."name" as "name",
     "f"."description" as "description",
+    "f"."sys_name" as "sys_name",
     "f"."valid" as "valid",
-    "f"."sys_name" as "sys_name"
+    "f"."year" as "year",
+    "f"."month" as "month",
+    "f"."day" as "day"
 FROM
     "sf_reporting"."forms" as "f"
+ORDER BY
+    "f"."sys_name";
 
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
@@ -35,11 +40,14 @@ SQL;
 SELECT
     "f"."form_name" as "form_name",
     "f"."description" as "description",
+    "f"."sys_name" as "sys_name",
     "f"."status" as "status",
-    "f"."sys_name" as "sys_name"
+    "f"."month" as "month",
+    "f"."day" as "day"
 FROM
     "stat_reporting"."forms" as "f"
-
+ORDER BY
+    "f"."sys_name";
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
@@ -54,16 +62,20 @@ SELECT
     "f"."form_name" as "form_name",
     "f"."description" as "description",
     "f"."status" as "status",
-    "f"."sys_name" as "sys_name"
+    "f"."sys_name" as "sys_name",
+    "f"."month" as "month",
+    "f"."day" as "day",
+    "f"."start_date" as "start_date",
+    "f"."end_date" as "end_date"
 FROM
     "sti_reporting"."forms" as "f"
-
+ORDER BY
+    "f"."sys_name";
 SQL;
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
         $stmt->execute();
 
-        echo json_encode($stmt->fetchAll());exit;
-    }
+        echo json_encode($stmt->fetchAll());exit;    }
 
 
     public function updateFormsSF() {
@@ -106,13 +118,9 @@ WHERE
 SQL;
 
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
-        $stmt->execute([
-            'status' => $status,
-            'sys_name' => $sys_name
-        ]);
 
         echo json_encode($stmt->execute([
-            'valid' => $status,
+            'status' => $status,
             'sys_name' => $sys_name
         ]));exit;
     }
@@ -132,18 +140,14 @@ WHERE
 SQL;
 
         $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
-        $stmt->execute([
-            'status' => $status,
-            'sys_name' => $sys_name
-        ]);
 
         echo json_encode($stmt->execute([
-            'valid' => $status,
+            'status' => $status,
             'sys_name' => $sys_name
         ]));exit;
     }
 
-	protected function main() {
+    protected function main() {
 		$this->variables->errors = [];
 
 	}

@@ -349,25 +349,48 @@
 
 <script type="text/javascript">
 
+    function clearStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'block');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+
+    function doneStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'block');
+        $('#'+Labl_Error_Sf).css('display', 'none');
+    }
+
+    function errorStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
+        $('#'+Labl_Opred_Sf).css('display', 'none');
+        $('#'+Labl_Done_Sf).css('display', 'none');
+        $('#'+Labl_Error_Sf).css('display', 'block');
+    }
+
 /*BEGIN СХЕМА Sf_reporting*/
     function updateStatus(sys_name, value) {
+        let Labl_Stat = 'Lab_Stat_'+sys_name;
+        let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
+        let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
+
         let postForm = {
             'sys_name'     : sys_name,
             'valid'        : value
         };
         $.ajax({
             type:'POST',
-            url:'index.php?view=reporting-forms&action=updateFormsSF',
+            url:'index.php?view=sochi-reporting-forms&action=updateFormsSF',
             dataType:'json',
             data: postForm
         })
             .done(function(ret) {
-                console.log(ret);
+                doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+                setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
 
             })
 
             .fail(function(ret) {
-                console.log(ret);
+                errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
             });
 
     }
@@ -381,7 +404,7 @@
     function sendAjaxFormSf() {
         $.ajax({
             type:'POST',
-            url:'index.php?view=reporting-forms&action=getFormsSF',
+            url:'index.php?view=sochi-reporting-forms&action=getFormsSF',
             dataType:'json',
         })
             .done(function(ret) {
@@ -391,23 +414,29 @@
                         `<li>
                             <table class="sfData">
                                 <tbody>
-                                    <tr class="active">
+                                    <tr class="active" style="width: 200px">
                                         <td class="tdName">
-                                            <span class="tab" style="margin-left: 2%">${value['sys_name']}</span>
+                                            <span class="tab" style="margin-left: 2%">${value['name']}</span>
                                         </td>
-                                        <td >
-                                             <label class="switch">
+                                        <td>
+                                           <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px; position: relative; right:-50px">Статус</label>
+                                           <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px; position: relative; right:-45px">Сохранено</label>
+                                           <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px; position: relative; right:-45px">Ошибка</label>
+                                        </td>
+                                        <td style="text-align: center">
+                                             <label class="switch" >
                                                 <input type="checkbox" class="chkSfReport" id="${value['sys_name']}" onclick="updateStatus('${value['sys_name']}', this.checked);">
                                                 <span class="slider round"></span>
                                             </label>
                                         </td>
+                                    </td>
                                     </tr>
                                 </tbody>
                             </table>
                     </li>`
                     );
 
-                    if (value['status']) {
+                    if (value['valid']) {
                         $('#'+value['sys_name']).prop('checked',true);
                     }
 
@@ -427,23 +456,28 @@
 
 /*BEGIN СХЕМА Stat_reporting*/
 function updateStatusStat(sys_name, status) {
+    let Labl_StatS = 'Lab_Stat_Stat_'+sys_name;
+    let Labl_Done_StatS = 'Lab_Done_Stat_Stat_'+sys_name;
+    let Labl_Error_StatS = 'Lab_Error_Stat_Stat_'+sys_name;
+
     let postForm = {
         'sys_name'     : sys_name,
         'status'        : status
     };
     $.ajax({
         type:'POST',
-        url:'index.php?view=reporting-forms&action=updateFormsStat',
+        url:'index.php?view=sochi-reporting-forms&action=updateFormsStat',
         dataType:'json',
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
+            doneStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS);
+            setTimeout(()=>clearStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS), 3000);
 
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            errorStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS);
         });
 
 }
@@ -457,7 +491,7 @@ $("#item-14-label").one("click", function() {
 function sendAjaxFormStat() {
     $.ajax({
         type:'POST',
-        url:'index.php?view=reporting-forms&action=getFormsStat',
+        url:'index.php?view=sochi-reporting-forms&action=getFormsStat',
         dataType:'json',
     })
         .done(function(ret) {
@@ -471,12 +505,17 @@ function sendAjaxFormStat() {
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
-                                <td>
-                                    <label class="switch" >
-                                        <input type="checkbox" class="chkStatReport" id="${value['sys_name']}" onclick="updateStatusStat('${value['sys_name']}', this.checked);">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </td>
+                                    <td>
+                                       <label id="Lab_Stat_Stat_${value['sys_name']}" style="font-size: 11px; position: relative; right:-30px">Статус</label>
+                                       <label id="Lab_Done_Stat_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px; position: relative; right:-30px">Сохранено</label>
+                                       <label id="Lab_Error_Stat_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px; position: relative; right:-30px">Ошибка</label>
+                                    </td>
+                                    <td>
+                                        <label class="switch" >
+                                            <input type="checkbox" class="chkStatReport" id="${value['sys_name']}" onclick="updateStatusStat('${value['sys_name']}', this.checked);">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
                             </tbody>
                         </table>
                     </li>`
@@ -504,23 +543,27 @@ function sendAjaxFormStat() {
 
 /*BEGIN СХЕМА Sti_reporting*/
 function updateStatusSti(sys_name, status) {
+    let Labl_Stat = 'Lab_Stat_'+sys_name;
+    let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
+    let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
+
     let postForm = {
         'sys_name'     : sys_name,
         'status'        : status
     };
     $.ajax({
         type:'POST',
-        url:'index.php?view=reporting-forms&action=updateFormsSti',
+        url:'index.php?view=sochi-reporting-forms&action=updateFormsSti',
         dataType:'json',
         data: postForm
     })
         .done(function(ret) {
-            console.log(ret);
-
+            doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
         })
 
         .fail(function(ret) {
-            console.log(ret);
+            errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
         });
 
 }
@@ -534,7 +577,7 @@ $("#item-2-label").one("click", function() {
 function sendAjaxFormSti() {
     $.ajax({
         type:'POST',
-        url:'index.php?view=reporting-forms&action=getFormsSti',
+        url:'index.php?view=sochi-reporting-forms&action=getFormsSti',
         dataType:'json',
     })
         .done(function(ret) {
@@ -548,12 +591,17 @@ function sendAjaxFormSti() {
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
-                                <td>
-                                    <label class="switch" >
-                                        <input type="checkbox" class="chkStiReport" id="${value['sys_name']}" onclick="updateStatusSti('${value['sys_name']}', this.checked);">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </td>
+                                    <td>
+                                       <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px; position: relative; right:-30px">Статус</label>
+                                       <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px; position: relative; right:-30px">Сохранено</label>
+                                       <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px; position: relative; right:-30px">Ошибка</label>
+                                    </td>
+                                    <td>
+                                        <label class="switch" >
+                                            <input type="checkbox" class="chkStiReport" id="${value['sys_name']}" onclick="updateStatusSti('${value['sys_name']}', this.checked);">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
                             </tbody>
                         </table>
                     </li>`

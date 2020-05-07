@@ -57,7 +57,7 @@ SQL;
 			'moduleGroupId' => $moduleGroup,
 			'accesKey' => "sochi-reporting-forms",
 			'handleClass' => "SochiReportingForms",
-			'namemg' => "Окрытие и закрытие форм отчетности",
+			'namemg' => "Открытие и закрытие форм отчетности",
 			'isEntryPoint' => true
 		] );
 
