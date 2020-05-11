@@ -4,40 +4,51 @@ namespace Environment\Modules;
 
 class SochiZeroReport extends \Environment\Core\Module {
     protected $config = [
-        'template' => 'layouts/SochiZeroReport/Default.html',
+        'template' => 'layouts/SochiZeroReport/Default.php',
         'listen'   => 'action'
     ];
 
     public function send() {
-        echo "Ответ от сервера - " . $this->get_zeroReport();
+        if((isset($_POST["module-id"]) && isset($_POST["day"])) &&
+            ($_POST['module-id'] != "(выбрать)" && $_POST["day"] != "(выбрать)")){
+
+            $this->variables->response = "Ответ от сервера - " . $this->get_zeroReport();
+
+        } else {
+            $this->variables->errors[] = 'Необходимо выбрать тип отправляемых нулевых отчетов и число!';
+        }
     }
 
     function get_zeroReport() {
-        $url = "https://sochi.dostek.kg/trigger-zero-report";
-        $options = array(
-            CURLOPT_RETURNTRANSFER => true,   // return web page
-            CURLOPT_HEADER         => false,  // don't return headers
-            CURLOPT_FOLLOWLOCATION => true,   // follow redirects
-            CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
-            CURLOPT_ENCODING       => "",     // handle compressed
-            CURLOPT_USERAGENT      => "test", // name of client
-            CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
-            CURLOPT_CONNECTTIMEOUT => 120,    // time-out on connect
-            CURLOPT_TIMEOUT        => 120,    // time-out on response
-        );
 
-        $ch = curl_init($url);
-        curl_setopt_array($ch, $options);
+            $url = $_ENV['core_modules_sochiZeroReport']."?".$_POST['module-id']."=".$_POST['day'];
+            $options = array(
+                CURLOPT_RETURNTRANSFER => true,   // return web page
+                CURLOPT_HEADER         => false,  // don't return headers
+                CURLOPT_FOLLOWLOCATION => true,   // follow redirects
+                CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
+                CURLOPT_ENCODING       => "",     // handle compressed
+                CURLOPT_USERAGENT      => "test", // name of client
+                CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
+                CURLOPT_CONNECTTIMEOUT => 120,    // time-out on connect
+                CURLOPT_TIMEOUT        => 120,    // time-out on response
+            );
 
-        $content  = curl_exec($ch);
+            $ch = curl_init($url);
+            curl_setopt_array($ch, $options);
 
-        curl_close($ch);
+            $content  = curl_exec($ch);
 
-        return $content;
+            curl_close($ch);
+
+            return $content;
+
+
     }
 
     protected function main() {
-        $this->variables->errors = [];
+
+        $this->context->css[] = 'resources/css/ui-misc-form.css';
 
     }
 }

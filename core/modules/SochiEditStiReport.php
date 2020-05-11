@@ -48,7 +48,6 @@ class SochiEditStiReport extends \Environment\Core\Module {
 
 
     protected function main() {
-        $this->variables->errors = [];
         $this->context->css[] = 'resources/css/ui-requisites.css';
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
