@@ -376,9 +376,6 @@
         $('#'+Labl_Error_Sf).css('display', 'none');
     }
 
-    let d = new Date();
-    let YearP = d.getFullYear();
-
         function limitDay(element)
     {
 
@@ -401,41 +398,16 @@
 
         }
 
-    function limitYear(element)
-    {
-
-        if (element.value >=(YearP+5)) {
-            element.value = (YearP+5);
-        } else if (element.value <=(YearP-5)) {
-            element.value = (YearP-5);
-        }
-
-    }
-
-
     /*BEGIN СХЕМА Sf_reporting*/
 
     function updateDateSf(sys_name, value, definition) {
-    let css_inpt_Sf;
-    let Labl_Done_Sf;
-    let Labl_Error_Sf;
-    let Labl_Opred_Sf;
-    if (definition == 'year') {
-        css_inpt_Sf = 'Year_'+sys_name;
-        Labl_Done_Sf = 'Lab_Done_Year_'+sys_name;
-        Labl_Error_Sf = 'Lab_Error_Year_'+sys_name;
-        Labl_Opred_Sf = 'Lab_Year_'+sys_name;
-    } else if (definition == 'month') {
-        css_inpt_Sf = 'Month_'+sys_name;
-        Labl_Done_Sf = 'Lab_Done_Month_'+sys_name;
-        Labl_Error_Sf = 'Lab_Error_Month_'+sys_name;
-        Labl_Opred_Sf = 'Lab_Month_'+sys_name;
-    } else {
-        css_inpt_Sf = 'Day_'+sys_name;
-        Labl_Done_Sf = 'Lab_Done_Day_'+sys_name;
-        Labl_Error_Sf = 'Lab_Error_Day_'+sys_name;
-        Labl_Opred_Sf = 'Lab_Day_'+sys_name;
-    }
+
+        let uDefinition = (definition === 'month') ? 'Month' : 'Day';
+        let css_inpt_Sf = `${uDefinition}_${sys_name}`;
+        let Labl_Done_Sf = `Lab_Done_${css_inpt_Sf}`;
+        let Labl_Error_Sf = `Lab_Error_${css_inpt_Sf}`;
+        let Labl_Opred_Sf = `Lab_${css_inpt_Sf}`;
+
         let postForm = {
             'sys_name'     : sys_name,
             'value'        : value,
@@ -475,12 +447,9 @@
             .done(function(ret) {
 
                 $.each(ret,function(index,value){
-                    let state;
-                    if (value['valid']) {
-                        state = stateFormAdd;
-                    } else {
-                        state = stateFormClose;
-                     }
+
+                    let state = value['valid'] ? stateFormAdd : stateFormClose;
+
                     $("#SfRep").append(
                         `<li>
                             <table class="sfData">
@@ -493,13 +462,7 @@
                                               ${state}
                                             <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
                                          </td>
-                                        <td style="text-align: center">
-                                            <input type="number" min="${YearP-5}" max="${YearP+5}" id="Year_${value['sys_name']}" value="${value['year']}"  onchange="limitYear(this);">
-                                                <label id="Lab_Done_Year_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                                <label id="Lab_Error_Year_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Year_${value['sys_name']}">Год</label>
-                                           </input>
-                                        </td>
+
                                        <td style="text-align: center">
                                            <input type="number" min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);">
                                                 <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
@@ -581,12 +544,9 @@ function sendAjaxFormStat() {
     })
         .done(function(ret) {
             $.each(ret,function(index,value){
-                let stateSt;
-                if (value['status']) {
-                    stateSt = stateFormAdd;
-                } else {
-                    stateSt = stateFormClose;
-                }
+
+                let stateSt = value['status'] ? stateFormAdd : stateFormClose;
+
                 $("#Stat").append(
                     `<li>
                         <table class="sfData">
@@ -682,12 +642,9 @@ function sendAjaxFormSti() {
     })
         .done(function(ret) {
             $.each(ret,function(index,value){
-                let stateSti;
-                if (value['status']) {
-                    stateSti = stateFormAdd;
-                } else {
-                    stateSti = stateFormClose;
-                }
+
+                let stateSti = value['status'] ? stateFormAdd : stateFormClose;
+
                 $("#Sti").append(
                     `<li>
                         <table class="sfData">
@@ -701,7 +658,7 @@ function sendAjaxFormSti() {
                                         <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
                                     </td>
                                      <td style="text-align: center">
-                                           <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this); updateDateSti('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                           <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);">
                                                 <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
                                                 <label id="Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
                                                 <label id="Lab_Month_${value['sys_name']}">Месяц</label>
