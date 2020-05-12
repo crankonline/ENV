@@ -18,6 +18,7 @@
 
     table.sfData tr.active:hover td {
         background: #a2a6a9;
+        transition: background .5s;
     }
 
     table.sfData tr.active td {
@@ -358,21 +359,21 @@
 
     function DonePer(sys_name) {
 
-       $('#Tr_'+sys_name+' td').css({'background': '#86cb84', 'transition' : ' 5s'});
+       $('#Tr_'+sys_name+' td').css({'background': '#86cb84'});
        $('#But_'+sys_name).attr('value', 'Сохранено');
        $('#But_'+sys_name).css('color', '#008d00');
     }
     function ErrorPer(sys_name) {
-        $('#Tr_'+sys_name+' td').css({'background': '#f55143', 'transition' : ' 2s'});
+        $('#Tr_'+sys_name+' td').css({'background': '#f55143'});
         setTimeout(()=>{alert('Ошибка изменения данных. Пожалуйста повторите позже.')}, 1000);
     }
 
     function clearCss(sys_name) {
-        $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4', 'transition' : ' 0s'});
+        $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4'});
         $('#Tr_'+sys_name+' td').hover(()=>{
             $('#Tr_'+sys_name+' td').css("background", "#a2a6a9");
         }, ()=>{
-            $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4', 'transition' : ' 0s'});});
+            $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4'});});
         $('#But_'+sys_name).attr('value', 'Сохранить');
         $('#But_'+sys_name).css('color', '#080808');
     }
