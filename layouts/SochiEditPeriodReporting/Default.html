@@ -17,15 +17,15 @@
     }
 
     table.sfData tr.active:hover td {
-        background: #bfe3bd !important;
+        background: #a2a6a9;
     }
 
     table.sfData tr.active td {
-        background: #d6ffd4;
+        background: #a2a6a9;
     }
 
     table.sfData tr.active td {
-        background: #d6ffd4;
+        background: #E8F1F4;
     }
 
     table.sfData td.tdName {
@@ -294,7 +294,7 @@
             <label for="item-11" class="aspect-label" id="item-11-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">База Sf</span>
+                    <span class="aspect-name">СФ</span>
                 </div>
             </div>
             <div class="aspect-tab-content">
@@ -310,7 +310,7 @@
         <label for="item-14" class="aspect-label" id="item-14-label"></label>
         <div class="aspect-content">
             <div class="aspect-info">
-                <span class="aspect-name">База Stat</span>
+                <span class="aspect-name">Стат</span>
             </div>
         </div>
         <div class="aspect-tab-content">
@@ -329,7 +329,7 @@
         <label for="item-2" class="aspect-label"  id="item-2-label"></label>
         <div class="aspect-content">
             <div class="aspect-info">
-                <span class="aspect-name">База Sti</span>
+                <span class="aspect-name">ГНС</span>
             </div>
         </div>
         <div class="aspect-tab-content">
@@ -356,24 +356,25 @@
     let stateFormClose = `<label class="switch" style="top: 0.6em; color: darkred;">Закрыта</label>`;
 
 
-    function DonePer(css_inpt_Sf,Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+css_inpt_Sf).css('border-color', '#008d00');
-        $('#'+Labl_Opred_Sf).css('display', 'none');
-        $('#'+Labl_Done_Sf).css('display', 'block');
-        $('#'+Labl_Error_Sf).css('display', 'none');
+    function DonePer(sys_name) {
+
+       $('#Tr_'+sys_name+' td').css({'background': '#86cb84', 'transition' : ' 5s'});
+       $('#But_'+sys_name).attr('value', 'Сохранено');
+       $('#But_'+sys_name).css('color', '#008d00');
     }
-    function ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+css_inpt_Sf).css('border-color', 'darkred');
-        $('#'+Labl_Opred_Sf).css('display', 'none');
-        $('#'+Labl_Done_Sf).css('display', 'none');
-        $('#'+Labl_Error_Sf).css('display', 'block');
+    function ErrorPer(sys_name) {
+        $('#Tr_'+sys_name+' td').css({'background': '#f55143', 'transition' : ' 2s'});
+        setTimeout(()=>{alert('Ошибка изменения данных. Пожалуйста повторите позже.')}, 1000);
     }
 
-    function clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+css_inpt_Sf).css('border-color', 'white');
-        $('#'+Labl_Opred_Sf).css('display', 'block');
-        $('#'+Labl_Done_Sf).css('display', 'none');
-        $('#'+Labl_Error_Sf).css('display', 'none');
+    function clearCss(sys_name) {
+        $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4', 'transition' : ' 0s'});
+        $('#Tr_'+sys_name+' td').hover(()=>{
+            $('#Tr_'+sys_name+' td').css("background", "#a2a6a9");
+        }, ()=>{
+            $('#Tr_'+sys_name+' td').css({'background': '#E8F1F4', 'transition' : ' 0s'});});
+        $('#But_'+sys_name).attr('value', 'Сохранить');
+        $('#But_'+sys_name).css('color', '#080808');
     }
 
         function limitDay(element)
@@ -402,12 +403,6 @@
 
     function updateDateSf(sys_name, value, definition) {
 
-        let uDefinition = (definition === 'month') ? 'Month' : 'Day';
-        let css_inpt_Sf = `${uDefinition}_${sys_name}`;
-        let Labl_Done_Sf = `Lab_Done_${css_inpt_Sf}`;
-        let Labl_Error_Sf = `Lab_Error_${css_inpt_Sf}`;
-        let Labl_Opred_Sf = `Lab_${css_inpt_Sf}`;
-
         let postForm = {
             'sys_name'     : sys_name,
             'value'        : value,
@@ -421,12 +416,12 @@
             data: postForm
         })
             .done(function(ret) {
-               DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-               setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
+               DonePer(sys_name);
+               setTimeout(()=>clearCss(sys_name), 5000);
             })
 
             .fail(function(ret) {
-                ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+                ErrorPer(sys_name);
             });
 
 
@@ -454,33 +449,27 @@
                         `<li>
                             <table class="sfData">
                                 <tbody>
-                                    <tr class="active">
+
+                                    <tr class="active" id="Tr_${value['sys_name']}">
                                         <td class="tdName">
                                             <span class="tab" style="margin-left: 2%">${value['name']}</span>
                                         </td>
                                         <td style="text-align: center">
-                                              ${state}
-                                            <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
-                                         </td>
-
-                                       <td style="text-align: center">
-                                           <input type="number" min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);">
-                                                <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                                <label id="Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Month_${value['sys_name']}">Месяц</label>
-                                            </input>
+                                            ${state}
                                         </td>
                                        <td style="text-align: center">
-                                            <input type="number" min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this);">
-                                                <label id="Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                                <label id="Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Day_${value['sys_name']}">День</label>
-                                            </input>
+                                           <label id="Lab_Month_${value['sys_name']}" style="font-size: 11px;">Месяц</label>
+                                           <input type="number" min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);"></input>
                                         </td>
-                                         <td >
-                                            <input type="button" style="position: relative; bottom:10px" value="Сохранить" onclick="updateDateSf('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month'); setTimeout(updateDateSf, 1000, '${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day'); setTimeout(updateDateSf, 2000, '${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
+                                       <td style="text-align: center">
+                                            <label id="Lab_Day_${value['sys_name']}" style="font-size: 11px;">День</label>
+                                            <input type="number" min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this);"></input>
+                                        </td>
+                                         <td style="text-align: center" >
+                                            <input type="button" id="But_${value['sys_name']}"  style="height: 40px" value="Сохранить" onclick="updateDateSf('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month'); setTimeout(updateDateSf, 1000, '${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day'); setTimeout(updateDateSf, 2000, '${value['sys_name']}', $('#Year_${value['sys_name']}').val(), 'year');">
                                         </td>
                                     </tr>
+
                                 </tbody>
                             </table>
                     </li>`
@@ -502,12 +491,6 @@
 
 function updateDateStat(sys_name, value, definition) {
 
-    let uDefinition = (definition === 'month') ? 'Month' : 'Day';
-    let css_inpt_Sf = `${uDefinition}_${sys_name}`;
-    let Labl_Done_Sf = `Stat_Lab_Done_${css_inpt_Sf}`;
-    let Labl_Error_Sf = `Stat_Lab_Error_${css_inpt_Sf}`;
-    let Labl_Opred_Sf = `Stat_Lab_${css_inpt_Sf}`;
-
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -521,12 +504,12 @@ function updateDateStat(sys_name, value, definition) {
         data: postForm
     })
         .done(function(ret) {
-            DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
+            DonePer(sys_name);
+            setTimeout(()=>clearCss(sys_name), 5000);
         })
 
         .fail(function(ret) {
-            ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            ErrorPer(sys_name);
         });
 }
 
@@ -551,30 +534,23 @@ function sendAjaxFormStat() {
                     `<li>
                         <table class="sfData">
                             <tbody>
-                                <tr class="active">
+                                <tr class="active" id="Tr_${value['sys_name']}">
                                     <td class="tdName">
                                         <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
                                     <td style="text-align: center">
                                          ${stateSt}
-                                        <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
                                     </td>
                                     <td style="text-align: center">
-                                        <input type="number"   min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);">
-                                            <label id="Stat_Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                            <label id="Stat_Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                            <label id="Stat_Lab_Month_${value['sys_name']}">Месяц</label>
-                                        </input>
+                                        <label id="Stat_Lab_Month_${value['sys_name']}" style="font-size: 11px;">Месяц</label>
+                                        <input type="number"   min="0" max="12" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);"></input>
                                     </td>
                                     <td style="text-align: center">
-                                       <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this);">
-                                            <label id="Stat_Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                            <label id="Stat_Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                            <label id="Stat_Lab_Day_${value['sys_name']}">День</label>
-                                        </input>
+                                       <label id="Stat_Lab_Day_${value['sys_name']}" style="font-size: 11px;">День</label>
+                                       <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this);"></input>
                                     </td>
                                      <td >
-                                        <input type="button" style="position: relative; bottom:10px" value="Сохранить" onclick="updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month'); setTimeout(updateDateStat, 1000, '${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
+                                        <input type="button" id="But_${value['sys_name']}" style="height: 40px" value="Сохранить" onclick="updateDateStat('${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month'); setTimeout(updateDateStat, 1000, '${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day');">
                                     </td>
                                 </tr>
                             </tbody>
@@ -600,11 +576,6 @@ function sendAjaxFormStat() {
 /*BEGIN СХЕМА Sti_reporting*/
 
  function updateDateSti(sys_name, value, definition) {
-    let uDefinition = (definition === 'month') ? 'Month' : 'Day';
-    let css_inpt_Sf = `${uDefinition}_${sys_name}`;
-    let Labl_Done_Sf = `Lab_Done_${css_inpt_Sf}`;
-    let Labl_Error_Sf = `Lab_Error_${css_inpt_Sf}`;
-    let Labl_Opred_Sf = `Lab_${css_inpt_Sf}`;
     let postForm = {
         'sys_name'     : sys_name,
         'value'        : value,
@@ -618,13 +589,13 @@ function sendAjaxFormStat() {
         data: postForm
     })
         .done(function(ret) {
-            DonePer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
-            setTimeout(()=>clearCss(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf), 3000);
+            DonePer(sys_name);
+            setTimeout(()=>clearCss(sys_name), 5000);
 
         })
 
         .fail(function(ret) {
-            ErrorPer(css_inpt_Sf, Labl_Opred_Sf, Labl_Done_Sf, Labl_Error_Sf);
+            ErrorPer(sys_name);
         });
 }
 
@@ -649,31 +620,24 @@ function sendAjaxFormSti() {
                     `<li>
                         <table class="sfData">
                             <tbody>
-                                <tr class="active" >
+                                <tr class="active" id="Tr_${value['sys_name']}">
                                     <td class="tdName">
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
                                     <td style="text-align: center">
                                           ${stateSti}
-                                        <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
-                                    </td>
+                                     </td>
                                      <td style="text-align: center">
-                                           <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);">
-                                                <label id="Lab_Done_Month_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                                <label id="Lab_Error_Month_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Month_${value['sys_name']}">Месяц</label>
-                                            </input>
-                                        </td>
-                                        <td style="text-align: center">
-                                          <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); ">
-                                                <label id="Lab_Done_Day_${value['sys_name']}"style="display: none; color: #008d00">Сохранено</label>
-                                                <label id="Lab_Error_Day_${value['sys_name']}" style="display: none; color: darkred">Ошибка</label>
-                                                <label id="Lab_Day_${value['sys_name']}">День</label>
-                                           </input>
-                                        </td>
-                                         <td >
-                                            <input type="button" style="position: relative; bottom:10px" value="Сохранить" onclick="updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day'); setTimeout(updateDateSti, 1000, '${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
-                                        </td>
+                                           <label id="Lab_Month_${value['sys_name']}" style="font-size: 11px;">Месяц</label>
+                                           <input type="number" min="0" max="12" list="MonthNumbers" id="Month_${value['sys_name']}" value="${value['month']}" onchange="limitMonth(this);"></input>
+                                     </td>
+                                     <td style="text-align: center">
+                                          <label id="Lab_Day_${value['sys_name']}" style="font-size: 11px;">День</label>
+                                          <input type="number"   min="0" max="31" id="Day_${value['sys_name']}" value="${value['day']}" onchange="limitDay(this); "></input>
+                                     </td>
+                                     <td style="text-align: center">
+                                            <input type="button" id="But_${value['sys_name']}" style="height: 40px" value="Сохранить" onclick="updateDateSti('${value['sys_name']}', $('#Day_${value['sys_name']}').val(), 'day'); setTimeout(updateDateSti, 1000, '${value['sys_name']}', $('#Month_${value['sys_name']}').val(), 'month');">
+                                      </td>
                             </tbody>
                         </table>
                     </li>`
