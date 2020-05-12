@@ -37,9 +37,9 @@ ini_set('soap.wsdl_cache_enabled', 0);
 Connections::configure(
     'Environment',
     [
-        'dsn'      => $_ENV['configuration_connection_Local_dsn'],
-        'user'     => $_ENV['configuration_connection_Local_user'],
-        'password' => $_ENV['configuration_connection_Local_password']
+        'dsn'      => $_ENV['configuration_connection_Environment_dsn'],
+        'user'     => $_ENV['configuration_connection_Environment_user'],
+        'password' => $_ENV['configuration_connection_Environment_password']
     ]
 );
 
