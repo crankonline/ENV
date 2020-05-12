@@ -17,15 +17,15 @@
     }
 
     table.sfData tr.active:hover td {
-        background: #bfe3bd !important;
+        background: #a2a6a9 !important;
     }
 
     table.sfData tr.active td {
-        background: #d6ffd4;
+        background:  #a2a6a9;
     }
 
     table.sfData tr.active td {
-        background: #d6ffd4;
+        background: #E8F1F4;
     }
 
     table.sfData td.tdName {
@@ -294,7 +294,7 @@
             <label for="item-11" class="aspect-label" id="item-11-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">База Sf</span>
+                    <span class="aspect-name">СФ</span>
                 </div>
             </div>
             <div class="aspect-tab-content">
@@ -310,7 +310,7 @@
         <label for="item-14" class="aspect-label" id="item-14-label"></label>
         <div class="aspect-content">
             <div class="aspect-info">
-                <span class="aspect-name">База Stat</span>
+                <span class="aspect-name">Стат</span>
             </div>
         </div>
         <div class="aspect-tab-content">
@@ -329,7 +329,7 @@
         <label for="item-2" class="aspect-label"  id="item-2-label"></label>
         <div class="aspect-content">
             <div class="aspect-info">
-                <span class="aspect-name">База Sti</span>
+                <span class="aspect-name">ГНС</span>
             </div>
         </div>
         <div class="aspect-tab-content">
@@ -349,27 +349,23 @@
 
 <script type="text/javascript">
 
-    function clearStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+Labl_Opred_Sf).css('display', 'block');
+    function clearStat(Labl_Done_Sf,  Labl_Error_Sf) {
         $('#'+Labl_Done_Sf).css('display', 'none');
         $('#'+Labl_Error_Sf).css('display', 'none');
     }
 
-    function doneStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+Labl_Opred_Sf).css('display', 'none');
-        $('#'+Labl_Done_Sf).css('display', 'block');
+    function doneStat(Labl_Done_Sf,  Labl_Error_Sf) {
+         $('#'+Labl_Done_Sf).css('display', 'block');
         $('#'+Labl_Error_Sf).css('display', 'none');
     }
 
-    function errorStat(Labl_Opred_Sf, Labl_Done_Sf,  Labl_Error_Sf) {
-        $('#'+Labl_Opred_Sf).css('display', 'none');
+    function errorStat(Labl_Done_Sf,  Labl_Error_Sf) {
         $('#'+Labl_Done_Sf).css('display', 'none');
         $('#'+Labl_Error_Sf).css('display', 'block');
     }
 
 /*BEGIN СХЕМА Sf_reporting*/
     function updateStatus(sys_name, value) {
-        let Labl_Stat = 'Lab_Stat_'+sys_name;
         let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
         let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
 
@@ -384,13 +380,13 @@
             data: postForm
         })
             .done(function(ret) {
-                doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-                setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
+                doneStat(Labl_Done_Stat, Labl_Error_Stat);
+                setTimeout(()=>clearStat(Labl_Done_Stat, Labl_Error_Stat), 3000);
 
             })
 
             .fail(function(ret) {
-                errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+                errorStat(Labl_Done_Stat, Labl_Error_Stat);
             });
 
     }
@@ -419,7 +415,6 @@
                                             <span class="tab" style="margin-left: 2%">${value['name']}</span>
                                         </td>
                                         <td style="text-align: right">
-                                           <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
                                            <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;">Сохранено</label>
                                            <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
                                         </td>
@@ -456,7 +451,6 @@
 
 /*BEGIN СХЕМА Stat_reporting*/
 function updateStatusStat(sys_name, status) {
-    let Labl_StatS = 'Lab_Stat_Stat_'+sys_name;
     let Labl_Done_StatS = 'Lab_Done_Stat_Stat_'+sys_name;
     let Labl_Error_StatS = 'Lab_Error_Stat_Stat_'+sys_name;
 
@@ -471,13 +465,13 @@ function updateStatusStat(sys_name, status) {
         data: postForm
     })
         .done(function(ret) {
-            doneStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS);
-            setTimeout(()=>clearStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS), 3000);
+            doneStat(Labl_Done_StatS, Labl_Error_StatS);
+            setTimeout(()=>clearStat(Labl_Done_StatS, Labl_Error_StatS), 3000);
 
         })
 
         .fail(function(ret) {
-            errorStat(Labl_StatS, Labl_Done_StatS, Labl_Error_StatS);
+            errorStat(Labl_Done_StatS, Labl_Error_StatS);
         });
 
 }
@@ -506,7 +500,6 @@ function sendAjaxFormStat() {
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
                                     <td style="text-align: right">
-                                       <label id="Lab_Stat_Stat_${value['sys_name']}" style="font-size: 11px">Статус</label>
                                        <label id="Lab_Done_Stat_Stat_${value['sys_name']}" style="display: none; color: #008d00;">Сохранено</label>
                                        <label id="Lab_Error_Stat_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
                                     </td>
@@ -543,7 +536,6 @@ function sendAjaxFormStat() {
 
 /*BEGIN СХЕМА Sti_reporting*/
 function updateStatusSti(sys_name, status) {
-    let Labl_Stat = 'Lab_Stat_'+sys_name;
     let Labl_Done_Stat = 'Lab_Done_Stat_'+sys_name;
     let Labl_Error_Stat = 'Lab_Error_Stat_'+sys_name;
 
@@ -558,12 +550,12 @@ function updateStatusSti(sys_name, status) {
         data: postForm
     })
         .done(function(ret) {
-            doneStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
-            setTimeout(()=>clearStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat), 3000);
+            doneStat(Labl_Done_Stat, Labl_Error_Stat);
+            setTimeout(()=>clearStat(Labl_Done_Stat, Labl_Error_Stat), 3000);
         })
 
         .fail(function(ret) {
-            errorStat(Labl_Stat, Labl_Done_Stat, Labl_Error_Stat);
+            errorStat(Labl_Done_Stat, Labl_Error_Stat);
         });
 
 }
@@ -592,7 +584,6 @@ function sendAjaxFormSti() {
                                          <span class="tab" style="margin-left: 2%">${value['form_name']}</span>
                                     </td>
                                     <td style="text-align: right">
-                                       <label id="Lab_Stat_${value['sys_name']}" style="font-size: 11px;">Статус</label>
                                        <label id="Lab_Done_Stat_${value['sys_name']}" style="display: none; color: #008d00; font-size: 11px;">Сохранено</label>
                                        <label id="Lab_Error_Stat_${value['sys_name']}" style="display: none; color: darkred; font-size: 11px;">Ошибка</label>
                                     </td>
