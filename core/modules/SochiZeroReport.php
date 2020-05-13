@@ -22,6 +22,7 @@ class SochiZeroReport extends \Environment\Core\Module {
     function get_zeroReport() {
 
             $url = $_ENV['core_modules_sochiZeroReport']."?".$_POST['module-id']."=".$_POST['day'];
+//            die($url);
             $options = array(
                 CURLOPT_RETURNTRANSFER => true,   // return web page
                 CURLOPT_HEADER         => false,  // don't return headers
@@ -30,8 +31,8 @@ class SochiZeroReport extends \Environment\Core\Module {
                 CURLOPT_ENCODING       => "",     // handle compressed
                 CURLOPT_USERAGENT      => "test", // name of client
                 CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
-                CURLOPT_CONNECTTIMEOUT => 120,    // time-out on connect
-                CURLOPT_TIMEOUT        => 120,    // time-out on response
+                CURLOPT_CONNECTTIMEOUT => 1200,    // time-out on connect
+                CURLOPT_TIMEOUT        => 1200,    // time-out on response
             );
 
             $ch = curl_init($url);
