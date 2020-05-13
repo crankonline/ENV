@@ -20,7 +20,7 @@
 
 </form>
 
-<?php if ($errors): ?>
+<?php if (isset($errors)): ?>
     <?php foreach ($errors as $error): ?>
         <div class="failure"><?php echo $error; ?></div>
     <?php endforeach; ?>
