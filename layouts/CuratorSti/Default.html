@@ -241,6 +241,8 @@
                                 )
                             );
                         ?></pre>
+                        <span>
+                            <b><?php echo ($record['protocolStatusText']); ?></b></span>
                     </td>
                     <td>
                         <?php if ($canChangeCuratorStiReportStatus && $record['report-status-id'] == $this::REPORT_STATUS_DECLINED): ?>

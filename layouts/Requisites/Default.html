@@ -5,7 +5,7 @@
 
     <div class="field">
         <label for="inn" class="fixed">ИНН:</label>
-        <input type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
+        <input onkeyup="checkParams()" type="text" name="inn" id="inn" maxlength="14" placeholder="введите ИНН" value="<?php echo isset($_GET['inn']) ? htmlspecialchars($_GET['inn']) : '' ?>">
         <span class="hint">10 или 14 цифр</span>
     </div>
 
@@ -16,10 +16,136 @@
     </div>
 
     <div class="field buttons">
-        <input type="submit" class="button" value="Поиск" />
+        <input type="submit" id="search" class="button" value="Поиск" />
     </div>
 
 </form>
+
+<form class="form" id="ajax_form" method="POST" action="" style="display: none">
+    <div class="field buttons">
+        <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузка компании в Тундук" disabled/>
+    </div>
+
+</form>
+
+<style>
+    .button.disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+</style>
+
+<div id="fountainG" style="display: none">
+    <div id="fountainG_1" class="fountainG"></div>
+    <div id="fountainG_2" class="fountainG"></div>
+    <div id="fountainG_3" class="fountainG"></div>
+    <div id="fountainG_4" class="fountainG"></div>
+    <div id="fountainG_5" class="fountainG"></div>
+    <div id="fountainG_6" class="fountainG"></div>
+    <div id="fountainG_7" class="fountainG"></div>
+    <div id="fountainG_8" class="fountainG"></div>
+</div>
+<div class="empty-resultset" id="tunduk-success"style="display: none"></div>
+<div class="failure" id="tunduk-error"style="display: none"></div>
+
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+
+<script type="text/javascript">
+
+    function checkParams() {
+
+        var inputInn = $('#inn').val();
+        var button =  $("#btn-tunduk");
+
+        if(inputInn.length >= 10) {
+            button.css("opacity", "3");
+            button.attr('disabled',false);
+        } else {
+            button.css("opacity", "0.65");
+            button.attr('disabled',true);
+        }
+    }
+
+    $( document ).ready(checkParams);
+
+
+    $("#btn-tunduk").click(function() {
+
+            sendAjaxForm();
+            return false;
+
+    });
+
+    function sendAjaxForm() {
+
+        let tunWacc = $("#fountainG");
+        let tunSuc = $("#tunduk-success");
+        let tunErr = $("#tunduk-error");
+
+        tunWacc.css('display', 'block');
+        tunSuc.css('display', 'none');
+        tunErr.css('display', 'none');
+
+        function tuErr () {
+            tunSuc.css('display', 'none');
+            tunErr.css('display', 'block');
+            tunWacc.css('display', 'none');
+
+        };
+
+
+        let postForm = {
+            'inn-tunduk'     : $('#inn').val()
+        };
+
+        $.ajax({
+
+            type:'POST',
+            url:'index.php?view=requisites&action=tunduk',
+            dataType:'json',
+            data: postForm
+        })
+             .done(function(ret) {
+                let obj = ret['result'];
+
+                if (obj == 'success') {
+
+                    tunSuc.text("Компания успешно отправлена в Тундук.");
+                    tunSuc.css('display', 'block');
+                    tunErr.css('display', 'none');
+                    tunWacc.css('display', 'none');
+
+                } else if (obj == 'noINN') {
+
+                    tunErr.text("Сертификатов для выгрузки не найдено.");
+                    tuErr();
+
+                } else if (obj == 'noConn') {
+
+                    tunErr.text("Ошибка отправки в Тундук. Пожалуйста повторите позже.");
+                    tuErr();
+                }
+
+                else {
+
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
+                    tuErr();
+
+                }
+
+            })
+
+            .fail(function() {
+
+                tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
+                tuErr();
+            })
+        ;
+    };
+
+</script>
 
 <?php if($errors): ?>
     <?php foreach($errors as $error): ?>
@@ -49,15 +175,22 @@ endif;
 <?php $usageStatus = empty($requisites->usageStatus) ? null : $requisites->usageStatus; ?>
 
 <?php
-if($usageStatus):
+if($usageStatus):?>
 
-    if($usageStatus->isActive):
+
+<?php   if($usageStatus->isActive):
         $class = 'successful';
-        $name  = 'ведется';
-    else:
-        $class = 'failed';
-        $name  = 'не ведется';
-    endif;
+        $name  = 'ведется';?>
+<script>
+$("#ajax_form").css('display', 'block');
+</script>
+<?php       else:
+      $class = 'failed';
+       $name  = 'не ведется';  ?>
+<script>
+    $("#ajax_form").css('display', 'block');
+</script>
+<?php   endif;
 
 else:
     $class = 'default';
@@ -750,3 +883,4 @@ if($bindings !== null):
 <?php else: ?>
     <div class="empty-resultset">В PKI сведений не найдено</div>
 <?php endif; ?>
+

@@ -12,6 +12,7 @@ $dotenv = \Dotenv\Dotenv::create(__DIR__);
 $dotenv->load();
 
 define('API_SUBSCRIBER_TOKEN', $_ENV['configutarion_API_SUBSCRIBER_TOKEN']);
+define('TUNDUK_SUBSCRIBER_TOKEN', $_ENV['configutarion_Tunduk_SUBSCRIBER_TOKEN']);
 
 Loader::register();
 
@@ -167,5 +168,5 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_SfArchive_password']
     ]
 );
-?>
+
 

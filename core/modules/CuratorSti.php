@@ -163,7 +163,13 @@ SQL;
 			'reportId' => $reportId
 		] );
 
-		return $stmt->fetchAll();
+        $protocol = $stmt->fetchAll();
+        foreach($protocol as $index => &$record) {
+            $record['protocolStatusText'] = $this->generateStiSfStausesText($record['result']);
+        }
+
+//		return $stmt->fetchAll();
+		return $protocol;
 	}
 
 	protected function getFilesByReportId( $reportId ) {
@@ -312,6 +318,72 @@ SQL;
 			'uin' => $uin
 		] );
 	}
+
+    protected static function generateStiSfStausesText($text) {
+
+        if(strripos(
+                $text,
+                'HighlandRateCode'
+            ) !== false) return 'Графа "код высокогорья и отдаленных районов" заполнено неверно';
+
+        if(strripos(
+                $text,
+                'DictHighlandRate'
+            ) !== false) return 'Графа "код высокогорья и отдаленных районов" заполнено неверно';
+
+        if(strripos(
+                $text,
+                'No space left on device'
+            ) !== false) return 'Ошибка сохранения. Нет свободного места на диске';
+
+        if(strripos(
+                $text,
+                'list index out of range'
+            ) !== false) return 'Вне диапазона отчетного периода';
+
+        if(strripos(
+                $text,
+                'PayerID'
+            ) !== false) return 'Отсутствует или некорректен регистрационный номер СФ';
+
+        if(strripos(
+                $text,
+                '\\\\u0414\\\\u0430\\\\u043d\\\\u043d\\\\u044b\\\\u0439 \\\\u043e\\\\u0442\\\\u0447\\\\u0435\\\\u0442 \\\\u0443\\\\u0436\\\\u0435 \\\\u0435\\\\u0441\\\\u0442\\\\u044c \\\\u0432 \\\\u0441\\\\u0438\\\\u0441\\\\u0442\\\\u0435\\\\u043c\\\\u0435'
+            ) !== false) return 'Данный отчет уже имеется в системе';
+
+
+        if(strripos(
+                $text,
+                'PIN'
+            ) !== false) return 'ПИН должен содержать 14 цифр';
+
+        if(strripos(
+                $text,
+                '\\\\u0422\\\\u0430\\\\u0440\\\\u0438\\\\u0444 \\\\u0443\\\\u043a\\\\u0430\\\\u0437\\\\u0430\\\\u043d \\\\u043d\\\\u0435\\\\u043f\\\\u0440\\\\u0430\\\\u0432\\\\u0438\\\\u043b\\\\u044c\\\\u043d\\\\u043e'
+            ) !== false) return 'Тариф указан неверно';
+
+        if(strripos(
+                $text,
+                'paysheet'
+            ) !== false) return 'Неверно заполнена таблица "Обязательства плательщика"';
+
+        if(strripos(
+            $text,
+            'NaN'
+        )) return 'Неизвестное число';
+
+        if(strripos(
+            $text,
+            'unconverted data remains'
+        )) {
+            $value = explode('unconverted data remains: ', $text)[1] ?? '';
+            $value = explode('&', $value)[0] ?? '';
+            if($value == '') return null;
+            return 'Неверное значение: ' . $value;
+        }
+
+        return null;
+    }
 
 	protected function main() {
 		$this->context->css[] = 'resources/css/ui-misc-form.css';

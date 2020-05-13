@@ -16,7 +16,8 @@ class Requisites extends \Environment\Core\Module {
         PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status';
 
     protected $config = [
-        'template' => 'layouts/Requisites/Default.html'
+        'template' => 'layouts/Requisites/Default.html',
+        'listen'   => 'action'
     ];
 
     protected function getRequisites( $inn, $uid ) {
@@ -285,7 +286,6 @@ SQL;
 
     protected function setUsageStatus( $uid, $status, $description ) {
         $client = new SoapClients\Api\RequisitesData();
-
         $success = $client->setUsageStatus(
             $client::SUBSCRIBER_TOKEN,
             $uid,
@@ -302,15 +302,69 @@ SQL;
         return null;
     }
 
+
+
+    protected function setTunduk( $inn) {
+
+        $client = new SoapClients\Tunduk\RequisitesData();
+
+        $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
+
+        return $client->send(
+            $token,
+            $inn
+        );
+
+    }
+
+    public function tunduk() {
+
+        if (!isset($_POST['inn-tunduk'])) return $this->main();
+
+            $innTunduk = $_POST['inn-tunduk'];
+
+            try {
+
+                if ($innTunduk && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $innTunduk)) {
+
+                    throw new \Exception( 'incINN' );
+
+                }
+
+                $resaultTunduk = $this->setTunduk($innTunduk);
+
+                    if ($resaultTunduk->success == true) {
+
+                        echo json_encode(['result' => 'success']);
+
+                    } else {
+
+                        throw new \Exception( 'noINN' );
+
+                    }
+
+            } catch (\Exception $e ){
+
+                echo json_encode(['result' => $e->getMessage()]);
+
+            }
+
+        exit;
+
+    }
+
     protected function main() {
+
+
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-misc-form-colored.css';
         $this->context->css[] = 'resources/css/ui-requisites.css';
 
         $this->variables->errors = [];
 
-        $inn = isset( $_GET['inn'] ) ? $_GET['inn'] : null;
-        $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : null;
+        $inn = $_GET['inn'] ?? null;
+        $uid = $_GET['uid'] ?? null;
+
 
         if ( ! ( $inn || $uid ) ) {
             return;
