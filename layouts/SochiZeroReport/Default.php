@@ -1,9 +1,5 @@
 <h2><a href="/index.php?view=service-zero-report">Сервисы -> Автоотправка нулевых отчетов</a></h2>
 
-<form class="form" id="ajax_form" method="POST" action="/index.php?view=sochi-zero-report-admin&action=send" >
-    <input type="submit" value="Отправить нулевые отчеты">
-
-</form>
 
 <?php if (isset($errors)): ?>
     <?php foreach ($errors as $error): ?>
@@ -40,7 +36,7 @@
             $date->modify('last day of this month');
             $day = (int)$date->format('d');
             for ($i=1; $i<= $day; $i++) { ?>
-                <option value="date-nsc"><?=$i?></option>
+                <option value="<?php echo $i; ?>"><?php echo $i;?></option>
             <?php } ?>
         </select>
         <span class="hint">Выберите число месяца</span>
