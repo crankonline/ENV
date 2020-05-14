@@ -13,7 +13,8 @@ class Requisites extends \Environment\Core\Module {
         ROLES_ROOT = 6;
 
     const
-        PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status';
+        PMS_CAN_CHANGE_USAGE_STATUS = 'can-change-usage-status',
+        PMS_CAN_SEND_TUNDUK_REQUISITES = 'can-send-tunduk-requisites';
 
     protected $config = [
         'template' => 'layouts/Requisites/Default.html',
