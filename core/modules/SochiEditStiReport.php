@@ -22,7 +22,8 @@ class SochiEditStiReport extends \Environment\Core\Module {
                 API_SUBSCRIBER_TOKEN,
                 $uin);
         } catch (\Exception $e) {
-            $resp = "No reports found for this UIN";
+            $resp = "Не найдено оточета для данного uin <br/>".$e;
+
         }
 
         return $resp;
@@ -71,6 +72,11 @@ class SochiEditStiReport extends \Environment\Core\Module {
         }
 
         $report = $this->getData($uin);
+        if (strpos($report, "Не найдено оточета для данного uin") !== false) {
+            $this->variables->errors [] = $report;
+            return;
+
+        }
 
         $length ['rep_code_length'] = strlen($report);
         $length ['rep_xml_length'] = $length ['rep_code_length'];
