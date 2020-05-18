@@ -311,11 +311,16 @@ SQL;
 
         $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
 
-        return $client->send(
-            $token,
-            $inn
-        );
+        try {
+            $ret = $client->send(
+                $token,
+                $inn
+            );
+        } catch (\Exception $ex) {
+            $ret = $ex->getMessage();
+        }
 
+        return $ret;
     }
 
     public function tunduk() {

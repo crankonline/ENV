@@ -20,7 +20,7 @@
 
 </form>
 
-<?php if (isset($errors)): ?>
+<?php if (isset($errors) && sizeof($errors)>0): ?>
     <?php foreach ($errors as $error): ?>
         <div class="failure"><?php echo $error; ?></div>
     <?php endforeach; ?>
@@ -37,7 +37,7 @@
 
 <pre style=" display:none;"><?php if (isset($length)): ?><?php print_r($length); ?><?php endif; ?></pre>
 
-<?php if (isset($length)): ?>
+<?php if (isset($length['rep_xml_length'])): ?>
     <?php if ($length['rep_xml_length'] > $available_size) : ?>
         Превышен размер для отображения - <a
                 href="index.php?view=<?php echo $this::AK_SOCHI_EDIT_STI_REPORT; ?>&type=<?php echo $_GET['type']; ?>&uin=<?php echo $_GET['uin']; ?>&sys-name=<?php echo $_GET['sys-name']; ?>&download=true">скачать</a>
