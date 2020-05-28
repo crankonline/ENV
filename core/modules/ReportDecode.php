@@ -102,8 +102,27 @@ SQL;
 			'uins' => $uin
 		] );
 
-		return $stmt->fetch();
+		$return_data = $stmt->fetch();
+		print_r($return_data['form_data']);
+		if(is_null($return_data['form_data'])) {
+            $sql = <<<SQL
+SELECT *
+FROM 
+	"stat_reporting"."report_data" as "f"
+WHERE
+	("f"."uin" = :uins)
+SQL;
+            $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
 
+            $stmt->execute( [
+                'uins' => $uin
+            ] );
+
+            $return_data = $stmt->fetch();
+            return $return_data;
+        } else {
+		    return $return_data;
+        }
 	}
 
 	private function formatXml($simpleXMLElement)
