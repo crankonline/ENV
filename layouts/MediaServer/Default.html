@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Менеджер файлов</title>
+</head>
+<body>
+<?php if(isset($serviceName)):?>
+    <table class="data client">
+        <caption>Наименование сервисов</caption>
+        <tr>
+            <th class="center">#:</th>
+            <th class="center">Наименование:</th>
+            <th class="center">Количество файлов:</th>
+            <th class="center">Размер файлов:</th>
+            <th class="center">Файлы:</th>
+
+        </tr>
+
+        <?php $ind = 0;
+
+        foreach($serviceName as $index => &$serviceN): ?>
+        <td class="center"><?php
+                        echo $ind = $ind + 1;
+                    ?></td>
+        <td><?php
+                        echo htmlspecialchars($serviceN['name']);
+                    ?></td>
+        <td class="center"><?php
+                        echo htmlspecialchars($serviceN['files_count']);
+                    ?></td>
+        <td class="center"><?php
+                        echo htmlspecialchars(round($serviceN['sum_files'], 2));
+                    ?> Мб</td>
+        <td class="center">
+            <a href="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&idService=<?php echo $serviceN['id']; ?>">Просмотр</a>
+        </td>
+        </tr>
+        <?php endforeach; ?>
+
+    </table>
+<caption style="font-size: 18px; font-weight: bold"><strong>Всего занято: <?php
+                    echo htmlspecialchars(round($FileSize, 2));
+                ?> Мб</strong></caption>
+<?php else :?>
+    <strong>Ошибка подключения к базе данных </strong>
+<?php endif ?>
+
+<?php if(isset($files)):?>
+    <table class="data form">
+        <caption>Файлы</caption>
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Наименование:</th>
+            <th class="center">Размер файла:</th>
+            <th class="center">Собственное имя:</th>
+            <th class="center">Время создания:</th>
+        </tr>
+        <?php $ind = 0;
+
+         foreach($files as $index => &$file): ?>
+        <tr>
+            <td class="center"><?php
+                        echo $ind = $ind + 1;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file['name']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars(round($file['size'], 2));
+                    ?> Мб</td>
+            <td>
+                <a href="<?php echo $link . $file['given_name']?>"><?php echo htmlspecialchars($file['given_name']); ?></a>
+            </td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file['time_stamp']);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif ?>
+
+<form action="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&ChkAnalize=true" method="POST">
+    <input type="submit" name="client-list-all" class="button" value="Анализатор">
+</form>
+
+<?php if(isset($jsonfile)):?>
+    <table class="data form">
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Файлы которых нет на диске:</th>
+        </tr>
+        <?php $ind = 0;
+        foreach($jsonfile['Db_Files'] as $index => &$file): ?>
+        <tr>
+            <td class="center"><?php
+                        echo $ind = $ind + 1;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+
+    <table class="data form">
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Файлы которых нет в БД:</th>
+        </tr>
+        <?php $ind = 0;
+         foreach($jsonfile['Dir_Files'] as $index => &$file): ?>
+        <tr>
+            <td class="center"><?php
+                        echo $ind = $ind + 1;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif ?>
+
+</body>
+</html>
+

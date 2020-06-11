@@ -4,6 +4,8 @@
     },
     "require": {
         "vlucas/phpdotenv": "^3.3",
-        "sentry/sdk": "2.0.0"
+        "sentry/sdk": "2.0.0",
+      "ext-curl": "*",
+      "ext-json": "*"
     }
 }
