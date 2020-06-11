@@ -49,7 +49,7 @@
         </pre>
         <form class="form" action="index.php?view=<?=$this::AK_SOCHI_EDIT_STI_REPORT?>&uin=<?=$_GET['uin']?>" method="POST">
 
-            <textarea name="xml" style="width: 100%; height: 800px;"><?php echo $report; ?></textarea>
+            <textarea name="xml" style="width: 100%; height: 800px;"><?php echo htmlspecialchars($report) ; ?></textarea>
 
             <div class="field buttons">
                 <input type="submit" id="search" class="button" value="Сохранить"/>
