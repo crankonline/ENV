@@ -189,6 +189,6 @@ endforeach; ?>
     </code>
 </pre>
 <textarea style="width: 100%; height: 800px; display:none;">
-<?php echo $report; ?>
+<?php echo htmlspecialchars($report)  ?>
 </textarea>
 <?php endif; ?>
