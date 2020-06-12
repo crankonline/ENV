@@ -42,7 +42,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Environment_password']
     ]
 );
-
 Connections::configure(
     'Requisites',
     [
@@ -51,7 +50,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Requisites_password']
     ]
 );
-
 Connections::configure(
     'Reregister',
     [
@@ -60,7 +58,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Reregister_password']
     ]
 );
-
 Connections::configure(
     'Api',
     [
@@ -69,7 +66,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Api_password']
     ]
 );
-
 Connections::configure(
     'Sochi',
     [
@@ -78,7 +74,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Sochi_password']
     ]
 );
-
 Connections::configure(
     'Billing',
     [
@@ -87,7 +82,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Billing_password']
     ]
 );
-
 Connections::configure(
     'SeoBaseWeb',
     [
@@ -96,7 +90,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_SeoBaseWeb_password']
     ]
 );
-
 Connections::configure(
     'OnlineStatements',
     [
@@ -105,7 +98,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_OnlineStatements_password']
     ]
 );
-
 Connections::configure(
     'OnlineStatementFiles',
     [
@@ -114,7 +106,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_OnlineStatementFiles_password']
     ]
 );
-
 Connections::configure(
     'Egrse',
     [
@@ -123,7 +114,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Egrse_password']
     ]
 );
-
 Connections::configure(
     'Sf',
     [
@@ -132,7 +122,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Sf_password']
     ]
 );
-
 Connections::configure(
     'Sti',
     [
@@ -141,7 +130,6 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Sti_password']
     ]
 );
-
 Connections::configure(
     'Nsc',
     [
@@ -150,22 +138,29 @@ Connections::configure(
         'password' => $_ENV['configuration_connection_Nsc_password']
     ]
 );
-
 Connections::configure(
-	'FileStore',
-	[
+    'FileStore',
+    [
         'dsn'      => $_ENV['configuration_connection_FileStore_dsn'],
         'user'     => $_ENV['configuration_connection_FileStore_user'],
         'password' => $_ENV['configuration_connection_FileStore_password']
-	]
+    ]
 );
-
 Connections::configure(
     'SfArchive',
     [
         'dsn'      => $_ENV['configuration_connection_SfArchive_dsn'],
         'user'     => $_ENV['configuration_connection_SfArchive_user'],
         'password' => $_ENV['configuration_connection_SfArchive_password']
+    ]
+);
+
+Connections::configure(
+    'MediaServer',
+    [
+        'dsn'      => $_ENV['configuration_connection_MediaServer_dsn'],
+        'user'     => $_ENV['configuration_connection_MediaServer_user'],
+        'password' => $_ENV['configuration_connection_MediaServer_password']
     ]
 );
 
