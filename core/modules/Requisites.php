@@ -307,6 +307,8 @@ SQL;
 
     protected function setTunduk( $inn) {
 
+        ini_set("default_socket_timeout", 600);
+
         $client = new SoapClients\Tunduk\RequisitesData();
 
         $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
