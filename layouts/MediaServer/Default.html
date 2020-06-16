@@ -1,10 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Менеджер файлов</title>
-</head>
-<body>
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal .modal_content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        z-index: 99999;
+    }
+    .modal .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .modal .button {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .modal #inpt_name {
+        margin: 5px;
+        width: 180px;
+    }
+
+    .modal .strong {
+        font-size: 16px;
+        color: #080808;
+    }
+    .modal .mt {
+        font-size: 20px;
+
+    }
+
+
+    .modal_nw {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal_nw .modal_content {
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        z-index: 99999;
+    }
+    .modal_nw .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal_nw .strong {
+        font-size: 16px;
+        color: #080808;
+    }
+
+
+
+</style>
 <?php if(isset($serviceName)):?>
     <table class="data client">
         <caption>Наименование сервисов</caption>
@@ -21,9 +98,9 @@
 
         foreach($serviceName as $index => &$serviceN): ?>
         <td class="center"><?php
-                        echo $ind = $ind + 1;
+                       echo ++$ind;
                     ?></td>
-        <td><?php
+        <td onclick='editName("<?php echo $serviceN['id']; ?>", "<?php echo $serviceN['name']; ?>")'><?php
                         echo htmlspecialchars($serviceN['name']);
                     ?></td>
         <td class="center"><?php
@@ -39,6 +116,7 @@
         <?php endforeach; ?>
 
     </table>
+<input type="submit" style="float: left" name="client-list-all" id="add_service_name" class="button" value="Добавить запись">
 <caption style="font-size: 18px; font-weight: bold"><strong>Всего занято: <?php
                     echo htmlspecialchars(round($FileSize, 2));
                 ?> Мб</strong></caption>
@@ -94,7 +172,7 @@
         foreach($jsonfile['Db_Files'] as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo $ind = $ind + 1;
+                        echo ++$ind;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file);
@@ -112,7 +190,7 @@
          foreach($jsonfile['Dir_Files'] as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo $ind = $ind + 1;
+                        echo ++$ind;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file);
@@ -122,6 +200,170 @@
     </table>
 <?php endif ?>
 
-</body>
-</html>
+<div id="my_modal" class="modal">
+    <div class="modal_content">
+        <label id="editLab" style="display: none">Редактирование</label>
+        <label id="addLab" style="display: none">Добавить</label>
+
+        <strong class="strong">Наименование:</strong>  <input type="text" name="" id="inpt_name"> <br>
+        <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить">
+        <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
+    </div>
+</div>
+<div id="my_modal_nw" class="modal_nw">
+    <div class="modal_content" id="dv_mss">
+     </div>
+</div>
+<script type="text/javascript">
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
+    function editName(id,name) {
+
+        let modal = document.getElementById("my_modal");
+        let inpName = document.getElementById("inpt_name");
+
+            modal.style.display = "block";
+            inpName.value = name;
+            document.getElementById("editLab").style.display = "block";
+            document.getElementById("addLab").style.display = "none";
+
+        document.getElementById("close_window").onclick = ()=>{ modal.style.display = "none"; }
+        document.getElementById("save_window").onclick =()=>{ saveName(id, inpName.value); };
+
+    }
+    function saveName(id, name) {
+        let modal = document.getElementById("my_modal_nw");
+        let mod = document.getElementById("my_modal");
+
+        let postForm = {
+            'id'     : id,
+            'name'   : name,
+
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?view=media-server&action=editName',
+            dataType: 'json',
+            data: postForm
+        })
+            .done(function (ret) {
+                if (ret) {
+
+                     $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px;">Сохранено</strong>`
+                    );
+
+                     modal.style.display = "block";
+                     sleep(3000).then(()=>{
+                         modal.style.display = "none";
+                         mod.style.display = "none";
+                         $("#message").remove();
+                         location.reload();
+                     });
+
+                } else {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;">Ошибка сохранения.</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
+                }
+
+            })
+            .fail(function () {
+
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;">Ошибка редактирования.</strong>`
+                );
+
+                modal.style.display = "block";
+                sleep(3000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
+
+            });
+    }
+
+    document.getElementById("add_service_name").onclick = addName;
+
+    function addName() {
+        let modal = document.getElementById("my_modal");
+        let inpName = document.getElementById("inpt_name");
+        modal.style.display = "block";
+        document.getElementById("editLab").style.display = "none";
+        document.getElementById("addLab").style.display = "block";
+        document.getElementById("save_window").onclick = () => {inpName.value && saveNameAdd(inpName.value)};
+        document.getElementById("close_window").onclick = ()=>{ modal.style.display = "none"; }
+    }
+
+    function saveNameAdd(name) {
+        let modal = document.getElementById("my_modal_nw");
+        let mod = document.getElementById("my_modal");
+
+        let postForm = {
+            'name'   : name,
+
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?view=media-server&action=addName',
+            dataType: 'json',
+            data: postForm
+        })
+            .done(function (ret) {
+                if (ret) {
+
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px;">Сохранено</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+
+                } else {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;">Ошибка сохранения.</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
+                }
+
+            })
+            .fail(function () {
+
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;">Ошибка редактирования.</strong>`
+                );
+
+                modal.style.display = "block";
+                sleep(3000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
+
+            });
+    }
+
+</script>
+
 
