@@ -215,6 +215,11 @@
      </div>
 </div>
 <script type="text/javascript">
+    let sleep = ms => {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(), ms)
+        })
+    }
     function editName(id,name) {
 
         let modal = document.getElementById("my_modal");
@@ -253,9 +258,7 @@
                     );
 
                      modal.style.display = "block";
-                    setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                    setTimeout(()=>{$("#message").remove();}, 3001);
-                    setTimeout(()=>{location.reload();}, 3002);
+                     sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove(); location.reload();});
 
                 } else {
                     $("#dv_mss").append(
@@ -263,8 +266,7 @@
                     );
 
                     modal.style.display = "block";
-                    setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                    setTimeout(()=>{$("#message").remove();}, 3001);
+                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
                 }
 
             })
@@ -275,13 +277,12 @@
                 );
 
                 modal.style.display = "block";
-                setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                setTimeout(()=>{$("#message").remove();}, 3001);
+                sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
 
             });
     }
 
-    document.getElementById("add_service_name").onclick =()=>{ addName(); };
+    document.getElementById("add_service_name").onclick = addName;
 
     function addName() {
         let modal = document.getElementById("my_modal");
@@ -289,12 +290,7 @@
         modal.style.display = "block";
         document.getElementById("editLab").style.display = "none";
         document.getElementById("addLab").style.display = "block";
-        document.getElementById("save_window").onclick = () => {
-                if (inpName.value) {
-                    saveNameAdd(inpName.value);
-                }
-        }
-
+        document.getElementById("save_window").onclick = () => {inpName.value && saveNameAdd(inpName.value)};
         document.getElementById("close_window").onclick = ()=>{ modal.style.display = "none"; }
     }
 
@@ -321,9 +317,7 @@
                     );
 
                     modal.style.display = "block";
-                    setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                    setTimeout(()=>{$("#message").remove();}, 3001);
-                    setTimeout(()=>{location.reload();}, 3002);
+                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove(); location.reload();});
 
                 } else {
                     $("#dv_mss").append(
@@ -331,8 +325,7 @@
                     );
 
                     modal.style.display = "block";
-                    setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                    setTimeout(()=>{$("#message").remove();}, 3001);
+                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
                 }
 
             })
@@ -343,13 +336,10 @@
                 );
 
                 modal.style.display = "block";
-                setTimeout(()=>{modal.style.display = "none"; mod.style.display = "none";}, 3000);
-                setTimeout(()=>{$("#message").remove();}, 3001);
+                sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
 
             });
     }
-
-
 
 </script>
 
