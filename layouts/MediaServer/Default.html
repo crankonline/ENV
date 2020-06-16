@@ -215,11 +215,8 @@
      </div>
 </div>
 <script type="text/javascript">
-    let sleep = ms => {
-        return new Promise(resolve => {
-            setTimeout(() => resolve(), ms)
-        })
-    }
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
     function editName(id,name) {
 
         let modal = document.getElementById("my_modal");
@@ -258,7 +255,12 @@
                     );
 
                      modal.style.display = "block";
-                     sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove(); location.reload();});
+                     sleep(3000).then(()=>{
+                         modal.style.display = "none";
+                         mod.style.display = "none";
+                         $("#message").remove();
+                         location.reload();
+                     });
 
                 } else {
                     $("#dv_mss").append(
@@ -266,7 +268,11 @@
                     );
 
                     modal.style.display = "block";
-                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
                 }
 
             })
@@ -277,7 +283,11 @@
                 );
 
                 modal.style.display = "block";
-                sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
+                sleep(3000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
 
             });
     }
@@ -317,7 +327,12 @@
                     );
 
                     modal.style.display = "block";
-                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove(); location.reload();});
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
 
                 } else {
                     $("#dv_mss").append(
@@ -325,7 +340,11 @@
                     );
 
                     modal.style.display = "block";
-                    sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
                 }
 
             })
@@ -336,7 +355,11 @@
                 );
 
                 modal.style.display = "block";
-                sleep(3000).then(()=>{modal.style.display = "none"; mod.style.display = "none"; $("#message").remove();});
+                sleep(3000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
 
             });
     }
