@@ -98,7 +98,7 @@
 
         foreach($serviceName as $index => &$serviceN): ?>
         <td class="center"><?php
-                        echo $ind = $ind + 1;
+                       echo ++$ind;
                     ?></td>
         <td onclick='editName("<?php echo $serviceN['id']; ?>", "<?php echo $serviceN['name']; ?>")'><?php
                         echo htmlspecialchars($serviceN['name']);
@@ -172,7 +172,7 @@
         foreach($jsonfile['Db_Files'] as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo $ind = $ind + 1;
+                        echo ++$ind;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file);
@@ -190,7 +190,7 @@
          foreach($jsonfile['Dir_Files'] as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo $ind = $ind + 1;
+                        echo ++$ind;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file);

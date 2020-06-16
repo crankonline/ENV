@@ -59,8 +59,8 @@ SQL;
         $stmt->execute();
 
         } catch (\SoapFault $e) {
-
-            return $e;
+            \Sentry\captureException( $e );
+            exit;
 
         }
         return $stmt->fetchAll();
@@ -99,7 +99,8 @@ SQL;
         echo json_encode($stmt->execute([
             'id' => $id,
             'name' => $name
-        ]));exit;
+        ]));
+        exit;
 
     }
 
@@ -121,7 +122,8 @@ SQL;
 
         echo json_encode($stmt->execute([
             'name' => $name
-        ]));exit;
+        ]));
+        exit;
 
     }
 
