@@ -60,7 +60,7 @@ SQL;
 
         } catch (\SoapFault $e) {
 
-            var_dump($e);die();
+            return $e;
 
         }
         return $stmt->fetchAll();
@@ -80,6 +80,51 @@ SQL;
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    function editName(){
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $sql = <<<SQL
+UPDATE
+    "public"."service_name"
+SET
+    "name" = :name
+
+WHERE
+    ("id" = :id);
+SQL;
+
+        $stmt = Connections::getConnection( 'MediaServer' )->prepare( $sql );
+
+        echo json_encode($stmt->execute([
+            'id' => $id,
+            'name' => $name
+        ]));exit;
+
+    }
+
+
+    function addName(){
+        $name = $_POST['name'];
+        $sql = <<<SQL
+INSERT INTO
+    "public"."service_name"
+    ("name")
+VALUES
+    (
+        :name
+    ); 
+
+SQL;
+
+        $stmt = Connections::getConnection( 'MediaServer' )->prepare( $sql );
+
+        echo json_encode($stmt->execute([
+            'name' => $name
+        ]));exit;
+
+    }
+
     function makeRequest($url, $data) {
 
         $ch = curl_init($url);
