@@ -71,29 +71,17 @@ ORDER BY
 SQL;
 
         $stmt = Connections::getConnection('MediaServer')->prepare($sql);
-        //var_dump($stmt);die();
-
 
         if ( $limit !== null ) {
-           // var_dump($limit);die();
-
-/*            var_dump($stmt->execute( [
-                'service_id'        =>$idService,
-                'limit'            => 30,
-                'offset'           => $offset
-            ] ));die();*/
             $stmt->execute( [
                 'limit'            => 30,
                 'offset'           => $offset
             ] );
-            //var_dump('assa');die();
             $rows = $stmt->fetchAll();
-           // var_dump($rows);die();
             return [ &$count, &$rows ];
         } else {
             $stmt->execute( [
             ] );
-            var_dump('$stmt');die();
             return $stmt;
         }
     }
@@ -235,7 +223,6 @@ SQL;
 
                 $resFil = $this->makeRequest($link2, $arr);
                 $json=json_decode($resFil, true);
-               // var_dump($json);die();
                 $this->variables->jsonfile = $json;
             }
             if ( $idService ) {

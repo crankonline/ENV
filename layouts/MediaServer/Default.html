@@ -96,11 +96,9 @@
 
         </tr>
 
-        <?php $ind = 0;
-
-        foreach($serviceName as $index => &$serviceN): ?>
+        <?php foreach($serviceName as $index => &$serviceN): ?>
         <td class="center"><?php
-                       echo ++$ind;
+                       echo ++$index;
                     ?></td>
         <td onclick='editName("<?php echo $serviceN['id']; ?>", "<?php echo $serviceN['name']; ?>")'><a href="#"><?php
                         echo htmlspecialchars($serviceN['name']);
@@ -141,12 +139,10 @@
                 <th class="center">Время создания:</th>
             </tr>
         </thead>
-        <?php $ind = 0;
-
-         foreach($files as $index => &$file): ?>
+        <?php foreach($files as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo $ind = $ind + 1;
+                       echo ++$index;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file['name']);
@@ -173,11 +169,10 @@
             <th class="center">#</th>
             <th class="center">Файлы которых нет на диске:</th>
         </tr>
-        <?php $ind = 0;
-        foreach($jsonfile['Db_Files'] as $index => &$file): ?>
+        <?php foreach($jsonfile['Db_Files'] as $index => &$file): ?>
         <tr>
             <td class="center"><?php
-                        echo ++$ind;
+                       echo ++$index;
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file);
@@ -252,12 +247,7 @@
             document.getElementById("editLab").style.display = "block";
             document.getElementById("addLab").style.display = "none";
             document.getElementById("save_window").onclick = () => {
-                if (inpName.value) {
-                    saveNameAdd(inpName.value)
-                } else {
-                    getMessageError();
-                }
-
+                inpName.value ? saveNameAdd(inpName.value) : getMessageError();
             };
         document.getElementById("close_window").onclick = ()=>{ modal.style.display = "none"; }
     }
@@ -331,12 +321,7 @@
         document.getElementById("editLab").style.display = "none";
         document.getElementById("addLab").style.display = "block";
         document.getElementById("save_window").onclick = () => {
-            if (inpName.value) {
-                saveNameAdd(inpName.value)
-            } else {
-                getMessageError();
-            }
-
+            inpName.value ? saveNameAdd(inpName.value) : getMessageError();
         };
         document.getElementById("close_window").onclick = ()=>{ modal.style.display = "none"; }
     }
@@ -406,10 +391,10 @@
     (function(w, d){
 
         let divSticky = d.getElementById('divSticky'),
-            scrollHandlerFn = function(){
+            scrollHandlerFn = ()=>{
                 divSticky.style.top = w.scrollY + 'px';
             },
-            loadHandlerFn = function(){
+            loadHandlerFn = ()=>{
                 w.onscroll = scrollHandlerFn;
             };
 
