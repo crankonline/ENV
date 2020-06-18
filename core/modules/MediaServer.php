@@ -6,14 +6,19 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class MediaServer extends \Environment\Core\Module
 {
+    const ROWS_PER_PAGE = 30;
+
     protected $config = [
         'template' => 'layouts/MediaServer/Default.html',
-        'listen' => 'action'
+        'listen' => 'action',
+		'plugins'  => [
+			'paginator' => Plugins\Paginator::class
+        ]
     ];
 
-    private function getFiles( $idService)
+    private function getFiles(  array $filters, $limit = null, $offset = null,$idService )
     {
-        $sql = <<<SQL
+         $sql = <<<SQL
 SELECT
     "f"."id" AS "id",
     "f"."file_name" AS "name",
@@ -22,7 +27,7 @@ SELECT
     "f"."time_stamp" AS "time_stamp",
     "f"."service_id" AS "service_id"
 FROM
-    "public"."files" AS "f"
+    "mediaserver"."files" AS "f"
 WHERE "f"."service_id" = {$idService}
 ORDER BY "f"."file_name" DESC 
 
@@ -33,7 +38,52 @@ SQL;
 
         $stmt->execute();
 
-        return $stmt->fetchAll();
+        $count = $stmt->fetchColumn();
+
+        $limits = null;
+        if ( $limit !== null ) {
+            $limits[] = 'LIMIT :limit';
+
+            $values['limit'] = $limit;
+
+            if ( $offset !== null ) {
+                $limits[] = 'OFFSET :offset';
+
+                $values['offset'] = $offset;
+            }
+        }
+
+        $limits = ! empty( $limits ) ? implode( PHP_EOL, $limits ) : '';
+        $sql = <<<SQL
+SELECT
+    "f"."id" AS "id",
+    "f"."file_name" AS "name",
+    ("f"."file_size" * 0.0000010) AS "size",
+    "f"."given_name" AS "given_name",
+    "f"."time_stamp" AS "time_stamp",
+    "f"."service_id" AS "service_id"
+FROM
+    "mediaserver"."files" AS "f"
+WHERE "f"."service_id" = {$idService}
+ORDER BY 
+    "f"."file_name" DESC 
+    {$limits};  
+SQL;
+
+        $stmt = Connections::getConnection('MediaServer')->prepare($sql);
+
+        if ( $limit !== null ) {
+            $stmt->execute( [
+                'limit'            => 30,
+                'offset'           => $offset
+            ] );
+            $rows = $stmt->fetchAll();
+            return [ &$count, &$rows ];
+        } else {
+            $stmt->execute( [
+            ] );
+            return $stmt;
+        }
     }
 
     private function getServiceName()
@@ -48,8 +98,8 @@ SELECT
     COUNT("f".*) as "files_count",
     SUM("f"."file_size" * 0.0000010)  AS sum_files
 FROM
-    "public"."service_name" AS "sn"
-left join "public"."files" AS "f" ON "sn"."id" = "f"."service_id"
+    "mediaserver"."service_name" AS "sn"
+left join "mediaserver"."files" AS "f" ON "sn"."id" = "f"."service_id"
 
 GROUP BY  "sn"."name", "sn"."id"; 
 SQL;
@@ -70,9 +120,10 @@ SQL;
     {
         $sql = <<<SQL
 SELECT
-    SUM("sn"."file_size" * 0.0000010)  AS sum_files
+    SUM("sn"."file_size" * 0.0000010)  AS sum_files_size,
+    count("sn"."id") AS sum_files
 FROM
-    "public"."files" AS "sn"
+    "mediaserver"."files" AS "sn"
 
 SQL;
 
@@ -86,7 +137,7 @@ SQL;
         $name = $_POST['name'];
         $sql = <<<SQL
 UPDATE
-    "public"."service_name"
+    "mediaserver"."service_name"
 SET
     "name" = :name
 
@@ -109,7 +160,7 @@ SQL;
         $name = $_POST['name'];
         $sql = <<<SQL
 INSERT INTO
-    "public"."service_name"
+    "mediaserver"."service_name"
     ("name")
 VALUES
     (
@@ -149,25 +200,39 @@ SQL;
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-sochi.css';
         $this->context->css[] = 'resources/css/ui-service-zero-report.css';
+        $this->context->css[] = 'resources/css/jquery.dataTables.min.css';
         $this->variables->errors = [];
         $idService =  $_GET['idService'] ?? null;
         $ChkAnalize =  $_GET['ChkAnalize'] ?? null;
         $arr = [ 'files' => 'file' ];
+        $page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
+        $limit  = self::ROWS_PER_PAGE;
+        $offset = ( $page - 1 ) * $limit;
+
         try {
 
            $this->variables->serviceName   = $this->getServiceName();
-            $this->variables->FileSize     = $this->getSumFileSize()[0]['sum_files'];
+            $this->variables->FileSize     = $this->getSumFileSize()[0]['sum_files_size'];
+            $this->variables->FileSum      = $this->getSumFileSize()[0]['sum_files'];
             $this->variables->idService    = $idService;
             $this->variables->link         = $link;
             $this->variables->link2        = $link2;
+            $this->variables->ChkAnalize        =$ChkAnalize;
             if ( $ChkAnalize )
             {
+
                 $resFil = $this->makeRequest($link2, $arr);
                 $json=json_decode($resFil, true);
                 $this->variables->jsonfile = $json;
             }
             if ( $idService ) {
-                $this->variables->files    = $this->getFiles( $idService );
+                list( $count, $files ) = $this->getFiles( [], $limit, $offset,  $idService);
+
+                $this->context->paginator['count'] = (int) ceil( $count / $limit );
+
+                $this->variables->count   = $count;
+
+                $this->variables->files    = &$files;
              }
 
         } catch ( \Exception $e ) {
