@@ -6,7 +6,6 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class MediaServer extends \Environment\Core\Module
 {
-    const ROWS_PER_PAGE = 30;
 
     protected $config = [
         'template' => 'layouts/MediaServer/Default.html',
@@ -16,9 +15,31 @@ class MediaServer extends \Environment\Core\Module
         ]
     ];
 
-    private function getFiles(  array $filters, $limit = null, $offset = null,$idService )
+    private function getFiles($idService, array $filters )
     {
-         $sql = <<<SQL
+    try{
+        if ($filters){
+            $params = [];
+
+            if ($filters['from'] && $filters['file_size_min']) {
+
+                $params[] = 'AND ("f"."time_stamp" BETWEEN :f_d_min AND :f_d_max) AND ("f"."file_size" BETWEEN :f_s_min AND :f_s_max)';
+
+            } elseif ($filters['from']) {
+
+                $params[] = 'AND ("f"."time_stamp" BETWEEN :f_d_min AND :f_d_max)';
+
+            }  elseif ($filters['file_size_min']) {
+
+                $params[] = 'AND ("f"."file_size" BETWEEN :f_s_min AND :f_s_max)';
+
+            }
+
+            else {
+                $params = [];
+            }
+
+            $sql = <<<SQL
 SELECT
     "f"."id" AS "id",
     "f"."file_name" AS "name",
@@ -29,67 +50,74 @@ SELECT
 FROM
     "mediaserver"."files" AS "f"
 WHERE "f"."service_id" = {$idService}
-ORDER BY "f"."file_name" DESC 
+     AND "f"."file_name" like '%{$filters['fileName']}%'
+    {$params[0]}
+  ORDER BY "f"."time_stamp" ASC
+SQL;
+            $stmt = Connections::getConnection('MediaServer')->prepare($sql);
+
+            if ($filters['from'] && $filters['file_size_min']) {
+
+                $stmt->execute([
+                    'f_d_min' => $filters['from'],
+                    'f_d_max'   => $filters['to'],
+                    'f_s_min'   => ($filters['file_size_min']  * 1000000),
+                    'f_s_max'   => ($filters['file_size_max']  * 1000000)
+                ]);
+
+            } elseif ($filters['from']) {
+
+                $stmt->execute([
+                    'f_d_min' => $filters['from'],
+                    'f_d_max'   => $filters['to']
+                ]);
+
+            }  elseif ($filters['file_size_min']) {
 
 
+                $stmt->execute([
+                    'f_s_min'   => ($filters['file_size_min']  * 1000000),
+                    'f_s_max'   => ($filters['file_size_max']  * 1000000)
+                ]);
+            }
+
+            else {
+
+                $stmt->execute();
+
+            }
+
+        } else {
+            $sql = <<<SQL
+SELECT
+    "f"."id" AS "id",
+    "f"."file_name" AS "name",
+    ("f"."file_size" * 0.0000010) AS "size",
+    "f"."given_name" AS "given_name",
+    "f"."time_stamp" AS "time_stamp",
+    "f"."service_id" AS "service_id"
+FROM
+    "mediaserver"."files" AS "f"
+WHERE "f"."service_id" = {$idService}
+ORDER BY "f"."time_stamp" ASC
 SQL;
 
         $stmt = Connections::getConnection('MediaServer')->prepare($sql);
 
         $stmt->execute();
-
-        $count = $stmt->fetchColumn();
-
-        $limits = null;
-        if ( $limit !== null ) {
-            $limits[] = 'LIMIT :limit';
-
-            $values['limit'] = $limit;
-
-            if ( $offset !== null ) {
-                $limits[] = 'OFFSET :offset';
-
-                $values['offset'] = $offset;
-            }
         }
 
-        $limits = ! empty( $limits ) ? implode( PHP_EOL, $limits ) : '';
-        $sql = <<<SQL
-SELECT
-    "f"."id" AS "id",
-    "f"."file_name" AS "name",
-    ("f"."file_size" * 0.0000010) AS "size",
-    "f"."given_name" AS "given_name",
-    "f"."time_stamp" AS "time_stamp",
-    "f"."service_id" AS "service_id"
-FROM
-    "mediaserver"."files" AS "f"
-WHERE "f"."service_id" = {$idService}
-ORDER BY 
-    "f"."file_name" DESC 
-    {$limits};  
-SQL;
-
-        $stmt = Connections::getConnection('MediaServer')->prepare($sql);
-
-        if ( $limit !== null ) {
-            $stmt->execute( [
-                'limit'            => 30,
-                'offset'           => $offset
-            ] );
-            $rows = $stmt->fetchAll();
-            return [ &$count, &$rows ];
-        } else {
-            $stmt->execute( [
-            ] );
-            return $stmt;
+        } catch (\SoapFault $e) {
+            \Sentry\captureException( $e );
+            exit;
         }
-    }
+
+    return $stmt->fetchAll();
+}
 
     private function getServiceName()
     {
         try {
-
 
         $sql = <<<SQL
 SELECT
@@ -100,8 +128,8 @@ SELECT
 FROM
     "mediaserver"."service_name" AS "sn"
 left join "mediaserver"."files" AS "f" ON "sn"."id" = "f"."service_id"
-
-GROUP BY  "sn"."name", "sn"."id"; 
+GROUP BY  "sn"."name", "sn"."id"
+ORDER BY "sn"."id"; 
 SQL;
 
         $stmt = Connections::getConnection('MediaServer')->prepare($sql);
@@ -111,7 +139,6 @@ SQL;
         } catch (\SoapFault $e) {
             \Sentry\captureException( $e );
             exit;
-
         }
         return $stmt->fetchAll();
     }
@@ -201,39 +228,50 @@ SQL;
         $this->context->css[] = 'resources/css/ui-sochi.css';
         $this->context->css[] = 'resources/css/ui-service-zero-report.css';
         $this->context->css[] = 'resources/css/jquery.dataTables.min.css';
+
         $this->variables->errors = [];
         $idService =  $_GET['idService'] ?? null;
-        $ChkAnalize =  $_GET['ChkAnalize'] ?? null;
+        $сhkAnalize =  $_GET['сhkAnalize'] ?? null;
+        $chkFilter =  $_GET['chkFilter'] ?? null;
+
+
         $arr = [ 'files' => 'file' ];
-        $page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
-        $limit  = self::ROWS_PER_PAGE;
-        $offset = ( $page - 1 ) * $limit;
 
         try {
 
-           $this->variables->serviceName   = $this->getServiceName();
-            $this->variables->FileSize     = $this->getSumFileSize()[0]['sum_files_size'];
-            $this->variables->FileSum      = $this->getSumFileSize()[0]['sum_files'];
-            $this->variables->idService    = $idService;
-            $this->variables->link         = $link;
-            $this->variables->link2        = $link2;
-            $this->variables->ChkAnalize        =$ChkAnalize;
-            if ( $ChkAnalize )
-            {
+            $this->variables->serviceName      = $this->getServiceName();
+            $this->variables->FileSize         = $this->getSumFileSize()[0]['sum_files_size'];
+            $this->variables->FileSum          = $this->getSumFileSize()[0]['sum_files'];
+            $this->variables->idService        = $idService;
+            $this->variables->link             = $link;
+            $this->variables->link2            = $link2;
+            $this->variables->сhkAnalize       =$сhkAnalize;
 
+            if ( $сhkAnalize )
+            {
                 $resFil = $this->makeRequest($link2, $arr);
                 $json=json_decode($resFil, true);
                 $this->variables->jsonfile = $json;
             }
             if ( $idService ) {
-                list( $count, $files ) = $this->getFiles( [], $limit, $offset,  $idService);
+                    if ($_POST['pst_tru']) {
 
-                $this->context->paginator['count'] = (int) ceil( $count / $limit );
+                        $sss = $this->getFiles($idService, [
+                            'fileName' => $_POST['file_name'],
+                            'file_size_min' => $_POST['file_zie_min'],
+                            'file_size_max' => $_POST['file_zie_max'],
+                            'from' => $_POST['from'],
+                            'to' => $_POST['to'],
+                        ]);
+                        echo json_encode($sss);
+                        exit;
 
-                $this->variables->count   = $count;
+                    } else {
 
-                $this->variables->files    = &$files;
-             }
+                        $this->variables->files = $this->getFiles($idService, []);
+                    }
+            }
+
 
         } catch ( \Exception $e ) {
             \Sentry\captureException( $e );
