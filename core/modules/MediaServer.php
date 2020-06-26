@@ -250,6 +250,8 @@ SQL;
             $this->variables->file_size_min        = $_POST['$file_size_min'] ?? null;
             $this->variables->file_size_max        = $_POST['$file_size_max'] ?? null;
             $this->variables->file_size_max        = $_POST['$file_size_max'] ?? null;
+            $this->variables->from        = $_POST['$from'] ?? null;
+            $this->variables->to        = $_POST['$to'] ?? null;
 
 
             if ( $сhkAnalize )
