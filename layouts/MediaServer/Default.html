@@ -284,21 +284,13 @@
 
     let tb = $('#table-id').DataTable();
 
-    tb;
-
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
-
 
     function chkElm(serName) {
          let ar = '<?php echo json_encode($serviceName) ?>';
          let chkName;
          ar = JSON.parse(ar);
-        ar.forEach(function(item, index) {
-            if(item['name'] == serName) {
-              chkName = true;
-               return chkName;
-            }
-        });
+         ar.forEach(item => item.name == serName && (chkName = true) );
        return chkName;
     }
 
@@ -565,10 +557,7 @@
 
     let frm = $('#form_filter');
 
-    frm.submit(() => {
-            send_ajax_form(frm);
-            return false;
-    });
+    frm.submit( () => send_ajax_form(frm) && false );
 
 </script>
 

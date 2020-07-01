@@ -246,6 +246,12 @@ SQL;
             $this->variables->link             = $link;
             $this->variables->link2            = $link2;
             $this->variables->сhkAnalize       =$сhkAnalize;
+            $this->variables->file_name        = $_POST['file_name'] ?? null;
+            $this->variables->file_size_min    = $_POST['$file_size_min'] ?? null;
+            $this->variables->file_size_max    = $_POST['$file_size_max'] ?? null;
+            $this->variables->from             = $_POST['$from'] ?? null;
+            $this->variables->to               = $_POST['$to'] ?? null;
+
 
             if ( $сhkAnalize )
             {
