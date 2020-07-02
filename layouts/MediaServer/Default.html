@@ -117,25 +117,23 @@
         <?php endforeach; ?>
     </table>
 <input type="submit" style="float: left" name="client-list-all" id="add_service_name" class="button" value="Добавить запись"><br>
+
 <?php else :?>
     <strong>Ошибка подключения к базе данных </strong>
 <?php endif ?>
-
+<br>
+<br>
+<form action="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&сhkAnalize=true" method="POST">
+    <input type="submit" style="float: left" name="client-list-all" class="button" value="Анализатор">
+</form><br><br><br>
 <?php if(isset($files)):?>
 
-<div class="panel" style="float: right">
-    <div class="body">
-        <div class="input-group">
-           <input type="hidden" id="searchBox" placeholder="Введите для поиска...">
-        </div>
-    </div>
-</div><br>
-
-<br><div class="floating" id="divSticky">
+<input type="submit" style="float: left" name="client-list-all" id="add_filter"  class="button" value="Фильтр"><br><br><br>
+<div class="floating" id="divSticky">
 
     <table  id="table-id" class=" data  myTable">
 
-        <div style=" border: 1px solid #ddd; color: black; height: 120px; ">
+        <div style=" border: 1px solid #ddd; color: black; height: 120px; display: none" id="dv-form">
             <label style="color: #aaa; font-size: 28px; font-weight: bold; float: left">Фильтр</label>
             <div style="position: relative; top: 20px">
 
@@ -183,14 +181,15 @@
 
                 </div>
             </div>
-        </div>
+
 
         <caption>Файлы</caption>
         <thead>
+            <tr>
                 <th class="center">#</th>
-                <th class="center">Наименование:</th>
-                <th class="center">Размер файла:</th>
-                <th class="center">Собственное имя:</th>
+                <th class="center" style="width: 900px;">Наименование:</th>
+                <th class="center" >Размер файла:</th>
+                <th class="center" style="width: 400px;">Собственное имя:</th>
                 <th class="center">Время создания:</th>
             </tr>
         </thead>
@@ -217,7 +216,7 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-
+</div>
 <?php endif ?>
 
 <?php if(isset($jsonfile)):?>
@@ -266,9 +265,9 @@
 
         <strong class="strong">Наименование:</strong>
         <input type="text" name="" id="inpt_name"><br>
-        <label id="message_err" style="font-size: 12px; color: darkred; display: none; position: relative; left: 50px">Заполните наименование</label>
-        <label id="message_err_dub" style="font-size: 12px; color: darkred; display: none; position: relative; left: 50px">Такое наименование уже есть</label>
-        <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить">
+        <label id="message_err" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Заполните наименование</label>
+        <label id="message_err_dub" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Такое наименование уже есть</label>
+        <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить"><br>
         <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
     </div>
 </div>
@@ -277,9 +276,7 @@
      </div>
 </div>
 {plugin:paginator}
-<br><form action="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&сhkAnalize=true" method="POST">
-    <input type="submit" name="client-list-all" class="button" value="Анализатор">
-</form>
+
 <script type="text/javascript">
 
     let tb = $('#table-id').DataTable();
@@ -536,13 +533,12 @@
 
                     } else {
                         tb.clear();
-                        tb.row.add(['Ничео не найдено','','','','','']).draw();
-
-
-
-
+                        tb.row.add(['Ничего не найдено','','','','','']).draw();
                        $("#table-id td.sorting_1").css("text-align",  "center");
+                       $('#table-id td.sorting_1').css('font-size', '17px');
+                       $('#table-id td.sorting_1').css('color', 'darkred');
                        $("#table-id td.sorting_1").attr("colspan", "6");
+                        disNoneFilt();
 
                    }
                 }
@@ -551,13 +547,35 @@
                 $("#table-id #tr-file").remove();
                 $("#table-id").append(`<tbody id="tb-files"></tbody>`);
                 $("#table-id #tb-files").append(`<tr id="tr-files"><td colspan="6" style="text-align: center; font-size: 17px; color: darkred">Данных не найдено</td></tr>`);
+
             },
         });
     }
 
     let frm = $('#form_filter');
 
-    frm.submit( () => send_ajax_form(frm) && false );
+    frm.submit(() => {
+        send_ajax_form(frm);
+        return false;
+    });
+
+    $('#add_filter').click( ()=> $('#dv-form').toggle() );
+
+    $('.dataTables_empty').css('text-align', 'center');
+
+    function disNoneFilt() {
+        $('.dataTables_length').css('display', 'none');
+        $('.dataTables_filter').css('display', 'none');
+        $('.dataTables_paginate').css('display', 'none');
+        $('.dataTables_info').css('display', 'none');
+    }
+
+    if ($('.dataTables_empty').text() === "Файлы отсутствуют") {
+        $('.dataTables_empty').css('text-align', 'center');
+        $('.dataTables_empty').css('font-size', '17px');
+        $('.dataTables_empty').css('color', 'darkred');
+        disNoneFilt();
+    }
 
 </script>
 

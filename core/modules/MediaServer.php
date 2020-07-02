@@ -261,8 +261,8 @@ SQL;
                 $this->variables->jsonfile = $json;
             }
             if ( $idService ) {
-                    if ( $pstTru ) {
 
+                    if ( $pstTru ) {
                         $sss = $this->getFiles($idService, [
                             'fileName' => $_POST['file_name'],
                             'file_size_min' => $_POST['file_zie_min'],
