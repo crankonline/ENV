@@ -233,6 +233,7 @@ SQL;
         $idService =  $_GET['idService'] ?? null;
         $сhkAnalize =  $_GET['сhkAnalize'] ?? null;
         $chkFilter =  $_GET['chkFilter'] ?? null;
+        $pstTru          = $_POST['pst_tru'] ?? null;
 
 
         $arr = [ 'files' => 'file' ];
@@ -260,8 +261,8 @@ SQL;
                 $this->variables->jsonfile = $json;
             }
             if ( $idService ) {
-                    if ($_POST['pst_tru']) {
 
+                    if ( $pstTru ) {
                         $sss = $this->getFiles($idService, [
                             'fileName' => $_POST['file_name'],
                             'file_size_min' => $_POST['file_zie_min'],
