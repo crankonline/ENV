@@ -21,7 +21,7 @@ class MediaServer extends \Environment\Core\Module
         if ($filters){
             $params = [];
 
-            if ($filters['from'] && $filters['file_size_min']) {
+            if ($filters['from'] && strlen($filters['from']) > 0 && $filters['file_size_min'] && strlen($filters['file_size_min']) > 0) {
 
                 $params[] = 'AND ("f"."time_stamp" BETWEEN :f_d_min AND :f_d_max) AND ("f"."file_size" BETWEEN :f_s_min AND :f_s_max)';
 
