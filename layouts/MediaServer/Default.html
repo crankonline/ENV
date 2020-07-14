@@ -147,12 +147,12 @@
                     </label>
                     <label>
                         <span class="fixed" style="font-size: 16px">С:</span>
-                        <input type="number" id="file_zie_min" name="file_zie_min" placeholder="Мб..." value="<?php echo $file_size_min; ?>" style="border-color: #888;">
+                        <input type="number" id="file_zie_min" step="0.01" name="file_zie_min" placeholder="Мб..." value="<?php echo $file_size_min; ?>" style="border-color: #888;">
 
                     </label>
                     <label>
                         <span class="fixed" style="font-size: 16px">До:</span>
-                        <input type="number" name="file_zie_max" id="file_zie_max" placeholder="Мб..." value="<?php echo $file_size_max; ?>" style="border-color: #888;">
+                        <input type="number" name="file_zie_max" step="0.01" id="file_zie_max" placeholder="Мб..." value="<?php echo $file_size_max; ?>" style="border-color: #888;">
 
                     </label><br>
                     <label id="message_err_zie_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 100px">Заполните поле</label>
@@ -186,11 +186,11 @@
         <caption>Файлы</caption>
         <thead>
             <tr>
-                <th class="center">#</th>
-                <th class="center" style="width: 900px;">Наименование:</th>
-                <th class="center" >Размер файла:</th>
-                <th class="center" style="width: 400px;">Собственное имя:</th>
-                <th class="center">Время создания:</th>
+                <th class="center" style="width: 20px;">#</th>
+                <th class="center" style="width: 400px;">Наименование:</th>
+                <th class="center" style="width: 50px;">Размер файла:</th>
+                <th class="center" style="width: 700px;">Собственное имя:</th>
+                <th class="center" style="width: 120px;">Время создания:</th>
             </tr>
         </thead>
         <tbody>
@@ -389,6 +389,7 @@
     function addName() {
         let modal = document.getElementById("my_modal");
         let inpName = document.getElementById("inpt_name");
+        inpName.value = "";
         modal.style.display = "block";
         document.getElementById("editLab").style.display = "none";
         document.getElementById("addLab").style.display = "block";
@@ -527,7 +528,8 @@
 
                     if (person.length > 0){
                         person.forEach(function (index) {
-                            tb.row.add([index['id'], index['name'], index['size'], index['given_name'], index['time_stamp']]).draw();
+                            let inds = index['size'];
+                            tb.row.add([index['id'], index['name'], ((parseInt(inds * 100)) / 100) + " Мб", index['given_name'], index['time_stamp']]).draw();
 
                         });
 

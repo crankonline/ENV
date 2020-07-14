@@ -36,7 +36,7 @@ class MediaServer extends \Environment\Core\Module
             }
 
             else {
-                $params = [];
+                $params[0] = NULL;
             }
 
             $sql = <<<SQL
@@ -57,19 +57,22 @@ SQL;
             $stmt = Connections::getConnection('MediaServer')->prepare($sql);
 
             if ($filters['from'] && $filters['file_size_min']) {
+                $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['to'])));
 
                 $stmt->execute([
                     'f_d_min' => $filters['from'],
-                    'f_d_max'   => $filters['to'],
+                    'f_d_max'   => $premium_date,
                     'f_s_min'   => ($filters['file_size_min']  * 1000000),
                     'f_s_max'   => ($filters['file_size_max']  * 1000000)
                 ]);
 
             } elseif ($filters['from']) {
+                $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['to'])));
 
                 $stmt->execute([
+
                     'f_d_min' => $filters['from'],
-                    'f_d_max'   => $filters['to']
+                    'f_d_max'   => $premium_date,
                 ]);
 
             }  elseif ($filters['file_size_min']) {
