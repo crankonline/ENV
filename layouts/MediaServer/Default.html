@@ -529,7 +529,10 @@
                     if (person.length > 0){
                         person.forEach(function (index) {
                             let inds = index['size'];
-                            tb.row.add([index['id'], index['name'], ((parseInt(inds * 100)) / 100) + " Мб", index['given_name'], index['time_stamp']]).draw();
+                            let str = index['given_name'];
+                            let result = str.link('<?php echo $link?>' + index['given_name']);
+
+                            tb.row.add([index['id'], index['name'], ((parseInt(inds * 100)) / 100) + " Мб", result , index['time_stamp']]).draw();
 
                         });
 
