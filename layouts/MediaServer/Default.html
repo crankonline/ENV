@@ -527,11 +527,15 @@
                     let person = JSON.parse(data);
 
                     if (person.length > 0){
-                        person.forEach(function (index) {
-                            let inds = index['size'];
-                            tb.row.add([index['id'], index['name'], ((parseInt(inds * 100)) / 100) + " Мб", index['given_name'], index['time_stamp']]).draw();
-
-                        });
+                        person.forEach(value =>
+                            tb.row.add([
+                                value['id'],
+                                value['name'],
+                                (parseInt(value['size'] * 100) / 100) + " Мб",
+                                value['given_name'].link('<?php echo $link?>' + value['given_name']),
+                                value['time_stamp']
+                            ]).draw()
+                        );
 
                     } else {
                         tb.clear();

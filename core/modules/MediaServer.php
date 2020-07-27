@@ -21,7 +21,7 @@ class MediaServer extends \Environment\Core\Module
         if ($filters){
             $params = [];
 
-            if ($filters['from'] && strlen($filters['from']) > 0 && $filters['file_size_min'] && strlen($filters['file_size_min']) > 0) {
+            if ($filters['from'] && strlen($filters['from']) > 0 && $filters['file_size_max'] && strlen($filters['file_size_max']) > 0) {
 
                 $params[] = 'AND ("f"."time_stamp" BETWEEN :f_d_min AND :f_d_max) AND ("f"."file_size" BETWEEN :f_s_min AND :f_s_max)';
 
@@ -29,7 +29,7 @@ class MediaServer extends \Environment\Core\Module
 
                 $params[] = 'AND ("f"."time_stamp" BETWEEN :f_d_min AND :f_d_max)';
 
-            }  elseif ($filters['file_size_min']) {
+            }  elseif ($filters['file_size_max']) {
 
                 $params[] = 'AND ("f"."file_size" BETWEEN :f_s_min AND :f_s_max)';
 
@@ -55,10 +55,8 @@ WHERE "f"."service_id" = {$idService}
   ORDER BY "f"."time_stamp" ASC
 SQL;
             $stmt = Connections::getConnection('MediaServer')->prepare($sql);
-
-            if ($filters['from'] && $filters['file_size_min']) {
+            if ($filters['from'] && $filters['file_size_max']) {
                 $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['to'])));
-
                 $stmt->execute([
                     'f_d_min' => $filters['from'],
                     'f_d_max'   => $premium_date,
@@ -68,16 +66,13 @@ SQL;
 
             } elseif ($filters['from']) {
                 $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['to'])));
-
                 $stmt->execute([
 
                     'f_d_min' => $filters['from'],
                     'f_d_max'   => $premium_date,
                 ]);
 
-            }  elseif ($filters['file_size_min']) {
-
-
+            }  elseif ($filters['file_size_max']) {
                 $stmt->execute([
                     'f_s_min'   => ($filters['file_size_min']  * 1000000),
                     'f_s_max'   => ($filters['file_size_max']  * 1000000)
@@ -85,7 +80,6 @@ SQL;
             }
 
             else {
-
                 $stmt->execute();
 
             }
