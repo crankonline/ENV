@@ -1,0 +1,264 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery-3.5.1.js"></script>
+
+<?php if($errors): ?>
+<?php foreach($errors as $error): ?>
+<div class="failure"><?php echo $error; ?></div>
+<?php endforeach; ?>
+<?php return; ?>
+<?php endif; ?>
+
+<style>
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal .modal_content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+        z-index: 99999;
+    }
+    .modal .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .modal .button {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .modal #inpt_name {
+        margin: 5px;
+        width: 180px;
+        border: 1px solid #888;
+    }
+
+    .modal .strong {
+        font-size: 17px;
+        color: #080808;
+    }
+    .modal .mt {
+        font-size: 20px;
+
+    }
+
+
+    .modal_nw {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal_nw .modal_content {
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        z-index: 99999;
+    }
+    .modal_nw .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal_nw .strong {
+        font-size: 16px;
+        color: #080808;
+    }
+</style>
+
+
+<input type="submit" style="float: left" name="client-list-all" id="add_filter"  class="button" value="Фильтр"><br><br><br>
+
+<div class="" id="divSticky">
+
+    <table  id="table-id" class=" data  myTable">
+
+        <div style=" border: 1px solid #ddd; color: black; height: 120px; display: none" id="dv-form">
+            <label style="color: #aaa; font-size: 28px; font-weight: bold; float: left">Фильтр</label>
+            <div style="position: relative; top: 20px">
+
+                <form id="form_filter" action="index.php?view=<?php echo $this::AK_LOG_TERMINAL; ?>&chkFilter=true" method="POST" style="position: relative; top: 200px">
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>Account:</b></span>
+                        <input type="text"  name="account" placeholder="Account..." value="<?php echo $account; ?>" style="border-color: #888;">
+                    </label>
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>DateTime:</b></span>
+                    </label>
+                    <label>
+                        <span class="fixed">С</span>
+                        <input type="date" name="dateMin" id="dateMin" value="<?php echo $dateMin; ?>" style="border-color: #888;">
+                    </label>
+                    <label>
+                        <span class="fixed">По</span>
+                        <input type="date" name="dateMax" id="dateMax" value="<?php echo $dateMax; ?>" style="border-color: #888;">
+                    </label>
+
+                    <label id="message_err_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 80px">Выберите дату</label>
+                    <label id="message_err_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 250px;">Выберите дату</label>
+                    <br>
+                    <br>
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>PaymentSystem:</b></span>
+                        <input type="number" min="0" max="10"  name="paymentSystem" placeholder="PaymentSystem..." value="<?php echo $paymentSystem; ?>" style="border-color: #888;">
+                    </label>
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>Type:</b></span>
+                        <input name="type" list="lst" placeholder="Type..." value="<?php echo $type; ?>" style="border-color: #888;">
+                        <datalist id="lst">
+                            <option value="check">check</option>
+                            <option value="pay">pay</option>
+                        </datalist>
+                    </label>
+
+                    <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" style="text-align: center; top: 0">&nbsp;
+                    <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
+                    <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить" style="text-align: center; top: 0" onclick="window.location.href = 'index.php?view=<?php echo $this::AK_LOG_TERMINAL; ?>'">&nbsp;<br>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+        <caption>Записи</caption>
+        <thead>
+        <tr>
+            <th class="center" style="width: 20px;">#</th>
+            <th class="center" style="width: 20px;">IDLog</th>
+            <th class="center" style="width: 40px;">Account:</th>
+            <th class="center" style="width: 50px;">DateTime:</th>
+            <th class="center" style="width: 70px;">txnid:</th>
+            <th class="center" style="width: 10px;">PaymentSystemID:</th>
+            <th class="center" style="width: 120px;">Type:</th>
+            <th class="center" style="width: 120px;">Content:</th>
+            <th class="center" style="width: 120px;">IP:</th>
+            <th class="center" style="width: 120px;">IsNew:</th>
+            <th class="center" style="width: 120px;">Answer:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if($mes): ?>
+        <?php foreach($mes as $mess): ?>
+        <tr>
+            <td class="center" colspan="11" style="font-size: 18px; color: darkred;"><?php
+                       echo $mess;
+                    ?></td>
+        <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if($logs): ?>
+        <?php foreach($logs as $index => &$log): ?>
+
+        <tr id="tr-file">
+            <td class="center"><?php
+                       echo ++$index;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['IDLog']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['Account']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['DateTime']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['txnid']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['PaymentSystemID']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['Type']);
+                    ?></td>
+            <td class="center" style="width: 120px;"><?php
+                        echo htmlspecialchars($log['Content']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['IP']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['IsNew']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['Answer']);
+                    ?></td>
+
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+<br><br><br>
+<?php   if($count):  ?>
+<div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
+<?php endif; ?>
+
+{plugin:paginator}
+<script>
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
+    $('#add_filter').click( ()=> $('#dv-form').toggle() );
+    let frm = $('#form_filter');
+
+    frm.submit(() => {
+        let frm_dMin = document.getElementById("dateMin");
+        let frm_dMax = document.getElementById("dateMax");
+        if (frm_dMin.value && (frm_dMax.value === '')) {
+            frm_dMax.style.borderColor = "darkred";
+            document.getElementById("message_err_max").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMax.style.borderColor = "#888";
+                    document.getElementById("message_err_max").style.display = "none";
+                }
+            )
+            return false;
+        } else if (frm_dMax.value && (frm_dMin.value === '')) {
+            frm_dMin.style.borderColor = "darkred";
+            document.getElementById("message_err_min").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMin.style.borderColor = "#888";
+                    document.getElementById("message_err_min").style.display = "none";
+                }
+            )
+            return false;
+        }
+
+
+    });
+
+</script>
+
+
+
+
