@@ -164,4 +164,14 @@ Connections::configure(
     ]
 );
 
+Connections::configure(
+    'Pay',
+    [
+        'dsn'      => $_ENV['configuration_connection_Pay_dsn'],
+        'user'     => $_ENV['configuration_connection_Pay_user'],
+        'password' => $_ENV['configuration_connection_Pay_password']
+    ]
+);
+
+
 

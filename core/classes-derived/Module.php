@@ -47,6 +47,8 @@ abstract class Module extends \Unikum\Core\Module {
 
         AK_MEDIA_SERVER                   = 'media-server',
 
+        AK_LOG_TERMINAL                   = 'log-terminal',
+
         AK_CURATOR_SF                     = 'curator-sf',
         AK_CURATOR_STI                    = 'curator-sti',
         AK_CURATOR_NSC                    = 'curator-nsc',
