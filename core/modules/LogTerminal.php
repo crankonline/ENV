@@ -188,7 +188,7 @@ SQL;
     protected function main() {
         $this->context->css[] = 'resources/css/ui-misc-form.css';
         $this->context->css[] = 'resources/css/ui-clients-list.css';
-
+        $this->variables->mes = [];
         $this->variables->errors = [];
         $chkFilter =  $_GET['chkFilter'] ?? null;
 
