@@ -1,0 +1,339 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<style>
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal .modal_content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+        z-index: 99999;
+    }
+    .modal .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .modal .button {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .modal #inpt_name {
+        margin: 5px;
+        width: 180px;
+        border: 1px solid #888;
+    }
+
+    .modal .strong {
+        font-size: 17px;
+        color: #080808;
+    }
+    .modal .mt {
+        font-size: 20px;
+
+    }
+
+
+    .modal_nw {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal_nw .modal_content {
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        z-index: 99999;
+    }
+    .modal_nw .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal_nw .strong {
+        font-size: 16px;
+        color: #080808;
+    }
+</style>
+<form class="form">
+
+    <div class="caption">Параметры поиска</div>
+
+    <div class="field">
+        <label for="uin" class="fixed">UIN:</label>
+        <input type="text" name="uin" id="uin" style="width: 475px" maxlength="49" placeholder="введите UIN" value="<?php echo $cUin; ?>">
+        <span class="hint">Уникальный межсистемный идентификатор документа, 49 цифр.</span>
+    </div>
+
+
+</form>
+
+<div class="field buttons">
+    <input type="submit" class="button" id="sv_butt" value="Поиск" />
+</div>
+<div id="my_modal" class="modal">
+    <div class="modal_content">
+        <label id="addLab" >Период</label>
+        <br>
+        <table align="center" style="">
+        <tr>
+            <td><label for="month"><strong class="strong">Месяц:</strong></label></td>
+                <td><select style="width: 180px" name="" id="month">
+                    <option value="">--</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select><br></td>
+           </tr><tr>
+            <td><label for="quarter"><strong class="strong">Квартал:</strong></label></td>
+                <td><select  style="width: 180px" name="" id="quarter">
+                    <option value="">--</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select><br></td>
+            </tr><tr>
+                <td><strong class="strong">Год:</strong></td>
+                <td><input style="width: 180px" type="number" onkeydown="limit(this);" onkeyup="limit(this);" id="year"><br></td>
+        </tr>
+        </table>
+        <label id="message_err" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Месяц и квартал не могут быть вместе заполнены.</label>
+        <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить"><br>
+        <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
+    </div>
+</div>
+<div id="my_modal_nw" class="modal_nw">
+    <div class="modal_content" id="dv_mss">
+    </div>
+</div>
+
+<script>
+    date = new Date();
+
+    let modal = document.getElementById("my_modal");
+    let modal_nw = document.getElementById("my_modal_nw");
+    let inpMonth = document.getElementById("month");
+    let inpQuarter = document.getElementById("quarter");
+    let inpYear = document.getElementById("year");
+    let reportId = '';
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
+
+    function limit(element)
+    {
+        let max_chars = 4;
+
+        if(element.value.length > max_chars) {
+            element.value = element.value.substr(0, max_chars);
+        }
+
+    }
+
+    function AjaxData() {
+        reportId = '';
+        inpMonth.value = '';
+        inpQuarter.value = '';
+        inpYear.value = '';
+
+
+        let uin = document.getElementById('uin').value;
+
+        let postForm = {
+            'uin'     : uin,
+
+        };
+         $.ajax({
+            type:'POST',
+            url:'index.php?view=pdf-delivery-period&action=getData',
+            dataType:'json',
+            data: postForm
+        })
+            .done(function(ret) {
+                if (ret.length == 0) {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Не найти запись по UIN</strong>`
+                    );
+                    modal_nw.style.display = "block";
+                    sleep(2000).then(()=>{
+                        modal_nw.style.display = "none";
+                        modal.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });                }
+
+                $.each(ret,function(index,value) {
+
+                    reportId = value['IDReport'];
+                    inpMonth.value = value['Month'];
+                    inpQuarter.value = value['Quarter'];
+                    inpYear.value = value['Year'];
+
+                })
+
+          })
+
+            .fail(function() {
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Не удалось подключиться к базе</strong>`
+                );
+                modal_nw.style.display = "block";
+                sleep(2000).then(()=>{
+                    modal_nw.style.display = "none";
+                    modal.style.display = "none";
+                    $("#message").remove();
+                    location.reload();
+                });
+
+            });
+    };
+
+
+    function SendAjaxData(month, quarter, year) {
+
+        let uin = document.getElementById('uin').value;
+
+        let postForm = {
+            'month'       : month,
+            'quarter'     : quarter,
+            'year'        : year,
+            'reportId'    : reportId,
+
+        };
+        $.ajax({
+            type:'POST',
+            url:'index.php?view=pdf-delivery-period&action=setData',
+            dataType:'json',
+            data: postForm
+        })
+            .done(function(ret) {
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px; position: relative; left: 55px">Сохранено</strong>`
+                );
+                modal_nw.style.display = "block";
+                sleep(2000).then(()=>{
+                    modal_nw.style.display = "none";
+                    modal.style.display = "none";
+                    $("#message").remove();
+                    location.reload();
+                });
+
+
+          })
+
+            .fail(function() {
+
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Не удалось изменить период</strong>`
+                );
+                modal_nw.style.display = "block";
+                sleep(2000).then(()=>{
+                    modal_nw.style.display = "none";
+                    modal.style.display = "none";
+                    $("#message").remove();
+                    location.reload();
+                });
+
+            });
+    };
+
+    document.getElementById("sv_butt").onclick = addWind;
+
+    function addWind() {
+        AjaxData();
+        sleep(1000).then(()=> {
+            modal.style.display = "block";
+            document.getElementById("addLab").style.display = "block";
+            document.getElementById("save_window").onclick = () => {
+                if (inpMonth.value != "" && inpQuarter.value != "") {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Нельзя чтобы поля "Месяц" и "Квартал" были вместе заполнены</strong>`
+                    );
+                    modal_nw.style.display = "block";
+                    sleep(2500).then(() => {
+                        modal_nw.style.display = "none";
+                        modal.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+
+                } else if (inpYear.value < 2015) {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Год должен быть больше или равен 2015</strong>`
+                    );
+                    modal_nw.style.display = "block";
+                    sleep(2500).then(() => {
+                        modal_nw.style.display = "none";
+                        modal.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+                } else if (inpYear.value > date.getFullYear()) {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Год должен быть меньше или равен текущему</strong>`
+                    );
+                    modal_nw.style.display = "block";
+                    sleep(2500).then(() => {
+                        modal_nw.style.display = "none";
+                        modal.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+                } else if (inpYear.value == "") {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Обязательно укажете Год</strong>`
+                    );
+                    modal_nw.style.display = "block";
+                    sleep(2500).then(() => {
+                        modal_nw.style.display = "none";
+                        modal.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+                } else {
+
+                    SendAjaxData(inpMonth.value, inpQuarter.value, inpYear.value);
+
+                }
+
+            };
+            document.getElementById("close_window").onclick = () => modal.style.display = "none";
+        });
+    }
+
+
+</script>
