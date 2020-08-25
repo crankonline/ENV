@@ -110,7 +110,6 @@ SQL;
     public function setData() {
         try {
 
-            if ($_POST) {
                 $month = $_POST['month'] ?? null;
                 $quarter = $_POST['quarter'] ?? null;
                 $year = $_POST['year'] ?? null;
@@ -169,7 +168,6 @@ SQL;
 
                 echo json_encode('success');
                 exit();
-            }
 
             } catch ( \Exception $e ) {
                 \Sentry\captureException( $e );

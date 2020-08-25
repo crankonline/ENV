@@ -104,32 +104,15 @@
         <tr>
             <td><label for="month"><strong class="strong">Месяц:</strong></label></td>
                 <td><select style="width: 180px" name="" id="month">
-                    <option value="">--</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
                 </select><br></td>
            </tr><tr>
             <td><label for="quarter"><strong class="strong">Квартал:</strong></label></td>
                 <td><select  style="width: 180px" name="" id="quarter">
-                    <option value="">--</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
                 </select><br></td>
             </tr><tr>
-                <td><strong class="strong">Год:</strong></td>
-                <td><input style="width: 180px" type="number" onkeydown="limit(this);" onkeyup="limit(this);" id="year"><br></td>
+            <td><label for="year"><strong class="strong">Год:</strong></label></td>
+                <td><select  style="width: 180px" name="" id="year">
+                </select><br></td>
         </tr>
         </table>
         <label id="message_err" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Месяц и квартал не могут быть вместе заполнены.</label>
@@ -153,16 +136,30 @@
     let reportId = '';
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
+    function OptNul(inp) {
+        let optMon = document.createElement('option');
+        optMon.value     =  '';
+        optMon.innerText = '--';
+        inp.appendChild(optMon);
 
-    function limit(element)
-    {
-        let max_chars = 4;
+    }
 
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
+    function Option(min, max, inp) {
+        for (let i = min; i <= max; i++) {
+            let option = document.createElement('option');
+            option.value     = i;
+            option.innerText = i;
+            inp.appendChild(option);
         }
 
     }
+    OptNul(inpMonth);
+    OptNul(inpQuarter);
+
+    Option(1, 12, inpMonth);
+    Option(1, 4, inpQuarter);
+    Option(2015, date.getFullYear(), inpYear);
+
 
     function AjaxData() {
         reportId = '';
@@ -291,29 +288,7 @@
                         location.reload();
                     });
 
-                } else if (inpYear.value < 2015) {
-                    $("#dv_mss").append(
-                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Год должен быть больше или равен 2015</strong>`
-                    );
-                    modal_nw.style.display = "block";
-                    sleep(2500).then(() => {
-                        modal_nw.style.display = "none";
-                        modal.style.display = "none";
-                        $("#message").remove();
-                        location.reload();
-                    });
-                } else if (inpYear.value > date.getFullYear()) {
-                    $("#dv_mss").append(
-                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Год должен быть меньше или равен текущему</strong>`
-                    );
-                    modal_nw.style.display = "block";
-                    sleep(2500).then(() => {
-                        modal_nw.style.display = "none";
-                        modal.style.display = "none";
-                        $("#message").remove();
-                        location.reload();
-                    });
-                } else if (inpYear.value == "") {
+                }  else if (inpYear.value == "") {
                     $("#dv_mss").append(
                         `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Обязательно укажете Год</strong>`
                     );
