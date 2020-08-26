@@ -46,6 +46,7 @@ abstract class Module extends \Unikum\Core\Module {
         AK_SERVICE_ZERO_REPORT            = 'service-zero-report',
 
         AK_MEDIA_SERVER                   = 'media-server',
+        AK_PDF_DELIVERY_PERIOD            = 'pdf-delivery-period',
 
         AK_LOG_TERMINAL                   = 'log-terminal',
 
