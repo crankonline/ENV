@@ -18,9 +18,7 @@ class LogTerminal extends \Environment\Core\Module
 
     private function getPaymentSys() {
         $sql = <<<SQL
-SELECT *
-FROM
-    "Payment"."PaymentSystem" AS "p"
+SELECT * FROM "Payment"."PaymentSystem"
 
 SQL;
 
@@ -74,7 +72,9 @@ SQL;
                 $new_array = array_filter($params, function($element) {
                     return !empty($element);
                 });
-                $new = array();
+
+                $new = [];
+
                 foreach($new_array as $key => $value){
                     $new[0] = $value;
                 }
