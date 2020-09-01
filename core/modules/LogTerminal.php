@@ -16,6 +16,24 @@ class LogTerminal extends \Environment\Core\Module
         ]
     ];
 
+    private function getPaymentSys() {
+        $sql = <<<SQL
+SELECT * FROM "Payment"."PaymentSystem"
+
+SQL;
+
+        $stmt = Connections::getConnection('Pay')->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+
+    }
+
+    private function getType() {
+        $type = array("check", "pay");
+        return $type;
+    }
+
     private function getLog( array $filters, $limit = null, $offset = null  )
     {
         try{
@@ -40,37 +58,45 @@ class LogTerminal extends \Environment\Core\Module
 
                 $params = [];
 
-                if ($filters['type']) {
+                $params[] = null;
 
-                    $params[] = 'AND ("p"."Type" = :f_type)';
+                $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': null;
 
-                } elseif ($filters['paymentSystem']) {
+                $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
 
-                    $params[] = 'AND ("p"."PaymentSystemID" = :f_paymentSystem)';
+                $params[] = ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) ? 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
-                } elseif ($filters['dateMin']) {
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
 
-                    $params[] = 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)';
+                $params[] = (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
+                $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
-                } else {
-                    $params[0] = NULL;
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
+
+                $new_array = array_filter($params, function($element) {
+                    return !empty($element);
+                });
+
+                $new = [];
+
+                foreach($new_array as $key => $value){
+                    $new[0] = $value;
                 }
 
                 $sql = <<<SQL
-SELECT *
+SELECT "p".*, "ps"."Name"
 FROM
     "Payment"."Log" AS "p"
+     INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
 WHERE  "p"."Account" like '%{$filters['account']}%'
-    {$params[0]}
+    {$new[0]}
 ORDER BY 
     "p"."IDLog" DESC,
     "p"."DateTime"
 
 SQL;
-
                 $stmt = Connections::getConnection('Pay')->prepare($sql);
-
 
                 if ($filters['dateMin'] && $filters['type'] && $filters['paymentSystem']) {
                     $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
@@ -84,27 +110,33 @@ SQL;
                     ]);
 
 
-                }  elseif ($filters['paymentSystem']) {
+                }
 
+                if ($filters['paymentSystem'] && !$filters['type'] && !$filters['dateMin']) {
                     $stmt->execute([
                         'f_paymentSystem'   => $filters['paymentSystem']
                     ]);
 
 
-                }  elseif ($filters['type']) {
+                }
+
+                if ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) {
                     $stmt->execute([
                         'f_type'   => $filters['type']
                     ]);
 
 
-                }  elseif ($filters['type'] && $filters['paymentSystem']) {
+                }
+                if ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) {
                      $stmt->execute([
                         'f_type'   => $filters['type'],
                         'f_paymentSystem'   => $filters['paymentSystem']
                     ]);
 
 
-                } elseif ($filters['type'] && $filters['dateMin']) {
+                }
+
+                if ($filters['type'] && $filters['dateMin'] && !$filters['paymentSystem']) {
                     $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
 
                     $stmt->execute([
@@ -114,7 +146,10 @@ SQL;
                     ]);
 
 
-                } elseif ($filters['paymentSystem'] && $filters['dateMin']) {
+                }
+
+                if ($filters['paymentSystem'] && $filters['dateMin'] && !$filters['type']) {
+
                     $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
 
                     $stmt->execute([
@@ -123,7 +158,9 @@ SQL;
                         'f_d_max'  => $premium_date
                     ]);
 
-                } elseif ($filters['dateMin']) {
+                }
+
+                if ($filters['dateMin'] && !$filters['paymentSystem'] && !$filters['type']) {
                     $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
                     $stmt->execute([
                         'f_d_min'  => $filters['dateMin'],
@@ -132,8 +169,8 @@ SQL;
 
                 }
 
-                else {
-
+                if (!$filters['dateMin'] && !$filters['paymentSystem'] && !$filters['type']) {
+                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
                     $stmt->execute([]);
 
                 }
@@ -155,10 +192,10 @@ SQL;
 
 
                 $sql = <<<SQL
-SELECT *
+SELECT "p".*, "ps"."Name"
 FROM
     "Payment"."Log" AS "p"
-    
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"    
 ORDER BY 
     "p"."IDLog" DESC,
     "p"."DateTime"
@@ -186,8 +223,6 @@ SQL;
     }
 
     protected function main() {
-        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-clients-list.css';
         $this->variables->mes = [];
         $this->variables->errors = [];
         $chkFilter =  $_GET['chkFilter'] ?? null;
@@ -197,8 +232,12 @@ SQL;
             $this->variables->account          = $_POST['account'] ?? null;
             $this->variables->dateMin          = $_POST['dateMin'] ?? null;
             $this->variables->dateMax          = $_POST['dateMax'] ?? null;
-            $this->variables->paymentSystem    = $_POST['paymentSystem'] ?? null;
+            $this->variables->paySys    = $_POST['paySys'] ?? null;
             $this->variables->type             = $_POST['type'] ?? null;
+            $this->variables->page             = $_GET['page'] ?? null;
+            $this->variables->PaySys           = $this->getPaymentSys();
+            $this->variables->gtType           = $this->getType();
+
 
 
 
@@ -212,7 +251,7 @@ SQL;
                             [
                             'account' => $_POST['account'],
                             'type' => $_POST['type'],
-                            'paymentSystem' => $_POST['paymentSystem'],
+                            'paymentSystem' => $_POST['paySys'],
                             'dateMin' => $_POST['dateMin'],
                             'dateMax' => $_POST['dateMax'],
                             ],
@@ -220,7 +259,7 @@ SQL;
                         );
 
                         if ($logs) {
-                            $this->variables->logs = $logs;
+                            $this->variables->logs = &$logs;
                         } else {
                             $this->variables->mes[] = 'Не найдено записей';
                         }
@@ -231,7 +270,7 @@ SQL;
                         $this->context->paginator['count'] = (int)ceil($count / $limit);
 
                         $this->variables->count = $count;
-                        $this->variables->logs = $logs;
+                        $this->variables->logs = &$logs;
                     }
 
 
