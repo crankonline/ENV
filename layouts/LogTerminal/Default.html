@@ -41,22 +41,11 @@
                 <label for="type" class="fixed">Type:</label>
                 <select name="type" id="">
                     <option value="">--</option>
-                    <?php  if($type == 'check'): ?>
-                        <option value="check" selected>check</option>
-                        <option value="pay">pay</option>
-                    <?php  elseif($type == 'pay'): ?>
-                        <option value="check">check</option>
-                        <option value="pay" selected>pay</option>
-                    <?php  else: ?>
-                        <option value="check">check</option>
-                        <option value="pay">pay</option>
-                    <?php  endif; ?>
-                </select>
-<!--                <input style="padding: 10px; font-size: 16px; color: #000; min-width: 210px; outline: none;" name="type" min="1" max="4" list="lst" placeholder="Type..." value="<?php echo $type; ?>">
-                <datalist id="lst">
-                    <option value="check">check</option>
-                    <option value="pay">pay</option>
-                </datalist>-->
+                    <?php foreach($gtType as $sys): ?>
+                    <option value="<?php echo $sys; ?>"<?php echo $sys == $type ? ' selected' : ''; ?>><?php
+                            echo  htmlspecialchars($sys); ?></option>
+                    <?php endforeach; ?>
+                  </select>
             </div>
             <div class="field buttons">
             <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" >&nbsp;
@@ -114,9 +103,8 @@
                     ?></td>
 
             <td class="left" ><?php $str = json_encode(json_decode($log['Content']), JSON_PRETTY_PRINT);
-                                 $str = str_replace("{", "", $str);
-                                 $str = str_replace("}", "", $str);
-                        echo str_replace("\n", "<br>", $str);
+                                 $vowels = array("{", "}", "\n");
+                        echo str_replace($vowels, "<br>", $str);
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($log['IP']);

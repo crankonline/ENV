@@ -29,6 +29,11 @@ SQL;
 
     }
 
+    private function getType() {
+        $type = array("check", "pay");
+        return $type;
+    }
+
     private function getLog( array $filters, $limit = null, $offset = null  )
     {
         try{
@@ -53,6 +58,8 @@ SQL;
 
                 $params = [];
 
+                $params[] = null;
+
                 $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': null;
 
                 $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
@@ -66,8 +73,6 @@ SQL;
                 $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
                 $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
-
-                $params[] = (!$filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? null : null;
 
                 $new_array = array_filter($params, function($element) {
                     return !empty($element);
@@ -230,8 +235,9 @@ SQL;
             $this->variables->paySys    = $_POST['paySys'] ?? null;
             $this->variables->type             = $_POST['type'] ?? null;
             $this->variables->page             = $_GET['page'] ?? null;
-         /*   var_dump($this->getPaymentSys());die();*/
             $this->variables->PaySys           = $this->getPaymentSys();
+            $this->variables->gtType           = $this->getType();
+
 
 
 
