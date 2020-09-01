@@ -55,52 +55,28 @@ SQL;
 
                 $params = [];
 
-                if ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) {
+                $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': NULL;
 
-                    $params[] = 'AND ("p"."Type" = :f_type)';
+                $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
 
-                }
+                $params[] = ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) ? 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
 
-                if ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) {
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
 
-                    $params[] = 'AND ("p"."PaymentSystemID" = :f_paymentSystem)';
+                $params[] = (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
 
-                }
+                $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
 
-                if ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) {
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
 
-                    $params[] = 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)';
+                $params[] = (!$filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? NULL : NULL;
 
-                }
-
-                if ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) {
-
-                    $params[] = 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)';
-
-                }
-
-                if (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) {
-
-                    $params[] = 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)';
-
-                }
-
-                if ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) {
-
-                    $params[] = 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)';
-
-                }
-
-                if ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) {
-
-                    $params[] = 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)';
-
-                }
-
-                if (!$filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) {
-
-                    $params[0] = NULL;
-
+                $new_array = array_filter($params, function($element) {
+                    return !empty($element);
+                });
+                $new = array();
+                foreach($new_array as $key => $value){
+                    $new[0] = $value;
                 }
 
                 $sql = <<<SQL
@@ -109,15 +85,13 @@ FROM
     "Payment"."Log" AS "p"
      INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
 WHERE  "p"."Account" like '%{$filters['account']}%'
-    {$params[0]}
+    {$new[0]}
 ORDER BY 
     "p"."IDLog" DESC,
     "p"."DateTime"
 
 SQL;
-/*var_dump($sql);die;*/
                 $stmt = Connections::getConnection('Pay')->prepare($sql);
-
 
                 if ($filters['dateMin'] && $filters['type'] && $filters['paymentSystem']) {
                     $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
@@ -244,9 +218,6 @@ SQL;
     }
 
     protected function main() {
-/*        $this->context->css[] = 'resources/css/ui-misc-form.css';
-        $this->context->css[] = 'resources/css/ui-misc-stripes.css';
-        $this->context->css[] = 'resources/css/ui-representatives-search.css';*/
         $this->variables->mes = [];
         $this->variables->errors = [];
         $chkFilter =  $_GET['chkFilter'] ?? null;
