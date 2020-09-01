@@ -53,21 +53,21 @@ SQL;
 
                 $params = [];
 
-                $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': NULL;
+                $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': null;
 
-                $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
+                $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
 
-                $params[] = ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) ? 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
+                $params[] = ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) ? 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
-                $params[] = ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
 
-                $params[] = (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
+                $params[] = (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
-                $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': NULL;
+                $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
 
-                $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': NULL;
+                $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
 
-                $params[] = (!$filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? NULL : NULL;
+                $params[] = (!$filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? null : null;
 
                 $new_array = array_filter($params, function($element) {
                     return !empty($element);
