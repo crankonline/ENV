@@ -33,6 +33,7 @@ class SochiZeroReport extends \Environment\Core\Module {
                 CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
                 CURLOPT_CONNECTTIMEOUT => 1200,    // time-out on connect
                 CURLOPT_TIMEOUT        => 1200,    // time-out on response
+                CURLOPT_SSL_VERIFYPEER => false,   // no ssl
             );
 
             $ch = curl_init($url);
