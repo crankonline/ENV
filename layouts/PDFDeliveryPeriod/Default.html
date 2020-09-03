@@ -117,9 +117,11 @@
                 </select><br></td>
         </tr>
         </table>
-        <label id="message_err" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Месяц и квартал не могут быть вместе заполнены.</label>
+
         <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить"><br>
-        <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
+        <div align="center" id="save_lab" class="save_lab" style="top: 0.6em; color: #008d00;  font-size: 22px; display: none">Сохранено</div>
+      <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
+
     </div>
 </div>
 <br><div class="failure" id="error" style="display: none"></div>
@@ -137,6 +139,9 @@
     let inpQuarter = document.getElementById("quarter");
     let inpYear = document.getElementById("year");
     let err_dub = document.getElementById("err_dub");
+    let save_window = document.getElementById("save_window");
+    let close_window = document.getElementById("close_window");
+    let save_lab = document.getElementById("save_lab");
     let reportId = '';
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
@@ -235,14 +240,31 @@
             data: postForm
         })
             .done(function(ret) {
-                $("#dv_mss").append(
-                    `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px; position: relative; left: 55px">Сохранено</strong>`
-                );
-                modal_nw.style.display = "block";
-                sleep(2000).then(()=>{
-                    modal_nw.style.display = "none";
+                save_window.style.display = "none";
+
+
+                close_window.style.display = "none";
+                save_lab.style.display = "block";
+                save_lab.style.position = "relative";
+                save_lab.style.left = "50%";
+
+                save_lab.style.transform = "translate(-50%, 0)";
+                save_lab.style.top = "-20px";
+
+                sleep(2500).then(()=>{
+                   save_lab.style.display = "none";
+                    save_window.style.display = "block";
+                    close_window.style.display = "block";
+                    save_window.style.position = "relative";
+                    save_window.style.left = "50%";
+
+                    save_window.style.transform = "translate(-50%, 0)";
+                    save_window.style.top = "10px";
+                    close_window.style.position = "relative";
+                    close_window.style.left = "50%";
+                    close_window.style.transform = "translate(-50%, 0)";
+                    close_window.style.bottom = "15px";
                     modal.style.display = "none";
-                    $("#message").remove();
 
                 });
           })
@@ -270,8 +292,8 @@
             document.getElementById("save_window").onclick = () => {
                 if (inpMonth.value != "" && inpQuarter.value != "") {
                     err_dub.style.display = "block";
-                    inpMonth.style.border="solid red";
-                    inpQuarter.style.border="solid red";
+                    inpMonth.style.border="0.2px solid red";
+                    inpQuarter.style.border=" 0.2px solid red";
                     sleep(2500).then(() => {
                         err_dub.style.display = "none";
                         inpMonth.style.border="0.2px solid black";
