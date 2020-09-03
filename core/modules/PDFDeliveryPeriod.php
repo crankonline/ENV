@@ -4,7 +4,7 @@ namespace Environment\Modules;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
-class PDFDeliferyPeriod extends \Environment\Core\Module {
+class PDFDeliveryPeriod extends \Environment\Core\Module {
     protected $config = [
         'template' => 'layouts/PDFDeliferyPeriod/Default.html',
         'listen'   => 'action'
