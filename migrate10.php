@@ -30,7 +30,7 @@ SQL;
         $stmt->execute( [
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "pdf-delivery-period",
-            'handleClass' => "PDFDeliferyPeriod",
+            'handleClass' => "PDFDeliveryPeriod",
             'namemg' => "PDF период сдачи",
             'isEntryPoint' => true
         ] );
