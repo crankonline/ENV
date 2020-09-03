@@ -89,21 +89,23 @@
         <input type="text" name="uin" id="uin" style="width: 475px" maxlength="49" placeholder="введите UIN" value="<?php echo $cUin; ?>">
         <span class="hint">Уникальный межсистемный идентификатор документа, 49 цифр.</span>
     </div>
-
+    <div class="field buttons">
+        <input type="submit" class="button" id="sv_butt" value="Поиск" />
+    </div>
 
 </form>
 
-<div class="field buttons">
-    <input type="submit" class="button" id="sv_butt" value="Поиск" />
-</div>
+
 <div id="my_modal" class="modal">
     <div class="modal_content">
         <label id="addLab" >Период</label>
         <br>
+
+        <label align="center" id="err_dub" class="err_dub" style="top: 0.6em; color: red;  font-size: 16px; display: none">Нельзя заполнять месяц и квартал одновременно</label>
         <table align="center" style="">
         <tr>
             <td><label for="month"><strong class="strong">Месяц:</strong></label></td>
-                <td><select style="width: 180px" name="" id="month">
+                <td><select  style="width: 180px" name="" id="month">
                 </select><br></td>
            </tr><tr>
             <td><label for="quarter"><strong class="strong">Квартал:</strong></label></td>
@@ -120,6 +122,7 @@
         <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
     </div>
 </div>
+<br><div class="failure" id="error" style="display: none"></div>
 <div id="my_modal_nw" class="modal_nw">
     <div class="modal_content" id="dv_mss">
     </div>
@@ -127,12 +130,13 @@
 
 <script>
     date = new Date();
-
+    let err = document.getElementById("error");
     let modal = document.getElementById("my_modal");
     let modal_nw = document.getElementById("my_modal_nw");
     let inpMonth = document.getElementById("month");
     let inpQuarter = document.getElementById("quarter");
     let inpYear = document.getElementById("year");
+    let err_dub = document.getElementById("err_dub");
     let reportId = '';
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
@@ -160,15 +164,13 @@
     Option(1, 4, inpQuarter);
     Option(2015, date.getFullYear(), inpYear);
 
-
     function AjaxData() {
         reportId = '';
         inpMonth.value = '';
         inpQuarter.value = '';
         inpYear.value = '';
 
-
-        let uin = document.getElementById('uin').value;
+            let uin = document.getElementById('uin').value;
 
         let postForm = {
             'uin'     : uin,
@@ -182,16 +184,13 @@
         })
             .done(function(ret) {
                 if (ret.length == 0) {
-                    $("#dv_mss").append(
-                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Не найти запись по UIN</strong>`
+                    err.innerHTML = '';
+                    err.append(
+                        `UIN не найден`
                     );
-                    modal_nw.style.display = "block";
-                    sleep(2000).then(()=>{
-                        modal_nw.style.display = "none";
-                        modal.style.display = "none";
-                        $("#message").remove();
-                        location.reload();
-                    });                }
+                    err.style.display = "block";
+                    return false;
+                }
 
                 $.each(ret,function(index,value) {
 
@@ -200,24 +199,22 @@
                     inpQuarter.value = value['Quarter'];
                     inpYear.value = value['Year'];
 
-                })
+                });
+                err.style.display = "none";
 
+                openWind();
           })
 
             .fail(function() {
-                $("#dv_mss").append(
-                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Не удалось подключиться к базе</strong>`
+                err.append(
+                    `Ошибка подключения к базе`
                 );
-                modal_nw.style.display = "block";
-                sleep(2000).then(()=>{
-                    modal_nw.style.display = "none";
-                    modal.style.display = "none";
-                    $("#message").remove();
-                    location.reload();
-                });
+                err.style.display = "block";
+                return false;
 
             });
-    };
+
+    }
 
 
     function SendAjaxData(month, quarter, year) {
@@ -246,10 +243,8 @@
                     modal_nw.style.display = "none";
                     modal.style.display = "none";
                     $("#message").remove();
-                    location.reload();
+
                 });
-
-
           })
 
             .fail(function() {
@@ -262,33 +257,29 @@
                     modal_nw.style.display = "none";
                     modal.style.display = "none";
                     $("#message").remove();
-                    location.reload();
                 });
 
             });
-    };
+    }
 
     document.getElementById("sv_butt").onclick = addWind;
-
-    function addWind() {
-        AjaxData();
-        sleep(1000).then(()=> {
+    function openWind() {
+        sleep(1000).then(() => {
             modal.style.display = "block";
             document.getElementById("addLab").style.display = "block";
             document.getElementById("save_window").onclick = () => {
                 if (inpMonth.value != "" && inpQuarter.value != "") {
-                    $("#dv_mss").append(
-                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Нельзя чтобы поля "Месяц" и "Квартал" были вместе заполнены</strong>`
-                    );
-                    modal_nw.style.display = "block";
+                    err_dub.style.display = "block";
+                    inpMonth.style.border="solid red";
+                    inpQuarter.style.border="solid red";
                     sleep(2500).then(() => {
-                        modal_nw.style.display = "none";
-                        modal.style.display = "none";
-                        $("#message").remove();
-                        location.reload();
+                        err_dub.style.display = "none";
+                        inpMonth.style.border="0.2px solid black";
+                        inpQuarter.style.border="0.2px solid black";
+                        return false;
                     });
 
-                }  else if (inpYear.value == "") {
+                } else if (inpYear.value == "") {
                     $("#dv_mss").append(
                         `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Обязательно укажете Год</strong>`
                     );
@@ -308,6 +299,11 @@
             };
             document.getElementById("close_window").onclick = () => modal.style.display = "none";
         });
+    }
+
+    function addWind() {
+        AjaxData();
+        return false;
     }
 
 
