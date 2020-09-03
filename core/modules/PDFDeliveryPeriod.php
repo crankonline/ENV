@@ -6,7 +6,7 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class PDFDeliveryPeriod extends \Environment\Core\Module {
     protected $config = [
-        'template' => 'layouts/PDFDeliferyPeriod/Default.html',
+        'template' => 'layouts/PDFDeliveryPeriod/Default.html',
         'listen'   => 'action'
     ];
 
