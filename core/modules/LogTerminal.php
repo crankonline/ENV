@@ -2,7 +2,10 @@
 
 namespace Environment\Modules;
 
+
 use Unikum\Core\Dbms\ConnectionManager as Connections;
+use Environment\Modules\PayFilter as PayFilter;
+
 
 class LogTerminal extends \Environment\Core\Module
 {
@@ -34,6 +37,58 @@ SQL;
         return $type;
     }
 
+    private function getTypeSel($value) {
+
+        $values['f_type'] = $value['type'];
+
+        $params[] = 'WHERE "p"."Type" = :f_type';
+
+        $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Log" AS "p"
+     INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
+WHERE  
+    {$params[0]}
+ORDER BY 
+    "p"."IDLog" DESC,
+    "p"."DateTime"
+
+SQL;
+        $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+        $stmt->execute($values);
+
+        return $stmt->fetchAll();
+    }
+
+    private function getPaySys($value) {
+
+        $values['f_paymentSystem'] = $value;
+
+        $params[] = 'WHERE "p"."PaymentSystemID" = :f_paymentSystem';
+
+        $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Log" AS "p"
+     INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
+WHERE  
+    {$params[0]}
+ORDER BY 
+    "p"."IDLog" DESC,
+    "p"."DateTime"
+
+SQL;
+        $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+        $stmt->execute($values);
+
+        return  $stmt->fetchAll();
+
+    }
+
+
     private function getLog( array $filters, $limit = null, $offset = null  )
     {
         try{
@@ -56,126 +111,69 @@ SQL;
 
             if ($filters){
 
-                $params = [];
 
-                $params[] = null;
 
-                $params[] = ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type)': null;
-
-                $params[] = ($filters['paymentSystem']  && !$filters['type'] && !$filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
-
-                $params[] = ($filters['dateMin'] && !$filters['type'] && !$filters['paymentSystem']) ? 'AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
-
-                $params[] = ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
-
-                $params[] = (!$filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."PaymentSystemID" = :f_paymentSystem) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
-
-                $params[] =  ($filters['type'] && !$filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)': null;
-
-                $params[] = ($filters['type'] && $filters['paymentSystem'] && $filters['dateMin']) ? 'AND ("p"."Type" = :f_type) AND ("p"."DateTime" BETWEEN :f_d_min AND :f_d_max) AND ("p"."PaymentSystemID" = :f_paymentSystem)': null;
-
-                $new_array = array_filter($params, function($element) {
+                $new_array = array_filter($filters, function($element) {
                     return !empty($element);
                 });
 
-                $new = [];
 
-                foreach($new_array as $key => $value){
-                    $new[0] = $value;
-                }
+                if ($new_array['account'] && !$new_array['type'] && !$new_array['paymentSystem']) {
 
-                $sql = <<<SQL
-SELECT "p".*, "ps"."Name"
-FROM
-    "Payment"."Log" AS "p"
-     INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
-WHERE  "p"."Account" like '%{$filters['account']}%'
-    {$new[0]}
-ORDER BY 
-    "p"."IDLog" DESC,
-    "p"."DateTime"
-
-SQL;
-                $stmt = Connections::getConnection('Pay')->prepare($sql);
-
-                if ($filters['dateMin'] && $filters['type'] && $filters['paymentSystem']) {
-                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
-                    $stmt->execute([
-
-                        'f_d_min'  => $filters['dateMin'],
-                        'f_d_max'  => $premium_date,
-                        'f_type'   => $filters['type'],
-                        'f_paymentSystem'   => $filters['paymentSystem']
-
-                    ]);
-
+                    $account = new  PayFilter\Account();
+                    $account->setParams($new_array);
 
                 }
 
-                if ($filters['paymentSystem'] && !$filters['type'] && !$filters['dateMin']) {
-                    $stmt->execute([
-                        'f_paymentSystem'   => $filters['paymentSystem']
-                    ]);
+                if ($new_array['account'] && $new_array['type'] && !$new_array['paymentSystem']) {
 
-
-                }
-
-                if ($filters['type'] && !$filters['paymentSystem'] && !$filters['dateMin']) {
-                    $stmt->execute([
-                        'f_type'   => $filters['type']
-                    ]);
-
-
-                }
-                if ($filters['type'] && $filters['paymentSystem'] && !$filters['dateMin']) {
-                     $stmt->execute([
-                        'f_type'   => $filters['type'],
-                        'f_paymentSystem'   => $filters['paymentSystem']
-                    ]);
-
+                    $account = new  PayFilter\AccountAndDateAndType();
+                    $account->setParams($new_array);
 
                 }
 
-                if ($filters['type'] && $filters['dateMin'] && !$filters['paymentSystem']) {
-                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
+                if ($new_array['account'] && !$new_array['type'] && $new_array['paymentSystem']) {
 
-                    $stmt->execute([
-                        'f_type'   => $filters['type'],
-                        'f_d_min'  => $filters['dateMin'],
-                        'f_d_max'  => $premium_date
-                    ]);
-
+                    $account = new  PayFilter\AccountAndDateAndPaySys();
+                    $account->setParams($new_array);
 
                 }
 
-                if ($filters['paymentSystem'] && $filters['dateMin'] && !$filters['type']) {
+                if ($new_array['account'] && $new_array['type'] && $new_array['paymentSystem']) {
 
-                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
-
-                    $stmt->execute([
-                        'f_paymentSystem'   => $filters['paymentSystem'],
-                        'f_d_min'  => $filters['dateMin'],
-                        'f_d_max'  => $premium_date
-                    ]);
+                    $account = new  PayFilter\AccountAndDateAndPaySysAndType();
+                    $account->setParams($new_array);
 
                 }
 
-                if ($filters['dateMin'] && !$filters['paymentSystem'] && !$filters['type']) {
-                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
-                    $stmt->execute([
-                        'f_d_min'  => $filters['dateMin'],
-                        'f_d_max'  => $premium_date
-                    ]);
+                if (!$new_array['account'] && $new_array['type'] && $new_array['paymentSystem']) {
+
+                    $account = new  PayFilter\PaySysAndDateAndType();
+                    $account->setParams($new_array);
 
                 }
 
-                if (!$filters['dateMin'] && !$filters['paymentSystem'] && !$filters['type']) {
-                    $premium_date = date("Y-m-d", strtotime("+1 days", strtotime($filters['dateMax'])));
-                    $stmt->execute([]);
+                if (!$new_array['account'] && !$new_array['type'] && $new_array['paymentSystem']) {
+
+                    $account = new  PayFilter\PaySysAndDate();
+                    $account->setParams($new_array);
 
                 }
 
-                $rows =  $stmt->fetchAll();
+                if (!$new_array['account'] && $new_array['type'] && !$new_array['paymentSystem']) {
+
+                    $account = new  PayFilter\DateAndType();
+                    $account->setParams($new_array);
+
+                }
+
+                if (!$new_array['account'] && !$new_array['type'] && !$new_array['paymentSystem']) {
+
+                    $account = new  PayFilter\Date();
+                    $account->setParams($new_array);
+
+                }
+                $rows = $account->geRes();
 
             } else {
                 $sql  = <<<SQL
@@ -225,21 +223,21 @@ SQL;
     protected function main() {
         $this->variables->mes = [];
         $this->variables->errors = [];
-        $chkFilter =  $_GET['chkFilter'] ?? null;
+        $chkFilter =  $_GET['btn_submit'] ?? null;
 
         try {
 
-            $this->variables->account          = $_POST['account'] ?? null;
-            $this->variables->dateMin          = $_POST['dateMin'] ?? null;
-            $this->variables->dateMax          = $_POST['dateMax'] ?? null;
-            $this->variables->paySys    = $_POST['paySys'] ?? null;
-            $this->variables->type             = $_POST['type'] ?? null;
+            $this->variables->account          = $_GET['account'] ?? null;
+            $this->variables->dateMin          = $_GET['dateMin'] ?? null;
+            $this->variables->dateMax          = $_GET['dateMax'] ?? null;
+            $this->variables->paySys    = $_GET['paySys'] ?? null;
+            $this->variables->type             = $_GET['type'] ?? null;
             $this->variables->page             = $_GET['page'] ?? null;
             $this->variables->PaySys           = $this->getPaymentSys();
             $this->variables->gtType           = $this->getType();
 
-
-
+            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
+            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
 
             $page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
             $limit  = self::ROWS_PER_PAGE;
@@ -247,13 +245,14 @@ SQL;
 
                    if ($chkFilter)
                     {
+
                         list($count, $logs) = $this->getLog(
                             [
-                            'account' => $_POST['account'],
-                            'type' => $_POST['type'],
-                            'paymentSystem' => $_POST['paySys'],
-                            'dateMin' => $_POST['dateMin'],
-                            'dateMax' => $_POST['dateMax'],
+                            'account' => $_GET['account'],
+                            'type' => $_GET['type'],
+                            'paymentSystem' => $_GET['paySys'],
+                            'dateMin' => $dateMin,
+                            'dateMax' => $dateMax,
                             ],
                             $limit, $offset
                         );

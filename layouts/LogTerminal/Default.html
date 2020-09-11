@@ -11,7 +11,9 @@
 <?php endforeach; ?>
 <?php return; ?>
 <?php endif; ?>
-        <form class="form" id="form_filter" action="index.php?view=<?php echo $this::AK_LOG_TERMINAL; ?>&chkFilter=true" method="POST">
+        <form class="form" id="form_filter" action="index.php" method="GET">
+            <input type="hidden" name="view" value="<?php echo $this::AK_LOG_TERMINAL; ?>" />
+
             <div class="caption">Параметры поиска</div>
             <div class="field">
                 <label for="account" class="fixed">Account:</label>
