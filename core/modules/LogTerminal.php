@@ -236,8 +236,8 @@ SQL;
             $this->variables->PaySys           = $this->getPaymentSys();
             $this->variables->gtType           = $this->getType();
 
-            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'] : date('Y-m-01 00:00:00');
-            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'] : date('Y-m-d  23:59:59');
+            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
+            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
 
             $page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
             $limit  = self::ROWS_PER_PAGE;
