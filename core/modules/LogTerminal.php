@@ -111,7 +111,7 @@ SQL;
 
             if ($filters){
 
-
+                $count = '';
 
                 $new_array = array_filter($filters, function($element) {
                     return !empty($element);
@@ -119,14 +119,12 @@ SQL;
 
 
                 if ($new_array['account'] && !$new_array['type'] && !$new_array['paymentSystem']) {
-
                     $account = new  PayFilter\Account();
                     $account->setParams($new_array);
 
                 }
 
                 if ($new_array['account'] && $new_array['type'] && !$new_array['paymentSystem']) {
-
                     $account = new  PayFilter\AccountAndDateAndType();
                     $account->setParams($new_array);
 
@@ -140,7 +138,6 @@ SQL;
                 }
 
                 if ($new_array['account'] && $new_array['type'] && $new_array['paymentSystem']) {
-
                     $account = new  PayFilter\AccountAndDateAndPaySysAndType();
                     $account->setParams($new_array);
 
@@ -227,17 +224,21 @@ SQL;
 
         try {
 
-            $this->variables->account          = $_GET['account'] ?? null;
+            $account =  $_GET['account'] ?? null;
+            $paySys =  $_GET['paySys'] ?? null;
+            $type =  $_GET['type'] ?? null;
+            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
+            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
+
+
+            $this->variables->account          = $account;
             $this->variables->dateMin          = $_GET['dateMin'] ?? null;
             $this->variables->dateMax          = $_GET['dateMax'] ?? null;
-            $this->variables->paySys    = $_GET['paySys'] ?? null;
-            $this->variables->type             = $_GET['type'] ?? null;
+            $this->variables->paySysD           = $paySys;
+            $this->variables->type             = $type;
             $this->variables->page             = $_GET['page'] ?? null;
             $this->variables->PaySys           = $this->getPaymentSys();
             $this->variables->gtType           = $this->getType();
-
-            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
-            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
 
             $page   = isset( $_GET['page'] ) ? ( abs( (int) $_GET['page'] ) ?: 1 ) : 1;
             $limit  = self::ROWS_PER_PAGE;
@@ -248,9 +249,9 @@ SQL;
 
                         list($count, $logs) = $this->getLog(
                             [
-                            'account' => $_GET['account'],
-                            'type' => $_GET['type'],
-                            'paymentSystem' => $_GET['paySys'],
+                            'account' => $account,
+                            'type' => $type,
+                            'paymentSystem' => $paySys,
                             'dateMin' => $dateMin,
                             'dateMax' => $dateMax,
                             ],

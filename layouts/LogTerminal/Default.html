@@ -34,7 +34,7 @@
                     <select name="paySys" id="paySys" style="padding: 10px; font-size: 16px; color: #000; min-width: 215px; outline: none; position: relative; left: 0px">
                         <option value="">--</option>
                         <?php foreach($PaySys as $sys):  ?>
-                        <option value="<?php echo $sys['IDPaymentSystem']; ?>"<?php echo $sys['IDPaymentSystem'] == $paySys ? ' selected' : ''; ?>><?php
+                        <option value="<?php echo $sys['IDPaymentSystem']; ?>"<?php echo $sys['IDPaymentSystem'] == $paySysD ? ' selected' : ''; ?>><?php
                             echo  htmlspecialchars($sys['Name']); ?></option>
                         <?php endforeach; ?>
                   </select>
