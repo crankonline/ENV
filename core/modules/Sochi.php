@@ -185,7 +185,10 @@ SELECT
     "r"."period_month" as "period-month",
     "r"."period_year"  as "period-year",
     "s"."id" as "status-id",
-    "s"."name" as "status"
+    "s"."name" as "status",
+    "sfrp".code as "code",
+    "sfrp".name as "region"
+    
 FROM
     "sf_reporting"."pass_reports" as "r"
         INNER JOIN (
@@ -218,6 +221,9 @@ FROM
                 'Принят'
         ) as "s"
             ON ("r"."status" = "s"."id")
+        INNER JOIN "sf_reporting"."salary" as "sfrp"
+            ON ("r"."region" = "sfrp"."code")
+
 WHERE
     ("r"."uid" = :uid)
     OR
