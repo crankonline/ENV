@@ -81,7 +81,7 @@
         <?php endforeach; ?>
         <?php endif; ?>
 
-        <?php if($logs): ?>
+        <?php if(!empty($logs)): ?>
         <?php foreach($logs as $index => &$log): ?>
 
         <tr id="tr-file">
@@ -137,7 +137,7 @@
     </table>
 </div>
 <br><br><br>
-<?php   if($count):  ?>
+<?php   if(!empty($count)):  ?>
 <div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
 <?php endif; ?>
 

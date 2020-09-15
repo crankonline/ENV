@@ -111,6 +111,8 @@ SQL;
 
             if ($filters){
 
+
+
                 $count = '';
 
                 $new_array = array_filter($filters, function($element) {
@@ -118,53 +120,53 @@ SQL;
                 });
 
 
-                if ($new_array['account'] && !$new_array['type'] && !$new_array['paymentSystem']) {
+                if ($filters['account'] && !$filters['type'] && !$filters['paymentSystem']) {
                     $account = new  PayFilter\Account();
                     $account->setParams($new_array);
 
                 }
 
-                if ($new_array['account'] && $new_array['type'] && !$new_array['paymentSystem']) {
+                if ($filters['account'] && $filters['type'] && !$filters['paymentSystem']) {
                     $account = new  PayFilter\AccountAndDateAndType();
                     $account->setParams($new_array);
 
                 }
 
-                if ($new_array['account'] && !$new_array['type'] && $new_array['paymentSystem']) {
+                if ($filters['account'] && !$filters['type'] && $filters['paymentSystem']) {
 
                     $account = new  PayFilter\AccountAndDateAndPaySys();
                     $account->setParams($new_array);
 
                 }
 
-                if ($new_array['account'] && $new_array['type'] && $new_array['paymentSystem']) {
+                if ($filters['account'] && $filters['type'] && $filters['paymentSystem']) {
                     $account = new  PayFilter\AccountAndDateAndPaySysAndType();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$new_array['account'] && $new_array['type'] && $new_array['paymentSystem']) {
+                if (!$filters['account'] && $filters['type'] && $filters['paymentSystem']) {
 
                     $account = new  PayFilter\PaySysAndDateAndType();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$new_array['account'] && !$new_array['type'] && $new_array['paymentSystem']) {
+                if (!$filters['account'] && !$filters['type'] && $filters['paymentSystem']) {
 
                     $account = new  PayFilter\PaySysAndDate();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$new_array['account'] && $new_array['type'] && !$new_array['paymentSystem']) {
+                if (!$filters['account'] && $filters['type'] && !$filters['paymentSystem']) {
 
                     $account = new  PayFilter\DateAndType();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$new_array['account'] && !$new_array['type'] && !$new_array['paymentSystem']) {
+                if (!$filters['account'] && !$filters['type'] && !$filters['paymentSystem']) {
 
                     $account = new  PayFilter\Date();
                     $account->setParams($new_array);
@@ -227,8 +229,8 @@ SQL;
             $account =  $_GET['account'] ?? null;
             $paySys =  $_GET['paySys'] ?? null;
             $type =  $_GET['type'] ?? null;
-            $dateMin = $_GET['dateMin'] ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
-            $dateMax = $_GET['dateMax'] ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
+            $dateMin = !empty($_GET['dateMin']) ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
+            $dateMax = !empty($_GET['dateMax']) ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
 
 
             $this->variables->account          = $account;
