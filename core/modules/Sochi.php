@@ -187,7 +187,9 @@ SELECT
     "s"."id" as "status-id",
     "s"."name" as "status",
     "sfrp".code as "code",
-    "sfrp".name as "region"
+    "sfrp".name as "region",
+    "sti".code as "code_new",
+    "sti".name as "region_new"
     
 FROM
     "sf_reporting"."pass_reports" as "r"
@@ -221,8 +223,10 @@ FROM
                 'Принят'
         ) as "s"
             ON ("r"."status" = "s"."id")
-        INNER JOIN "sf_reporting"."salary" as "sfrp"
+        LEFT OUTER JOIN "sf_reporting"."salary" as "sfrp"
             ON ("r"."region" = "sfrp"."code")
+        LEFT OUTER JOIN "sti_reporting"."region" as "sti"
+            ON ("r"."region" = "sti"."code")
 
 WHERE
     ("r"."uid" = :uid)
