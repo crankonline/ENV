@@ -1,0 +1,503 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery-3.5.1.js"></script>
+<link rel="stylesheet" href="resources/css/ui-misc-form.css">
+<link rel="stylesheet" href="resources/css/ui-misc-stripes.css">
+<link rel="stylesheet" href="resources/css/ui-representatives-search.css">
+
+<style>
+    .butt-add {
+        position: relative;
+        right: 46.8%;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal .modal_content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+        z-index: 99999;
+    }
+    .modal .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .modal .button {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .modal #inpt_name {
+        margin: 5px;
+        width: 180px;
+        border: 1px solid #888;
+    }
+
+    .modal .strong {
+        font-size: 17px;
+        color: #080808;
+    }
+    .modal .mt {
+        font-size: 20px;
+
+    }
+</style>
+
+<input type="submit" name="add-payment-service" id="add-payment-service" class="button butt-add" value="Добавить">
+
+
+<div id="my_modal" class="modal">
+    <form class="form" id="form" action="index.php" method="GET">
+        <input type="hidden" name="view" value="<?php echo $this::AK_PAYMENT_SERVICE; ?>" />
+
+        <div class="modal_content" id="modal_content">
+            <label id="editLab" style="display: none; position: relative; left: 25%">Редактирование</label>
+            <label id="addLab" style="display: none; position: relative; left: 40%">Добавить</label>
+            <label align="center" id="err_dub" class="err_dub" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Заполните все поля</label>
+            <label align="center" id="err_suc" class="err_suc" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Не удалось добавить запись</label>
+            <table align="center" style="">
+                <tr>
+                    <td id="inpt_name_td" style="position: relative; right: 23%">
+                        <strong class="strong">Наименование:</strong>
+                        <input type="text" name="inpt_name" id="inpt_name"><br>
+                     </td>
+                </tr>
+                <tr>
+                    <td id="inpt_name_token">
+                         <strong class="strong">Токен:</strong>
+                         <input type="text" name="inpt-token" id="inpt-token"><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="ip-td" style="position: relative; left: 9%">
+                        <strong  class="strong">IP:</strong>
+                        <input type="text" name="inpt-ip" id="inpt-ip"><br>
+                    </td>
+                </tr>
+                <tr id="add-tr" style="position: relative; left: 14%">
+
+                <tr id="inp0" style="position: relative; left: 14%">
+                </tr>
+                </tr>
+                <tr>
+                    <td style="position: relative; left: 5%">
+                        <div class="add">
+                        <input type="button" name="add-ip" id="add-ip" class="button" value="+" style=" min-width: 33px; font-size: 22px; "><br>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" style="position: relative; left: 37%" name="save_window" id="save_window" class="button" value="Сохранить"><br>
+            <input type="reset" style="position: relative; left: 37%" name="close_window" id="close_window" class="button" value="Закрыть">
+            <div align="center" id="save_lab" class="save_lab" style=" position: relative; top: 0.6em; right: 30px; color: #008d00;  font-size: 22px; display: none">Сохранено</div>
+        </div>
+    </form>
+</div>
+
+<br>
+<br>
+
+<div class="" id="divSticky">
+    <table  id="table-id" class=" data  myTable">
+        <thead>
+        <tr>
+
+            <th class="center" >ID</th>
+            <th class="center" >Наименование:</th>
+            <th class="center" >Токен:</th>
+            <th class="center" >IP:</th>
+            <th class="center" ></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php if($paymentSystem): ?>
+        <?php foreach($paymentSystem as $paySys): ?>
+        <tr>
+
+            <td class="center"><?php
+                               echo htmlspecialchars($paySys['IDPaymentSystem']);
+                            ?></td>
+            <td class="center"><?php
+                               echo htmlspecialchars($paySys['Name']);
+                            ?></td>
+            <td class="center"><?php
+                               echo htmlspecialchars($paySys['Token']);
+                            ?></td>
+            <td class="center">
+                <a  id="href_file" href="index.php?view=<?php echo $this::AK_PAYMENT_SERVICE; ?>&idPaySys=<?php echo $paySys['IDPaymentSystem']; ?>&paySysName=<?php echo $paySys['Name']; ?>">Просмотр</a>
+            </td>
+
+            <td class="center"><a href= 'javascript:clickFunction(<?php echo json_encode($paySys, JSON_UNESCAPED_UNICODE); ?>)'>Изменить</a>
+            </td>
+
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+
+    <?php if(!empty($paymentSystemIP)): ?>
+    <table  id="table" class=" data  myTable">
+        <thead>
+        <tr>
+            <div style="display: none;"> <?php
+                                echo htmlspecialchars($idPaySys); ?></div>
+            <th colspan="2" class="center" ><?php
+                                echo htmlspecialchars($paySysName); ?>&nbsp;&nbsp;&nbsp;   IP:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($paymentSystemIP as $paySysIP): ?>
+        <tr>
+            <td class="center"><?php
+                               echo htmlspecialchars($paySysIP['IP']);
+                            ?></td>
+            <td class="center"><a href= 'javascript:clickFunctionIP(<?php echo json_encode($paySysIP, JSON_UNESCAPED_UNICODE); ?>)'>Изменить</a>
+
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+    let x = 0;
+    const save_lab      = document.getElementById("save_lab");
+    const save_window   = document.getElementById("save_window");
+    const modal         = document.getElementById("my_modal");
+    const close_window  = document.getElementById("close_window");
+    const err_dub       = document.getElementById("err_dub");
+    const err_suc       = document.getElementById("err_suc");
+    const inpt_name     = document.getElementById("inpt_name");
+    const inpt_token    = document.getElementById("inpt-token");
+    const inpt_ip       = document.getElementById("inpt-ip");
+    const mod_cont      = document.getElementById("modal_content");
+    const frm           = $('#form');
+
+
+    function addIPWind() {
+        document.getElementById('inp' + x).innerHTML = '<div style="position: relative; left: 10%"> <strong class="strong">IP:</strong>&nbsp;<input type="text" name="inp-dop' + (x + 1) + '" class="ip"> </div> <div id="inp' + (x + 1) + '"></div>';
+        x++;
+    }
+
+    document.getElementById("add-payment-service").onclick = () => { addService();
+                                                                err_dub.style.display   = "none";
+                                                                inpt_name.style.border  ="0.2px solid black";
+                                                                inpt_ip.style.border    ="0.2px solid black";
+                                                                inpt_token.style.border ="0.2px solid black";
+                                                                err_suc.style.display   = "none";
+                                                                };
+
+    function clickFunction(per) {
+        editService(per);
+        document.getElementById("inp0").style.display   = "none";
+        document.getElementById("add-ip").style.display = "none";
+        document.getElementById("ip-td").style.display  = "none";
+        document.getElementById("add-tr").style.display = "none";
+        save_window.style.position  = "relative";
+        save_window.style.bottom    = "50px";
+        close_window.style.position = "relative";
+        close_window.style.top      = "-50px";
+        mod_cont.style.height       = "230px";
+
+    }
+
+    function clickFunctionIP(per) {
+        const ip_td     = document.getElementById("ip-td");
+        const editLab   = document.getElementById("editLab");
+        editServiceIP(per);
+        document.getElementById("inp0").style.display            = "none";
+        document.getElementById("add-ip").style.display          = "none";
+        document.getElementById("inpt_name_token").style.display = "none";
+        document.getElementById("inpt_name_td").style.display    = "none";
+        document.getElementById("add-tr").style.display          = "none";
+        ip_td.style.position        = "relative";
+        ip_td.style.left            = "-20%";
+        save_window.style.position  = "relative";
+        save_window.style.bottom    = "50px";
+        close_window.style.position = "relative";
+        close_window.style.top      = "-50px";
+        mod_cont.style.height       = "230px";
+        editLab.style.position      = 'relative';
+        editLab.style.left          = '30%';
+
+    }
+
+     function sendP( $data) {
+
+         if ($data['inpt_name'] && $data['inpt-token'] && $data['inpt-ip']) {
+
+             fetch('/index.php?view=payment-service&action=addService', {
+                 method: 'post',
+                 body: JSON.stringify($data)
+             })
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                 .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform   = "translate(-50%, 0)";
+                         save_lab.style.top         = "-20px";
+
+                         sleep(2500).then(()=>{
+                             save_lab.style.display         = "none";
+                             save_window.style.display      = "block";
+                             close_window.style.display     = "block";
+                             save_window.style.position     = "relative";
+                             save_window.style.left         = "50%";
+
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
+                             location.reload();
+
+                         });
+                     }
+
+                 })
+                 .catch(() => {
+                     err_suc.style.display = "block";
+                 })
+         } else {
+             err_dub.style.display      = "block";
+             inpt_name.style.border     ="0.2px solid red";
+             inpt_token.style.border    =" 0.2px solid red";
+             inpt_ip.style.border       =" 0.2px solid red";
+
+         }
+    }
+     function sendEd(data) {
+         if (data.Name && data.Token) {
+
+             fetch('/index.php?view=payment-service&action=editService', {
+                 method: 'post',
+                 body: JSON.stringify(data)
+             })
+
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                     .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform   = "translate(-50%, 0)";
+                         save_lab.style.top         = "-50px";
+
+                         sleep(2500).then(()=>{
+                             save_lab.style.display         = "none";
+                             save_window.style.display      = "block";
+                             close_window.style.display     = "block";
+                             save_window.style.position     = "relative";
+                             save_window.style.left         = "50%";
+
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
+                             location.reload();
+
+                         });
+                     }
+
+                 })
+                 .catch(() => {
+                     err_suc.style.display = "block";
+                 })
+         } else {
+             err_dub.style.display      = "block";
+             inpt_name.style.border     ="0.2px solid red";
+             inpt_token.style.border    =" 0.2px solid red";
+             inpt_ip.style.border       =" 0.2px solid red";
+
+         }
+    }
+
+    function sendEdIP(data) {
+         if (data['IP']) {
+
+             fetch('/index.php?view=payment-service&action=editServiceIP', {
+                 method: 'post',
+                 body: JSON.stringify(data)
+             })
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                 .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform = "translate(-50%, 0)";
+                         save_lab.style.top       = "-50px";
+
+                         sleep(2500).then(()=>{
+                             save_lab.style.display     = "none";
+                             save_window.style.display  = "block";
+                             close_window.style.display = "block";
+                             save_window.style.position = "relative";
+                             save_window.style.left     = "50%";
+
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
+                             location.reload();
+
+                         });
+                     }
+
+                 })
+                 .catch(() => {
+                     err_suc.style.display = "block";
+                 })
+         } else {
+             err_dub.style.display  = "block";
+             inpt_name.style.border ="0.2px solid red";
+             inpt_token.style.border=" 0.2px solid red";
+             inpt_ip.style.border   =" 0.2px solid red";
+
+         }
+    }
+
+
+
+    function addService() {
+        x = 0;
+
+        const modal   = document.getElementById("my_modal");
+        const inpName = document.getElementById("inpt_name");
+
+        document.getElementById("inp0").remove();
+        inpName.value = "";
+        modal.style.display                              = "block";
+        document.getElementById("editLab").style.display = "none";
+        document.getElementById("addLab").style.display  = "block";
+
+        document.getElementById("add-ip").onclick = () => {addIPWind() };
+
+        document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
+
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+
+        frm.submit(() => {
+           let  $data = {};
+            frm.find ('input').each(function() {
+                $data[this.name] = $(this).val();
+            });
+            sendP( $data);
+            return false;
+
+        });
+    }
+
+    function editService(per) {
+        x = 0;
+        const modal          = document.getElementById("my_modal");
+        const inpName        = document.getElementById("inpt_name");
+        const inpttoken      = document.getElementById("inpt-token");
+        const inpt_name_td   = document.getElementById("inpt_name_td");
+
+        inpt_name_td.style.position = "relative";
+        inpt_name_td.style.right    = "72px";
+        inpName.style.left          = "200px";
+        inpName.style.left          = "200px";
+        inpttoken.style.width       = "470px";
+        document.getElementById("inp0").remove();
+        inpName.value                                       = per['Name'];
+        inpttoken.value                                     =  per['Token'];
+        modal.style.display                                 = "block";
+        document.getElementById("editLab").style.display    = "block";
+        document.getElementById("addLab").style.display     = "none";
+
+        document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
+
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+
+        frm.submit(() => {
+             sendEd({
+                     IDPaymentSystem: per.IDPaymentSystem,
+                     Name: inpName.value,
+                     Token: inpttoken.value
+                 });
+             return  false;
+
+        })
+    }
+
+    function editServiceIP(per) {
+        x = 0;
+        const modal = document.getElementById("my_modal");
+        const inpIP = document.getElementById("inpt-ip");
+
+        inpIP.value                                      = per['IP'];
+        modal.style.display                              = "block";
+        document.getElementById("editLab").style.display = "block";
+        document.getElementById("addLab").style.display  = "none";
+
+        document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
+
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+
+        frm.submit(() =>  !sendEdIP({
+                PaymentSystemID: per['PaymentSystemID'],
+                IP: inpIP.value,
+                IP_ST: per['IP']
+            }) && false);
+
+    }
+
+</script>
