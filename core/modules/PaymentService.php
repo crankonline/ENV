@@ -49,14 +49,14 @@ SQL;
 
     }
 
-    public function AddService() {
+    public function addService() {
 
-    $resault = file_get_contents('php://input');
-    $resault = json_decode($resault,true);
-    $name = $resault['inpt_name'] ?? null;
-    $token = $resault['inpt-token'] ?? null;
-    $ip = $resault['inpt-ip'] ?? null;
-    $count = $this->CountSys();
+    $resault    = file_get_contents('php://input');
+    $resault    = json_decode($resault,true);
+    $name       = $resault['inpt_name'] ?? null;
+    $token      = $resault['inpt-token'] ?? null;
+    $ip         = $resault['inpt-ip'] ?? null;
+    $count      = $this->CountSys();
 
         $sql = <<<SQL
 INSERT INTO
@@ -89,14 +89,13 @@ SQL;
         exit();
     }
 
-    public function EditService() {
+    public function editService() {
 
-    $resault = file_get_contents('php://input');
-    $resault = json_decode($resault,true);
-
-    $id_s = $resault['IDPaymentSystem'] ?? null;
-    $name = $resault['Name'] ?? null;
-    $token = $resault['Token'] ?? null;
+    $resault    = file_get_contents('php://input');
+    $resault    = json_decode($resault,true);
+    $id_s       = $resault['IDPaymentSystem'] ?? null;
+    $name       = $resault['Name'] ?? null;
+    $token      = $resault['Token'] ?? null;
 
         $sql = <<<SQL
         UPDATE
@@ -122,14 +121,13 @@ SQL;
         exit();
     }
 
-    public function EditServiceIP() {
+    public function editServiceIP() {
 
-    $resault = file_get_contents('php://input');
-    $resault = json_decode($resault,true);
-
-    $id_s = $resault['PaymentSystemID'] ?? null;
-    $ip = $resault['IP'] ?? null;
-    $ip_st = $resault['IP_ST'] ?? null;
+    $resault    = file_get_contents('php://input');
+    $resault    = json_decode($resault,true);
+    $id_s       = $resault['PaymentSystemID'] ?? null;
+    $ip         = $resault['IP'] ?? null;
+    $ip_st      = $resault['IP_ST'] ?? null;
 
         $sql = <<<SQL
         UPDATE
@@ -182,7 +180,7 @@ SQL;
 
     protected function main() {
         $this->variables->errors = [];
-        $idPaySys = $_GET['idPaySys'] ?? null;
+        $idPaySys   = $_GET['idPaySys'] ?? null;
         $paySysName = $_GET['paySysName'] ?? null;
 
         try {

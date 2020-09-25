@@ -181,17 +181,17 @@
 
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
     let x = 0;
-    let save_lab = document.getElementById("save_lab");
-    let save_window = document.getElementById("save_window");
-    let modal = document.getElementById("my_modal");
-    let close_window = document.getElementById("close_window");
-    let err_dub = document.getElementById("err_dub");
-    let err_suc = document.getElementById("err_suc");
-    let inpt_name = document.getElementById("inpt_name");
-    let inpt_token = document.getElementById("inpt-token");
-    let inpt_ip = document.getElementById("inpt-ip");
-    let mod_cont = document.getElementById("modal_content");
-    let frm = $('#form');
+    const save_lab      = document.getElementById("save_lab");
+    const save_window   = document.getElementById("save_window");
+    const modal         = document.getElementById("my_modal");
+    const close_window  = document.getElementById("close_window");
+    const err_dub       = document.getElementById("err_dub");
+    const err_suc       = document.getElementById("err_suc");
+    const inpt_name     = document.getElementById("inpt_name");
+    const inpt_token    = document.getElementById("inpt-token");
+    const inpt_ip       = document.getElementById("inpt-ip");
+    const mod_cont      = document.getElementById("modal_content");
+    const frm           = $('#form');
 
 
     function addIPWind() {
@@ -200,45 +200,45 @@
     }
 
     document.getElementById("add-payment-service").onclick = () => { addService();
-                                                                err_dub.style.display = "none";
-                                                                inpt_name.style.border="0.2px solid black";
-                                                                inpt_ip.style.border="0.2px solid black";
-                                                                inpt_token.style.border="0.2px solid black";
-                                                                err_suc.style.display = "none";
+                                                                err_dub.style.display   = "none";
+                                                                inpt_name.style.border  ="0.2px solid black";
+                                                                inpt_ip.style.border    ="0.2px solid black";
+                                                                inpt_token.style.border ="0.2px solid black";
+                                                                err_suc.style.display   = "none";
                                                                 };
 
     function clickFunction(per) {
         editService(per);
-        document.getElementById("inp0").style.display = "none";
+        document.getElementById("inp0").style.display   = "none";
         document.getElementById("add-ip").style.display = "none";
-        document.getElementById("ip-td").style.display = "none";
+        document.getElementById("ip-td").style.display  = "none";
         document.getElementById("add-tr").style.display = "none";
-        save_window.style.position = "relative";
-        save_window.style.bottom = "50px";
+        save_window.style.position  = "relative";
+        save_window.style.bottom    = "50px";
         close_window.style.position = "relative";
-        close_window.style.top = "-50px";
-        mod_cont.style.height = "230px";
+        close_window.style.top      = "-50px";
+        mod_cont.style.height       = "230px";
 
     }
 
     function clickFunctionIP(per) {
-        let ip_td = document.getElementById("ip-td");
-        let editLab = document.getElementById("editLab");
+        const ip_td     = document.getElementById("ip-td");
+        const editLab   = document.getElementById("editLab");
         editServiceIP(per);
-        document.getElementById("inp0").style.display = "none";
-        document.getElementById("add-ip").style.display = "none";
+        document.getElementById("inp0").style.display            = "none";
+        document.getElementById("add-ip").style.display          = "none";
         document.getElementById("inpt_name_token").style.display = "none";
-        document.getElementById("inpt_name_td").style.display = "none";
-        document.getElementById("add-tr").style.display = "none";
-        ip_td.style.position = "relative";
-        ip_td.style.left = "-20%";
-        save_window.style.position = "relative";
-        save_window.style.bottom = "50px";
+        document.getElementById("inpt_name_td").style.display    = "none";
+        document.getElementById("add-tr").style.display          = "none";
+        ip_td.style.position        = "relative";
+        ip_td.style.left            = "-20%";
+        save_window.style.position  = "relative";
+        save_window.style.bottom    = "50px";
         close_window.style.position = "relative";
-        close_window.style.top = "-50px";
-        mod_cont.style.height = "230px";
-        editLab.style.position = 'relative';
-        editLab.style.left = '30%';
+        close_window.style.top      = "-50px";
+        mod_cont.style.height       = "230px";
+        editLab.style.position      = 'relative';
+        editLab.style.left          = '30%';
 
     }
 
@@ -246,123 +246,112 @@
 
          if ($data['inpt_name'] && $data['inpt-token'] && $data['inpt-ip']) {
 
-             let status = function (response) {
-                 if (response.status !== 200) {
-                     return Promise.reject(new Error(response.statusText))
-                 }
-                 return Promise.resolve(response)
-             };
-             let json = function (response) {
-                 return response.json()
-             };
-
-             fetch('/index.php?view=payment-service&action=AddService', {
+             fetch('/index.php?view=payment-service&action=addService', {
                  method: 'post',
                  body: JSON.stringify($data)
              })
-                 .then(status)
-                 .then(json)
-                 .then(function (data) {
-                     if (data === 'success') {
-                         save_window.style.display = "none";
-                         close_window.style.display = "none";
-                         save_lab.style.display = "block";
-                         save_lab.style.position = "relative";
-                         save_lab.style.left = "50%";
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
 
-                         save_lab.style.transform = "translate(-50%, 0)";
-                         save_lab.style.top = "-20px";
+                 .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform   = "translate(-50%, 0)";
+                         save_lab.style.top         = "-20px";
 
                          sleep(2500).then(()=>{
-                             save_lab.style.display = "none";
-                             save_window.style.display = "block";
-                             close_window.style.display = "block";
-                             save_window.style.position = "relative";
-                             save_window.style.left = "50%";
+                             save_lab.style.display         = "none";
+                             save_window.style.display      = "block";
+                             close_window.style.display     = "block";
+                             save_window.style.position     = "relative";
+                             save_window.style.left         = "50%";
 
-                             save_window.style.transform = "translate(-50%, 0)";
-                             save_window.style.top = "10px";
-                             close_window.style.position = "relative";
-                             close_window.style.left = "50%";
-                             close_window.style.transform = "translate(-50%, 0)";
-                             close_window.style.bottom = "15px";
-                             modal.style.display = "none";
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
                              location.reload();
 
                          });
                      }
 
                  })
-                 .catch(function (error) {
+                 .catch(() => {
                      err_suc.style.display = "block";
                  })
          } else {
-             err_dub.style.display = "block";
-             inpt_name.style.border="0.2px solid red";
-             inpt_token.style.border=" 0.2px solid red";
-             inpt_ip.style.border=" 0.2px solid red";
+             err_dub.style.display      = "block";
+             inpt_name.style.border     ="0.2px solid red";
+             inpt_token.style.border    =" 0.2px solid red";
+             inpt_ip.style.border       =" 0.2px solid red";
 
          }
     }
      function sendEd(data) {
-         if (data['Name'] && data['Token']) {
+         if (data.Name && data.Token) {
 
-             let status = function (response) {
-                 if (response.status !== 200) {
-                     return Promise.reject(new Error(response.statusText))
-                 }
-                 return Promise.resolve(response)
-             };
-             let json = function (response) {
-                 return response.json()
-             };
-
-             fetch('/index.php?view=payment-service&action=EditService', {
+             fetch('/index.php?view=payment-service&action=editService', {
                  method: 'post',
                  body: JSON.stringify(data)
              })
-                 .then(status)
-                 .then(json)
-                 .then(function (data) {
-                     if (data === 'success') {
-                         save_window.style.display = "none";
-                         close_window.style.display = "none";
-                         save_lab.style.display = "block";
-                         save_lab.style.position = "relative";
-                         save_lab.style.left = "50%";
-                         save_lab.style.left = "50%";
 
-                         save_lab.style.transform = "translate(-50%, 0)";
-                         save_lab.style.top = "-50px";
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                     .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform   = "translate(-50%, 0)";
+                         save_lab.style.top         = "-50px";
 
                          sleep(2500).then(()=>{
-                             save_lab.style.display = "none";
-                             save_window.style.display = "block";
-                             close_window.style.display = "block";
-                             save_window.style.position = "relative";
-                             save_window.style.left = "50%";
+                             save_lab.style.display         = "none";
+                             save_window.style.display      = "block";
+                             close_window.style.display     = "block";
+                             save_window.style.position     = "relative";
+                             save_window.style.left         = "50%";
 
-                             save_window.style.transform = "translate(-50%, 0)";
-                             save_window.style.top = "10px";
-                             close_window.style.position = "relative";
-                             close_window.style.left = "50%";
-                             close_window.style.transform = "translate(-50%, 0)";
-                             close_window.style.bottom = "15px";
-                             modal.style.display = "none";
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
                              location.reload();
 
                          });
                      }
 
                  })
-                 .catch(function (error) {
+                 .catch(() => {
                      err_suc.style.display = "block";
                  })
          } else {
-             err_dub.style.display = "block";
-             inpt_name.style.border="0.2px solid red";
-             inpt_token.style.border=" 0.2px solid red";
-             inpt_ip.style.border=" 0.2px solid red";
+             err_dub.style.display      = "block";
+             inpt_name.style.border     ="0.2px solid red";
+             inpt_token.style.border    =" 0.2px solid red";
+             inpt_ip.style.border       =" 0.2px solid red";
 
          }
     }
@@ -370,62 +359,56 @@
     function sendEdIP(data) {
          if (data['IP']) {
 
-             let status = function (response) {
-                 if (response.status !== 200) {
-                     return Promise.reject(new Error(response.statusText))
-                 }
-                 return Promise.resolve(response)
-             };
-             let json = function (response) {
-                 return response.json()
-             };
-
-             fetch('/index.php?view=payment-service&action=EditServiceIP', {
+             fetch('/index.php?view=payment-service&action=editServiceIP', {
                  method: 'post',
                  body: JSON.stringify(data)
              })
-                 .then(status)
-                 .then(json)
-                 .then(function (data) {
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                 .then((data) => {
                      if (data === 'success') {
-                         save_window.style.display = "none";
+                         save_window.style.display  = "none";
                          close_window.style.display = "none";
-                         save_lab.style.display = "block";
-                         save_lab.style.position = "relative";
-                         save_lab.style.left = "50%";
-                         save_lab.style.left = "50%";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
 
                          save_lab.style.transform = "translate(-50%, 0)";
-                         save_lab.style.top = "-50px";
+                         save_lab.style.top       = "-50px";
 
                          sleep(2500).then(()=>{
-                             save_lab.style.display = "none";
-                             save_window.style.display = "block";
+                             save_lab.style.display     = "none";
+                             save_window.style.display  = "block";
                              close_window.style.display = "block";
                              save_window.style.position = "relative";
-                             save_window.style.left = "50%";
+                             save_window.style.left     = "50%";
 
-                             save_window.style.transform = "translate(-50%, 0)";
-                             save_window.style.top = "10px";
-                             close_window.style.position = "relative";
-                             close_window.style.left = "50%";
-                             close_window.style.transform = "translate(-50%, 0)";
-                             close_window.style.bottom = "15px";
-                             modal.style.display = "none";
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
                              location.reload();
 
                          });
                      }
 
                  })
-                 .catch(function (error) {
+                 .catch(() => {
                      err_suc.style.display = "block";
                  })
          } else {
-             err_dub.style.display = "block";
-             inpt_name.style.border="0.2px solid red";
+             err_dub.style.display  = "block";
+             inpt_name.style.border ="0.2px solid red";
              inpt_token.style.border=" 0.2px solid red";
-             inpt_ip.style.border=" 0.2px solid red";
+             inpt_ip.style.border   =" 0.2px solid red";
 
          }
     }
@@ -435,14 +418,14 @@
     function addService() {
         x = 0;
 
-        let modal = document.getElementById("my_modal");
-        let inpName = document.getElementById("inpt_name");
+        const modal   = document.getElementById("my_modal");
+        const inpName = document.getElementById("inpt_name");
 
         document.getElementById("inp0").remove();
         inpName.value = "";
-        modal.style.display = "block";
+        modal.style.display                              = "block";
         document.getElementById("editLab").style.display = "none";
-        document.getElementById("addLab").style.display = "block";
+        document.getElementById("addLab").style.display  = "block";
 
         document.getElementById("add-ip").onclick = () => {addIPWind() };
 
@@ -451,13 +434,10 @@
         document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
 
         frm.submit(() => {
-            let fr =  frm.get();
-            let  $data = {};
-
+           let  $data = {};
             frm.find ('input').each(function() {
                 $data[this.name] = $(this).val();
             });
-
             sendP( $data);
             return false;
 
@@ -466,63 +446,58 @@
 
     function editService(per) {
         x = 0;
-        let modal = document.getElementById("my_modal");
-        let inpName = document.getElementById("inpt_name");
-        let inpttoken = document.getElementById("inpt-token");
-        let inpt_name_td = document.getElementById("inpt_name_td");
+        const modal          = document.getElementById("my_modal");
+        const inpName        = document.getElementById("inpt_name");
+        const inpttoken      = document.getElementById("inpt-token");
+        const inpt_name_td   = document.getElementById("inpt_name_td");
 
         inpt_name_td.style.position = "relative";
-        inpt_name_td.style.right = "72px";
-        inpName.style.left = "200px";
-        inpName.style.left = "200px";
-        inpttoken.style.width = "470px";
+        inpt_name_td.style.right    = "72px";
+        inpName.style.left          = "200px";
+        inpName.style.left          = "200px";
+        inpttoken.style.width       = "470px";
         document.getElementById("inp0").remove();
-        inpName.value = per['Name'];
-        inpttoken.value =  per['Token'];
-        modal.style.display = "block";
-        document.getElementById("editLab").style.display = "block";
-        document.getElementById("addLab").style.display = "none";
+        inpName.value                                       = per['Name'];
+        inpttoken.value                                     =  per['Token'];
+        modal.style.display                                 = "block";
+        document.getElementById("editLab").style.display    = "block";
+        document.getElementById("addLab").style.display     = "none";
 
         document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
 
         document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
 
         frm.submit(() => {
-            let fr =  frm.get();
-            let $data = {};
-            $data['IDPaymentSystem'] = per['IDPaymentSystem'];
-            $data['Name'] = inpName.value;
-            $data['Token'] = inpttoken.value;
-
-             sendEd($data);
-            return false;
+             sendEd({
+                     IDPaymentSystem: per.IDPaymentSystem,
+                     Name: inpName.value,
+                     Token: inpttoken.value
+                 });
+             return  false;
 
         })
     }
 
     function editServiceIP(per) {
         x = 0;
-        let modal = document.getElementById("my_modal");
-        let inpIP = document.getElementById("inpt-ip");
-        inpIP.value = per['IP'];
-        modal.style.display = "block";
+        const modal = document.getElementById("my_modal");
+        const inpIP = document.getElementById("inpt-ip");
+
+        inpIP.value                                      = per['IP'];
+        modal.style.display                              = "block";
         document.getElementById("editLab").style.display = "block";
-        document.getElementById("addLab").style.display = "none";
+        document.getElementById("addLab").style.display  = "none";
 
         document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
 
         document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
 
-        frm.submit(() => {
-            let fr =  frm.get();
-            let $data = {};
-            $data['PaymentSystemID'] = per['PaymentSystemID'];
-            $data['IP'] = inpIP.value;
-            $data['IP_ST'] =  per['IP'];
-            sendEdIP($data);
-            return false;
+        frm.submit(() =>  !sendEdIP({
+                PaymentSystemID: per['PaymentSystemID'],
+                IP: inpIP.value,
+                IP_ST: per['IP']
+            }) && false);
 
-        })
     }
 
 </script>
