@@ -234,8 +234,8 @@ SQL;
 
 
             $this->variables->account          = $account;
-            $this->variables->dateMin          = $_GET['dateMin'] ?? null;
-            $this->variables->dateMax          = $_GET['dateMax'] ?? null;
+            $this->variables->dateMin          =  date( 'Y-m-d', strtotime($dateMin));
+            $this->variables->dateMax          = date('Y-m-d',  strtotime($dateMax));
             $this->variables->paySysD           = $paySys;
             $this->variables->type             = $type;
             $this->variables->page             = $_GET['page'] ?? null;
