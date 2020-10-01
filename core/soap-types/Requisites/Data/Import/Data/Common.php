@@ -152,8 +152,8 @@ class Common {
 
         if(empty($values['rnsf'])){
             throw new \Exception('Регистрационный номер Cоциального Фонда не указан.');
-        } elseif(!preg_match('/^\d{7,12}$/', $values['rnsf'])) {
-            throw new \Exception('Регистрационный номер Cоциального Фонда должен содержать от 7 до 10 цифр.');
+        } elseif(!preg_match('/^\d{12,12}$/', $values['rnsf'])) {
+            throw new \Exception('Регистрационный номер Cоциального Фонда должен содержать 12 цифр.');
         } else {
             $self->rnsf = $values['rnsf'];
         }
