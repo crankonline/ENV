@@ -53,7 +53,7 @@ SQL;
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "log-terminal",
             'handleClass' => "LogTerminal",
-            'namemg' => "логи платежей",
+            'namemg' => "Логи платежей",
             'isEntryPoint' => true
         ] );
 
