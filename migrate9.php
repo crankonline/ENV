@@ -5,7 +5,29 @@ require 'core/configuration.php';
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 
-class migrate8 {
+class migrate9 {
+
+    public function insertModuleGroup() {
+        $sql = <<<SQL
+INSERT INTO "Core"."ModuleGroup"
+    ("IDModuleGroup", "Name")
+VALUES
+    (
+        DEFAULT,
+        'Платежи'
+    )RETURNING
+    "IDModuleGroup";
+
+
+SQL;
+
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
 
     public function insertModuleSochiEditStiReport( $moduleGroup ) {
         $sql = <<<SQL
@@ -31,7 +53,7 @@ SQL;
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "log-terminal",
             'handleClass' => "LogTerminal",
-            'namemg' => "Платежи клиентов через терминал",
+            'namemg' => "Логи платежей",
             'isEntryPoint' => true
         ] );
 
@@ -65,9 +87,8 @@ SQL;
 
 }
 
-$migrate = new migrate8();
-
-$mg = 2;
+$migrate = new migrate9();
+$mg = $migrate->insertModule();
 $m4 = $migrate->insertModuleSochiEditStiReport($mg);
 $ma4 = $migrate->insertModuleAccess($m4);
 
