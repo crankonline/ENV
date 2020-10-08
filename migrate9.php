@@ -88,7 +88,7 @@ SQL;
 }
 
 $migrate = new migrate9();
-$mg = $migrate->insertModule();
+$mg = $migrate->insertModuleGroup();
 $m4 = $migrate->insertModuleSochiEditStiReport($mg);
 $ma4 = $migrate->insertModuleAccess($m4);
 
