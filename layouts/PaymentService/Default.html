@@ -69,6 +69,8 @@
             <label id="addLab" style="display: none; position: relative; left: 40%">Добавить</label>
             <label align="center" id="err_dub" class="err_dub" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Заполните все поля</label>
             <label align="center" id="err_suc" class="err_suc" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Не удалось добавить запись</label>
+            <label align="center" id="hav_chg" class="err_suc" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Вы ничего не изменили</label>
+            <label align="center" id="rec_ald" class="err_suc" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Такая запись уже есть</label>
             <table align="center" style="">
                 <tr>
                     <td id="inpt_name_td" style="position: relative; right: 23%">
@@ -102,7 +104,8 @@
                 </tr>
             </table>
             <input type="submit" style="position: relative; left: 37%" name="save_window" id="save_window" class="button" value="Сохранить"><br>
-            <input type="reset" style="position: relative; left: 37%" name="close_window" id="close_window" class="button" value="Закрыть">
+            <input type="reset" style="position: relative; left: 37%" name="close_window" id="close_window" class="button" value="Закрыть"><br>
+            <input type="button" style="position: relative; top: -40px; left: 37%" name="delete_rec" id="delete_rec" class="button" value="Удалить">
             <div align="center" id="save_lab" class="save_lab" style=" position: relative; top: 0.6em; right: 30px; color: #008d00;  font-size: 22px; display: none">Сохранено</div>
         </div>
     </form>
@@ -150,7 +153,17 @@
         <?php endif; ?>
         </tbody>
     </table>
-
+    <?php if(!empty($paymentSystemChk)): ?>
+    <table>
+        <tr>
+            <td>
+                <div class="add">
+                    <input type="button" name="add-ip" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style=" min-width: 100px; font-size: 22px; "><br>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <?php endif; ?>
     <?php if(!empty($paymentSystemIP)): ?>
     <table  id="table" class=" data  myTable">
         <thead>
@@ -171,6 +184,15 @@
 
         </tr>
         <?php endforeach; ?>
+        <table>
+            <tr>
+                <td>
+                    <div class="add">
+                        <input type="button" name="add-ip" id="add-ip_new" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style=" min-width: 100px; font-size: 22px; "><br>
+                    </div>
+                </td>
+            </tr>
+        </table>
         <?php endif; ?>
         </tbody>
     </table>
@@ -192,6 +214,10 @@
     const inpt_ip       = document.getElementById("inpt-ip");
     const mod_cont      = document.getElementById("modal_content");
     const frm           = $('#form');
+    const hav_chg       = document.getElementById("hav_chg");
+    const rec_ald       = document.getElementById("rec_ald");
+    const rec_del       = document.getElementById("delete_rec");
+    const add_ser_ip       = document.getElementById("add_ser_ip");
 
 
     function addIPWind() {
@@ -205,7 +231,28 @@
                                                                 inpt_ip.style.border    ="0.2px solid black";
                                                                 inpt_token.style.border ="0.2px solid black";
                                                                 err_suc.style.display   = "none";
+                                                                rec_ald.style.display   = "none";
+                                                                rec_del.style.display   = "none";
+
+
+                                                                document.getElementById("inp0").style.display            = "block";
+                                                                document.getElementById("add-ip").style.display          = "block";
+                                                                document.getElementById("inpt_name_token").style.display = "block";
+                                                                document.getElementById("inpt_name_td").style.display    = "block";
+                                                                document.getElementById("add-tr").style.display          = "block";
+                                                                document.getElementById("ip-td").style.display           = "block";
+
+                                                                document.getElementById("ip-td").style.position = "relative";
+                                                                document.getElementById("ip-td").style.left = "30px";
+                                                                mod_cont.style.height       = "280px";
+
+                                                                save_window.style.position  = "relative";
+                                                                save_window.style.bottom    = "50px";
+                                                                close_window.style.position = "relative";
+                                                                close_window.style.top      = "-50px";
                                                                 };
+
+
 
     function clickFunction(per) {
         editService(per);
@@ -213,11 +260,44 @@
         document.getElementById("add-ip").style.display = "none";
         document.getElementById("ip-td").style.display  = "none";
         document.getElementById("add-tr").style.display = "none";
+        document.getElementById("inpt_name_token").style.display = "block";
+        document.getElementById("inpt_name_td").style.display    = "block";
+
+
+
+        save_window.style.position  = "relative";
+        save_window.style.bottom    = "50px";
+        close_window.style.position = "relative";
+        close_window.style.top      = "-50px";
+        mod_cont.style.height       = "240px";
+        err_suc.style.display       = "none";
+        rec_ald.style.display       = "none";
+        rec_del.style.display       = "block";
+
+    }
+
+    function  addFuncNwIP(paySys){
+        const ip_td     = document.getElementById("ip-td");
+        const editLab   = document.getElementById("editLab");
+       addServiceIP(paySys);
+        document.getElementById("inp0").style.display            = "none";
+        document.getElementById("add-ip").style.display          = "none";
+        document.getElementById("inpt_name_token").style.display = "none";
+        document.getElementById("inpt_name_td").style.display    = "none";
+        document.getElementById("add-tr").style.display          = "none";
+        document.getElementById("ip-td").style.display           = "block";
+        ip_td.style.position        = "relative";
+        ip_td.style.left            = "-20%";
         save_window.style.position  = "relative";
         save_window.style.bottom    = "50px";
         close_window.style.position = "relative";
         close_window.style.top      = "-50px";
         mod_cont.style.height       = "230px";
+        editLab.style.position      = 'relative';
+        editLab.style.left          = '30%';
+        err_suc.style.display       = "none";
+        rec_ald.style.display       = "none";
+        rec_del.style.display       = "none";
 
     }
 
@@ -230,6 +310,7 @@
         document.getElementById("inpt_name_token").style.display = "none";
         document.getElementById("inpt_name_td").style.display    = "none";
         document.getElementById("add-tr").style.display          = "none";
+        document.getElementById("ip-td").style.display           = "block";
         ip_td.style.position        = "relative";
         ip_td.style.left            = "-20%";
         save_window.style.position  = "relative";
@@ -239,6 +320,7 @@
         mod_cont.style.height       = "230px";
         editLab.style.position      = 'relative';
         editLab.style.left          = '30%';
+        rec_del.style.display       = "block";
 
     }
 
@@ -263,9 +345,74 @@
                          save_lab.style.display     = "block";
                          save_lab.style.position    = "relative";
                          save_lab.style.left        = "50%";
+                         rec_ald.style.display      = "none";
 
                          save_lab.style.transform   = "translate(-50%, 0)";
                          save_lab.style.top         = "-20px";
+
+                         sleep(2500).then(()=>{
+                             save_lab.style.display         = "none";
+                             save_window.style.display      = "block";
+                             close_window.style.display     = "block";
+                             save_window.style.position     = "relative";
+                             save_window.style.left         = "50%";
+
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
+                             location.reload();
+
+                         });
+                     }
+
+                     if  (data === 'dublicate') {
+                         rec_ald.style.display   = "block";
+
+                     }
+
+                 })
+                 .catch(() => {
+                     err_suc.style.display = "block";
+                     rec_ald.style.display   = "none";
+                 })
+         } else {
+             err_dub.style.display      = "block";
+             inpt_name.style.border     ="0.2px solid red";
+             inpt_token.style.border    =" 0.2px solid red";
+             inpt_ip.style.border       =" 0.2px solid red";
+             rec_ald.style.display      = "none";
+
+         }
+    }
+     function sendEd(data) {
+         if (data.Name && data.Token) {
+
+             fetch('/index.php?view=payment-service&action=editService', {
+                 method: 'post',
+                 body: JSON.stringify(data)
+             })
+
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                     .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
+
+                         save_lab.style.transform   = "translate(-50%, 0)";
+                         save_lab.style.top         = "-50px";
 
                          sleep(2500).then(()=>{
                              save_lab.style.display         = "none";
@@ -298,10 +445,12 @@
 
          }
     }
-     function sendEd(data) {
+
+
+   function sendDeleteSer(data) {
          if (data.Name && data.Token) {
 
-             fetch('/index.php?view=payment-service&action=editService', {
+             fetch('/index.php?view=payment-service&action=deleteService', {
                  method: 'post',
                  body: JSON.stringify(data)
              })
@@ -377,6 +526,7 @@
                          save_lab.style.position    = "relative";
                          save_lab.style.left        = "50%";
                          save_lab.style.left        = "50%";
+                         rec_ald.style.display      = "none";
 
                          save_lab.style.transform = "translate(-50%, 0)";
                          save_lab.style.top       = "-50px";
@@ -398,11 +548,82 @@
                              location.reload();
 
                          });
+
+                         if  (data === 'dublicate') {
+                             rec_ald.style.display   = "block";
+
+                         }
+
                      }
 
                  })
                  .catch(() => {
                      err_suc.style.display = "block";
+                     rec_ald.style.display = "none";
+                 })
+         } else {
+             err_dub.style.display  = "block";
+             inpt_name.style.border ="0.2px solid red";
+             inpt_token.style.border=" 0.2px solid red";
+             inpt_ip.style.border   =" 0.2px solid red";
+
+         }
+    }
+
+    function sendAdIP(data) {
+         if (data['IP']) {
+
+             fetch('/index.php?view=payment-service&action=addServiceIP', {
+                 method: 'post',
+                 body: JSON.stringify(data)
+             })
+                 .then(response => (response.status !== 200)
+                     ? Promise.reject(new Error(response.statusText))
+                     : Promise.resolve(response)
+                 )
+                 .then(response => response.json())
+
+                 .then((data) => {
+                     if (data === 'success') {
+                         save_window.style.display  = "none";
+                         close_window.style.display = "none";
+                         save_lab.style.display     = "block";
+                         save_lab.style.position    = "relative";
+                         save_lab.style.left        = "50%";
+                         save_lab.style.left        = "50%";
+                         rec_ald.style.display      = "none";
+
+                         save_lab.style.transform = "translate(-50%, 0)";
+                         save_lab.style.top       = "-50px";
+
+                         sleep(2500).then(()=>{
+
+                             save_lab.style.display     = "none";
+                             save_window.style.display  = "block";
+                             close_window.style.display = "block";
+                             save_window.style.position = "relative";
+                             save_window.style.left     = "50%";
+
+                             save_window.style.transform    = "translate(-50%, 0)";
+                             save_window.style.top          = "10px";
+                             close_window.style.position    = "relative";
+                             close_window.style.left        = "50%";
+                             close_window.style.transform   = "translate(-50%, 0)";
+                             close_window.style.bottom      = "15px";
+                             modal.style.display            = "none";
+                             location.reload();
+
+                         });
+                     }
+                         if  (data === 'dublicate') {
+                             rec_ald.style.display   = "block";
+
+                         }
+
+                 })
+                 .catch(() => {
+                     err_suc.style.display = "block";
+                     rec_ald.style.display = "none";
                  })
          } else {
              err_dub.style.display  = "block";
@@ -450,6 +671,8 @@
         const inpName        = document.getElementById("inpt_name");
         const inpttoken      = document.getElementById("inpt-token");
         const inpt_name_td   = document.getElementById("inpt_name_td");
+        hav_chg.style.display = "none";
+        rec_ald.style.display = "none";
 
         inpt_name_td.style.position = "relative";
         inpt_name_td.style.right    = "72px";
@@ -467,21 +690,32 @@
 
         document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
 
+        document.getElementById("delete_rec").onclick = ()=> { sendDeleteSer(per); };
         frm.submit(() => {
-             sendEd({
-                     IDPaymentSystem: per.IDPaymentSystem,
-                     Name: inpName.value,
-                     Token: inpttoken.value
-                 });
+            if (inpName.value === per['Name'] && inpttoken.value == per['Token']) {
+                hav_chg.style.display = "block";
+            } else {
+                hav_chg.style.display = "none";
+                sendEd({
+                    IDPaymentSystem: per.IDPaymentSystem,
+                    Name: inpName.value,
+                    Token: inpttoken.value
+                });
+            }
              return  false;
 
-        })
+        });
+
+
     }
 
     function editServiceIP(per) {
         x = 0;
         const modal = document.getElementById("my_modal");
         const inpIP = document.getElementById("inpt-ip");
+        hav_chg.style.display = "none";
+        rec_ald.style.display = "none";
+
 
         inpIP.value                                      = per['IP'];
         modal.style.display                              = "block";
@@ -497,6 +731,28 @@
                 IP: inpIP.value,
                 IP_ST: per['IP']
             }) && false);
+
+    }
+
+    function addServiceIP(per) {
+        x = 0;
+        const modal = document.getElementById("my_modal");
+        const inpIP = document.getElementById("inpt-ip");
+        hav_chg.style.display = "none";
+        rec_ald.style.display = "none";
+
+        modal.style.display                              = "block";
+        document.getElementById("editLab").style.display = "none";
+        document.getElementById("addLab").style.display  = "block";
+
+        document.getElementById("add-tr").innerHTML = '<div id="inp0" name="inp-ip" style="position: relative;"></div>';
+
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+
+        frm.submit(() =>  !sendAdIP({
+            PaymentSystemID: per,
+            IP: inpIP.value
+        }) && false);
 
     }
 
