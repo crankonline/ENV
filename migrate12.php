@@ -5,7 +5,7 @@ require 'core/configuration.php';
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 
-class migrate11 {
+class migrate12 {
 
     public function insertModule() {
         $sql = <<<SQL
