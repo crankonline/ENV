@@ -65,7 +65,8 @@ abstract class Module extends \Unikum\Core\Module {
         AK_SOCHI_REPORTING_FORMS          = 'sochi-reporting-forms',
         AK_SOCHI_EDIT_PERIOD_REPORTING    = 'sochi-edit-period-reporting',
         AK_SOCHI_ZERO_REPORT_ADMIN        = 'sochi-zero-report-admin',
-        AK_SOCHI_EDIT_STI_REPORT          = 'sochi-edit-sti-report';
+        AK_SOCHI_EDIT_STI_REPORT          = 'sochi-edit-sti-report',
+        AK_DIFF_REQUISITES                = 'diff-requisites';
     const
         PMS_ACCESS = 'can-access';
 

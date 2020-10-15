@@ -116,6 +116,52 @@ SQL;
 		return $xmlDocument->saveXML();
 	}
 
+    protected static function uinParse( $uin ) {
+        if ( ! preg_match( '/^\d{49}$/', $uin ) ) {
+            throw new \Exception( 'Идентификатор отчета должен состоять из 49 цифр' );
+        }
+
+        $ret = [
+            'UIN'        => $uin,
+            'Year'       => substr( $uin, 0, 4 ),
+            'Month'      => substr( $uin, 4, 2 ),
+            'Day'        => substr( $uin, 6, 2 ),
+            'Hour'       => substr( $uin, 8, 2 ),
+            'Minute'     => substr( $uin, 10, 2 ),
+            'Second'     => substr( $uin, 12, 2 ),
+            'UID'        => substr( $uin, 14, 23 ),
+            'Subscriber' => substr( $uin, 37, 3 ),
+            'Number'     => substr( $uin, 40 )
+        ];
+
+        $dateTime = $ret['Year']."-".$ret['Month']."-".$ret['Day']." ".$ret['Hour'].":".$ret['Minute'].":".$ret['Second'];
+        return ['dateTime' => $dateTime, "uid" => $ret['UID']];
+    }
+
+    protected static function findNearestRequisites($uin) {
+	    $arr = self::uinParse($uin);
+        $sql = <<<SQL
+SELECT "r"."DateTime"
+FROM 
+	"Common"."Requisites" AS "r"
+LEFT JOIN "Uid"."Uid" AS "u" on "r"."UidID" = "u"."IDUid"
+WHERE
+	("u"."Value" = :uid) AND 
+	("r"."DateTime" < :datet)
+ORDER BY "r"."DateTime" DESC
+SQL;
+
+        $stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
+
+        $stmt->execute( [
+            'uid' => $arr['uid'],
+            'datet' => $arr['dateTime']
+        ] );
+
+        return $stmt->fetch();
+
+    }
+
 	protected function main() {
 		$this->variables->errors = [];
         $this->context->css[] = 'resources/css/ui-requisites.css';
@@ -138,6 +184,8 @@ SQL;
 
 			return;
 		}
+
+        $nRequisites = $this->findNearestRequisites($uin);
 
 		try {
 		    $report = null;
@@ -167,6 +215,7 @@ SQL;
                 $length ['dtg_cont_length']= strlen($data['form_data']);
                 $report = $this->parseXml($data['form_data']);
             }
+
             if ($report != null) {
                 $repXml = base64_decode($report['rep']);
                 if($download) {
@@ -188,6 +237,7 @@ SQL;
                 $this->variables->length = $length;
                 $this->variables->certs = $certsArr;
                 $this->variables->report = $this->formatXml($repXml);
+                $this->variables->nearestRequisites = $nRequisites;
             } else {
                 $this->variables->errors[] = 'Контейнер по запрашиваемому uin отсутствует';
             }
