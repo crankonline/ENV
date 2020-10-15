@@ -7,6 +7,9 @@ use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class migrate11 {
 
+
+
+
     public function insertModuleSochiEditStiReport( $moduleGroup ) {
         $sql = <<<SQL
 INSERT INTO "Core"."Module"
@@ -66,12 +69,11 @@ SQL;
 }
 
 $migrate = new migrate11();
-
-$mg = 2;
-$m4 = $migrate->insertModuleSochiEditStiReport($mg);
+$mig =12;
+$m4 = $migrate->insertModuleSochiEditStiReport($mig);
 $ma4 = $migrate->insertModuleAccess($m4);
 
-print_r( "migrate success - \n" . $mg ."\n");
+print_r( "migrate success - \n" . $mig ."\n");
 print_r($m4."\n");
 print_r($ma4);
 
