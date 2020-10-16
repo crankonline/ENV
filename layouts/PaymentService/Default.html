@@ -223,7 +223,11 @@
 
 
     function addIPWind() {
-        document.getElementById('inp' + x).innerHTML = '<div style="position: relative; right: 3.5%"> <strong class="strong">IP:</strong>&nbsp;<input type="text" name="inp-dop' + (x + 1) + '" class="ip"> </div> <div id="inp' + (x + 1) + '"></div>';
+        document.getElementById('inp' + x).innerHTML = `<div style="position: relative; right: 3.5%">
+                                                            <strong class="strong">IP:</strong>&nbsp;
+                                                            <input type="text" name="inp-dop` + (x + 1) + `" class="ip">
+                                                        </div>
+                                                        <div id="inp` + (x + 1) + `"></div>`;
         let height= mod_cont.offsetHeight;
         let conheight = height + 35;
         mod_cont.style.height = conheight + "px";
