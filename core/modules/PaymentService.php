@@ -15,10 +15,10 @@ class PaymentService extends \Environment\Core\Module
 
 
 
-    function  CountSys(){
+    function  countSys(){
         $sql  = <<<SQL
 SELECT
-    COUNT("p"."IDPaymentSystem")
+    max("p"."IDPaymentSystem")
 FROM
      "Payment"."PaymentSystem" AS "p"
 SQL;
@@ -29,24 +29,23 @@ SQL;
         return $stmt->fetchColumn();
     }
 
-    function  ChkSys($name, $token){
+    function  chkSys($name){
         $sql  = <<<SQL
 SELECT count("p"."Name")    
 FROM
      "Payment"."PaymentSystem" AS "p"
-WHERE "p"."Name" = :t_name AND "p"."Token" = :t_token     
+WHERE "p"."Name" = :t_name     
 SQL;
         $stmt = Connections::getConnection( 'Pay' )->prepare( $sql );
 
         $stmt->execute([
-            't_name' => $name,
-            't_token' => $token
+            't_name' => $name
         ]);
 
         return $stmt->fetchColumn();
     }
 
-    function  ChkSysIP($ip, $pay){
+    function  chkSysIP($ip, $pay){
 
         $sql  = <<<SQL
 SELECT count("p"."IP")    
@@ -64,14 +63,14 @@ SQL;
         return $stmt->fetchColumn();
     }
 
-    function  AddServiceIP(){
+    function  addServiceIP(){
         $resault    = file_get_contents('php://input');
         $resault    = json_decode($resault,true);
 
         $IDPaymentSys       = $resault['PaymentSystemID'] ?? null;
         $ip         = $resault['IP'] ?? null;
 
-        if ($this->ChkSysIP($ip, $IDPaymentSys) >= 1) {
+        if ($this->chkSysIP($ip, $IDPaymentSys) >= 1) {
             echo json_encode('dublicate');
             exit();
         } else {
@@ -99,10 +98,10 @@ SQL;
 
     }
 
-    function  AddServiceIPNw($IDPaymentSys, $ip){
+    function  addServiceIPNw(int $IDPaymentSys, string $ip){
 
-        if ($this->ChkSysIP($ip, $IDPaymentSys) >= 1) {
-            echo json_encode('dublicate');
+        if ($this->chkSysIP($ip, $IDPaymentSys) >= 1) {
+            echo json_encode('dublicate_ip');
             exit();
         } else {
             $sql = <<<SQL
@@ -136,9 +135,9 @@ SQL;
     $name       = $resault['inpt_name'] ?? null;
     $token      = $resault['inpt-token'] ?? null;
     $ip         = $resault['inpt-ip'] ?? null;
-    $count      = $this->CountSys();
+    $count      = $this->countSys();
 
-     if ($this->ChkSys($name, $token) >= 1) {
+     if ($this->chkSys($name) >= 1) {
          echo json_encode('dublicate');
          exit();
      } else {
@@ -164,10 +163,10 @@ SQL;
 
         $ins = $stmt->fetchAll();
 
-       $this->AddServiceIPNw($ins[0]['IDPaymentSystem'], $ip);
+       $this->addServiceIPNw($ins[0]['IDPaymentSystem'], $ip);
 
         for ($x = 1; !empty($resault['inp-dop'.$x]); $x++) {
-            $this->AddServiceIPNw($ins[0]['IDPaymentSystem'], $resault['inp-dop'.$x]);
+            $this->addServiceIPNw($ins[0]['IDPaymentSystem'], $resault['inp-dop'.$x]);
         }
 
         echo json_encode('success');
@@ -241,7 +240,7 @@ SQL;
     $ip         = $resault['IP'] ?? null;
     $ip_st      = $resault['IP_ST'] ?? null;
 
-        if ($this->ChkSysIP($ip, $id_s) >= 1) {
+        if ($this->chkSysIP($ip, $id_s) >= 1) {
             echo json_encode('dublicate');
             exit();
         } else {
@@ -270,7 +269,7 @@ SQL;
         }
     }
 
-    public function deleteServiceIP($insertService)
+    public function deleteServiceIP(int $insertService)
     {
 
         $sql = <<<SQL
@@ -284,6 +283,33 @@ SQL;
 
         $stmt->execute([
             't_id' => $insertService
+        ]);
+
+        echo json_encode('success');
+        exit();
+
+    }
+
+    public function deleteServiceIPNw()
+    {
+
+        $resault    = file_get_contents('php://input');
+        $resault    = json_decode($resault,true);
+        $id_s       = $resault['PaymentSystemID'] ?? null;
+        $ip         = $resault['IP'] ?? null;
+
+        $sql = <<<SQL
+DELETE FROM
+    "Payment"."IPAddress"
+WHERE
+    ("PaymentSystemID" = :t_id AND "IP" = :t_ip);
+SQL;
+
+        $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+        $stmt->execute([
+            't_id' => $id_s,
+            't_ip' => $ip
         ]);
 
         echo json_encode('success');
