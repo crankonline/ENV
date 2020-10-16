@@ -49,7 +49,8 @@ abstract class Module extends \Unikum\Core\Module {
         AK_PDF_DELIVERY_PERIOD            = 'pdf-delivery-period',
 
         AK_LOG_TERMINAL                   = 'log-terminal',
-        AK_PAYMENT_SERVICE                   = 'payment-service',
+        AK_PAYMENT_SOCHI                  = 'payment-sochi',
+        AK_PAYMENT_SERVICE                = 'payment-service',
 
         AK_CURATOR_SF                     = 'curator-sf',
         AK_CURATOR_STI                    = 'curator-sti',
