@@ -18,7 +18,7 @@ class PaymentService extends \Environment\Core\Module
     function  CountSys(){
         $sql  = <<<SQL
 SELECT
-    COUNT("p"."IDPaymentSystem")
+    max("p"."IDPaymentSystem")
 FROM
      "Payment"."PaymentSystem" AS "p"
 SQL;
@@ -29,18 +29,17 @@ SQL;
         return $stmt->fetchColumn();
     }
 
-    function  ChkSys($name, $token){
+    function  ChkSys($name){
         $sql  = <<<SQL
 SELECT count("p"."Name")    
 FROM
      "Payment"."PaymentSystem" AS "p"
-WHERE "p"."Name" = :t_name AND "p"."Token" = :t_token     
+WHERE "p"."Name" = :t_name     
 SQL;
         $stmt = Connections::getConnection( 'Pay' )->prepare( $sql );
 
         $stmt->execute([
-            't_name' => $name,
-            't_token' => $token
+            't_name' => $name
         ]);
 
         return $stmt->fetchColumn();
@@ -102,7 +101,7 @@ SQL;
     function  AddServiceIPNw($IDPaymentSys, $ip){
 
         if ($this->ChkSysIP($ip, $IDPaymentSys) >= 1) {
-            echo json_encode('dublicate');
+            echo json_encode('dublicate_ip');
             exit();
         } else {
             $sql = <<<SQL
@@ -138,7 +137,7 @@ SQL;
     $ip         = $resault['inpt-ip'] ?? null;
     $count      = $this->CountSys();
 
-     if ($this->ChkSys($name, $token) >= 1) {
+     if ($this->ChkSys($name) >= 1) {
          echo json_encode('dublicate');
          exit();
      } else {
@@ -284,6 +283,33 @@ SQL;
 
         $stmt->execute([
             't_id' => $insertService
+        ]);
+
+        echo json_encode('success');
+        exit();
+
+    }
+
+    public function deleteServiceIPNw()
+    {
+
+        $resault    = file_get_contents('php://input');
+        $resault    = json_decode($resault,true);
+        $id_s       = $resault['PaymentSystemID'] ?? null;
+        $ip         = $resault['IP'] ?? null;
+
+        $sql = <<<SQL
+DELETE FROM
+    "Payment"."IPAddress"
+WHERE
+    ("PaymentSystemID" = :t_id AND "IP" = :t_ip);
+SQL;
+
+        $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+        $stmt->execute([
+            't_id' => $id_s,
+            't_ip' => $ip
         ]);
 
         echo json_encode('success');
