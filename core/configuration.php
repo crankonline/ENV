@@ -173,5 +173,14 @@ Connections::configure(
     ]
 );
 
+Connections::configure(
+    'Dealer',
+    [
+        'dsn'      => $_ENV['configuration_connection_Dealer_dsn'],
+        'user'     => $_ENV['configuration_connection_Dealer_user'],
+        'password' => $_ENV['configuration_connection_Dealer_password']
+    ]
+);
+
 
 
