@@ -12,7 +12,7 @@ abstract  class  PayFilter
         protected $params;
         protected $values;
 
-    abstract public function setParams($values);
+    abstract public function setParams(array $values);
     public function getDateMax($date)
     {
         return date("Y-m-d", strtotime("+1 days", strtotime($date)));
