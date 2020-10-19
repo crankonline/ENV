@@ -6,7 +6,7 @@ namespace Environment\Modules\PayFilter;
 
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
-abstract  class  PayFilterSochi
+abstract  class  PayFilterDealer
 {
 
         protected $params;
@@ -26,20 +26,20 @@ abstract  class  PayFilterSochi
         $value = $this->values;
 
         $sql = <<<SQL
-SELECT "p".*, "ps"."Name"
-FROM
-    "Payment"."Payment" AS "p"
-     INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem" 
+SELECT "p".*, "ps"."Name", "inv". "inn" 
+FROM "Dealer_payments"."PayLog" as "p" 
+    INNER JOIN "Dealer_payments"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"  
+    INNER JOIN "Dealer_data"."invoice" AS "inv" ON "p"."Account" = "inv"."invoice_serial_number"
 WHERE  
     {$param}
 ORDER BY 
-    "p"."IDPayment" DESC,
-    "p"."PayDateTime"
+    "p"."IDPayLog" DESC,
+    "p"."DateTime"
 
 SQL;
 
 
-        $stmt = Connections::getConnection('Pay')->prepare($sql);
+        $stmt = Connections::getConnection('Dealer')->prepare($sql);
 
         $stmt->execute($value);
 
