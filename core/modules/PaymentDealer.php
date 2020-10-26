@@ -89,30 +89,59 @@ SQL;
                 });
 
 
-                if ($filters['account'] && !$filters['paymentSystem']) {
+                if ($filters['account'] && !$filters['paymentSystem'] && !$filters['inn']) {
+
                     $account = new  PayFilter\AccountDealer();
                     $account->setParams($new_array);
 
                 }
 
 
-                if ($filters['account'] && $filters['paymentSystem']) {
+                if ($filters['account'] && $filters['paymentSystem'] && !$filters['inn']) {
 
                     $account = new  PayFilter\AccountAndDateAndPaySysDealer();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$filters['account'] && $filters['paymentSystem']) {
+                if (!$filters['account'] && $filters['paymentSystem'] && !$filters['inn']) {
 
                     $account = new  PayFilter\PaySysAndDateDealer();
                     $account->setParams($new_array);
 
                 }
 
-                if (!$filters['account'] && !$filters['paymentSystem']) {
+                if (!$filters['account'] && !$filters['paymentSystem'] && !$filters['inn']) {
 
                     $account = new  PayFilter\DateDealer();
+                    $account->setParams($new_array);
+
+                }
+
+                if (!$filters['account'] && !$filters['paymentSystem'] && $filters['inn']) {
+
+                    $account = new  PayFilter\InnDealer();
+                    $account->setParams($new_array);
+
+                }
+
+                if ($filters['account'] && !$filters['paymentSystem'] && $filters['inn']) {
+
+                    $account = new  PayFilter\AccountAndInnDealer();
+                    $account->setParams($new_array);
+
+                }
+
+                if (!$filters['account'] && $filters['paymentSystem'] && $filters['inn']) {
+
+                    $account = new  PayFilter\PaySysAndDateAndInnDealer();
+                    $account->setParams($new_array);
+
+                }
+
+                if ($filters['account'] && $filters['paymentSystem'] && $filters['inn']) {
+
+                    $account = new  PayFilter\AccountAndDateAndPaySysAndInnDealer();
                     $account->setParams($new_array);
 
                 }
@@ -168,21 +197,23 @@ SQL;
     protected function main() {
         $this->variables->mes = [];
         $this->variables->errors = [];
-        $chkFilter =  $_GET['btn_submit'] ?? null;
+        $chkFilter = $_GET['btn_submit'] ?? null;
 
         try {
 
             $account =  $_GET['account'] ?? null;
-            $paySys =  $_GET['paySys'] ?? null;
-            $type =  $_GET['type'] ?? null;
+            $inn     =  $_GET['inn'] ?? null;
+            $paySys  =  $_GET['paySys'] ?? null;
+            $type    =  $_GET['type'] ?? null;
             $dateMin = !empty($_GET['dateMin']) ? $_GET['dateMin'].' 00:00:00' : date('Y-m-01 00:00:00');
             $dateMax = !empty($_GET['dateMax']) ? $_GET['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
 
 
+            $this->variables->inn              = $inn;
             $this->variables->account          = $account;
             $this->variables->dateMin          =  date( 'Y-m-d', strtotime($dateMin));
             $this->variables->dateMax          = date('Y-m-d',  strtotime($dateMax));
-            $this->variables->paySysD           = $paySys;
+            $this->variables->paySysD          = $paySys;
             $this->variables->type             = $type;
             $this->variables->page             = $_GET['page'] ?? null;
             $this->variables->PaySys           = $this->getPaymentSys();
@@ -197,6 +228,7 @@ SQL;
                         list($count, $logs) = $this->getLog(
                             [
                             'account' => $account,
+                            'inn' => $inn,
                             'type' => $type,
                             'paymentSystem' => $paySys,
                             'dateMin' => $dateMin,

@@ -16,8 +16,12 @@
 
             <div class="caption">Параметры поиска</div>
             <div class="field">
-                <label for="account" class="fixed">Inn:</label>
-                <input type="text" maxlength="14"  id="account" name="account" placeholder="Inn..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
+                <label for="account" class="fixed">Account:</label>
+                <input type="text" maxlength="16"  id="account" name="account" placeholder="account..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
+            </div>
+            <div class="field">
+                <label for="inn" class="fixed">INN:</label>
+                <input type="text" maxlength="14"  id="inn" name="inn" placeholder="INN..." value="<?php echo $inn; ?>" style="border-color: #888;"><br>
             </div>
             <div class="field">
                 <label for="date" class="fixed">DateTime:</label>
@@ -51,7 +55,8 @@
         <thead>
         <tr>
 
-            <th class="center" >Inn:</th>
+            <th class="center" >Account:</th>
+            <th class="center" >INN:</th>
             <th class="center" >DateTime:</th>
             <th class="center" >SystemName:</th>
             <th class="center" >Sum:</th>
@@ -72,6 +77,9 @@
         <?php foreach($logs as $index => &$log): ?>
 
         <tr id="tr-file">
+            <td class="center" ><?php
+                        echo htmlspecialchars($log['Account']);
+                    ?></td>
             <td class="center" ><?php
                         echo htmlspecialchars($log['inn']);
                     ?></td>
