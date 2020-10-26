@@ -74,7 +74,7 @@
             <label align="center" id="rec_ald" class="err_suc" style="position: relative; right: 20px; top: 0.6em; color: red;  font-size: 16px; display: none">Такая запись уже есть</label>
             <table align="center" style="">
                 <tr>
-                    <td id="inpt_name_td" style="position: relative; right: 23%">
+                    <td id="inpt_name_td" style="position: relative; right: 17%">
                         <strong class="strong">Наименование:</strong>
                         <input type="text" name="inpt_name" id="inpt_name"><br>
                      </td>
@@ -82,7 +82,7 @@
                 <tr>
                     <td id="inpt_name_token">
                          <strong class="strong">Токен:</strong>
-                         <input type="text" name="inpt-token" id="inpt-token"><br>
+                         <input type="text" name="inpt-token" id="inpt-token" style="width: 400px"><br>
                     </td>
                 </tr>
                 <tr>
@@ -91,9 +91,9 @@
                         <input type="text" name="inpt-ip" id="inpt-ip"><br>
                     </td>
                 </tr>
-                <tr id="add-tr" style="position: relative; left: 14%">
+                <tr id="add-tr" style="position: relative; left: 9%">
 
-                <tr id="inp0" style="position: relative; left: 14%">
+                <tr id="inp0" style="position: relative; left: 9%">
                 </tr>
                 </tr>
                 <tr>
@@ -159,7 +159,7 @@
         <tr>
             <td>
                 <div class="add">
-                    <input type="button" name="add-ip" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style="min-width: 70px; font-size: 22px; min-height: 42px"><br>
+                    <input type="button" name="add-ip" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style="min-width: 60px; font-size: 20px; min-height: 22px"><br>
                 </div>
             </td>
         </tr>
@@ -189,7 +189,7 @@
             <tr>
                 <td>
                     <div class="add">
-                        <input type="button" name="add-ip" id="add-ip_new" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style="min-width: 70px; font-size: 22px; height: 42px"><br>
+                        <input type="button" name="add-ip" id="add-ip_new" class="button" value="+" onclick='addFuncNwIP(<?php echo json_encode($idPaySys, JSON_UNESCAPED_UNICODE); ?>)' style="min-width: 60px; font-size: 20px; min-height: 22px"><br>
                     </div>
                 </td>
             </tr>
@@ -254,7 +254,8 @@
 
                                                                 document.getElementById("ip-td").style.position = "relative";
                                                                 document.getElementById("ip-td").style.left = "30px";
-                                                                mod_cont.style.height       = "280px";
+                                                                mod_cont.style.height       = "300px";
+                                                                mod_cont.style.width       = "700px";
 
                                                                 save_window.style.position  = "relative";
                                                                 save_window.style.bottom    = "50px";
@@ -308,6 +309,8 @@
         err_suc.style.display       = "none";
         rec_ald.style.display       = "none";
         rec_del.style.display       = "none";
+        err_dub.style.display       = "none";
+        inpt_ip.style.border        ="0.2px solid black";
 
     }
 
@@ -637,6 +640,7 @@
                          save_lab.style.left        = "50%";
                          save_lab.style.left        = "50%";
                          rec_ald.style.display      = "none";
+                         err_suc.style.display      = "none";
 
                          save_lab.style.transform = "translate(-50%, 0)";
                          save_lab.style.top       = "-50px";
