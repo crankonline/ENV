@@ -16,15 +16,15 @@
 
             <div class="caption">Параметры поиска</div>
             <div class="field">
-                <label for="account" class="fixed">Account:</label>
-                <input type="text" maxlength="16"  id="account" name="account" placeholder="account..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
+                <label for="account" class="fixed">Аккаунт:</label>
+                <input type="text" maxlength="16"  id="account" name="account" placeholder="Аккаунт..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
             </div>
             <div class="field">
-                <label for="inn" class="fixed">INN:</label>
-                <input type="text" maxlength="14"  id="inn" name="inn" placeholder="INN..." value="<?php echo $inn; ?>" style="border-color: #888;"><br>
+                <label for="inn" class="fixed">ИНН:</label>
+                <input type="text" maxlength="14"  id="inn" name="inn" placeholder="ИНН..." value="<?php echo $inn; ?>" style="border-color: #888;"><br>
             </div>
             <div class="field">
-                <label for="date" class="fixed">DateTime:</label>
+                <label for="date" class="fixed">ДАТА:</label>
                 <span class="fixed" style="position: relative; right: 15px">С</span>
                 <input style="position: relative; right: 10px" type="date" name="dateMin" id="dateMin" value="<?php echo $dateMin ?>" style="border-color: #888;">
                <span class="fixed">По</span>
@@ -34,7 +34,7 @@
             <label id="message_err_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 250px;">Выберите дату</label>
             </div>
             <div class="field">
-                    <label for="paySys" class="fixed">PaymentSystem:</label>
+                    <label for="paySys" class="fixed">Система:</label>
                     <select name="paySys" id="paySys" style="padding: 10px; font-size: 16px; color: #000; min-width: 215px; outline: none; position: relative; left: 0px">
                         <option value="">--</option>
                         <?php foreach($PaySys as $sys):  ?>
@@ -55,12 +55,12 @@
         <thead>
         <tr>
 
-            <th class="center" >Account:</th>
-            <th class="center" >INN:</th>
-            <th class="center" >DateTime:</th>
-            <th class="center" >SystemName:</th>
-            <th class="center" >Sum:</th>
-            <th class="center" >TXNID:</th>
+            <th class="center" >Аккаунт:</th>
+            <th class="center" >ИНН:</th>
+            <th class="center" >Дата:</th>
+            <th class="center" >Система:</th>
+            <th class="center" >Сумма:</th>
+            <th class="center" >ID транзакции:</th>
         </tr>
         </thead>
         <tbody>
