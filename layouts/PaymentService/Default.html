@@ -254,7 +254,7 @@
 
                                                                 document.getElementById("ip-td").style.position = "relative";
                                                                 document.getElementById("ip-td").style.left = "30px";
-                                                                mod_cont.style.height       = "300px";
+                                                                mod_cont.style.height      = "310px";
                                                                 mod_cont.style.width       = "700px";
 
                                                                 save_window.style.position  = "relative";
@@ -359,6 +359,7 @@
                          save_lab.style.position    = "relative";
                          save_lab.style.left        = "50%";
                          rec_ald.style.display      = "none";
+                         err_suc.style.display      = "none";
 
                          save_lab.style.transform   = "translate(-50%, 0)";
                          save_lab.style.top         = "-100px";
@@ -384,12 +385,13 @@
 
                      if  (data === 'dublicate') {
                          rec_ald.style.display   = "block";
+                         err_suc.style.display   = "none";
 
                      }
 
                      if  (data === 'dublicate_ip') {
                          err_suc_ip.style.display   = "block";
-
+                         err_suc.style.display      = "none";
                          sleep(2500).then(()=>{
                              save_lab.style.display         = "none";
                              save_window.style.display      = "block";
