@@ -34,7 +34,7 @@ SQL;
             'moduleGroupId' => $moduleGroup,
             'accesKey' => "payment-dealer",
             'handleClass' => "PaymentDealer",
-            'namemg' => "Платежи диллерки",
+            'namemg' => "Платежи дилерки",
             'isEntryPoint' => true
         ] );
 
