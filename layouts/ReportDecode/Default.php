@@ -35,7 +35,9 @@
 <pre style='text-align:left; display: none;'>
 <?php print_r($certs); ?>
 </pre>
-<?php foreach ($certs as $certss) : ?>
+<?php
+$innReq = '';
+foreach ($certs as $certss) : ?>
     <?php
     if ($certss ?? null)
     foreach ($certss as $certificate) :
@@ -90,7 +92,7 @@
                 <span class="w150 center">
                     <b>ИНН:</b>
                     <br>
-                    <?php echo htmlspecialchars($certificate->Inn); ?>
+                    <?php echo htmlspecialchars($certificate->Inn); $innReq = htmlspecialchars($certificate->Inn); ?>
                 </span>
                 <span class="w300 center">
                     <b>Серийный номер:</b>
@@ -178,6 +180,14 @@
         </div>
     <?php endforeach;
 endforeach; ?>
+<div class="field buttons">
+    <?php if($this->isPermitted($this::AK_REQUISITES)): ?>
+        <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $innReq; ?>" target="_blank" class="button">Текущие реквизиты</a>
+        <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $innReq; ?>&uid=&date=<?php echo $nearestRequisites['DateTime']; ?>" target="_blank" class="button">Реквизиты во время сдачи</a>
+    <?php endif; ?>
+    <a href="index.php?view=<?php echo $this::AK_DIFF_REQUISITES; ?>&inn=<?php echo $innReq; ?>&date=<?php echo $nearestRequisites['DateTime']; ?>" target="_blank" class="button">Diff</a>
+
+</div>
 <pre style=" display:none;"><?php print_r($length);?></pre>
 
 <?php if ($length['rep_xml_length'] > $available_size) : ?>

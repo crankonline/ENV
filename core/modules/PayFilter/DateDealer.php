@@ -4,7 +4,7 @@
 namespace  Environment\Modules\PayFilter;
 
 
-class Date extends \Environment\Modules\PayFilter\PayFilter
+class DateDealer extends \Environment\Modules\PayFilter\PayFilterDealer
 {
     public function setParams(array $values) {
         $this->params = '("p"."DateTime" BETWEEN :f_d_min AND :f_d_max)';

@@ -21,12 +21,16 @@ class Requisites extends \Environment\Core\Module {
         'listen'   => 'action'
     ];
 
-    protected function getRequisites( $inn, $uid ) {
+    protected function getRequisites( $inn, $uid, $upToDateTime = null ) {
+        if($upToDateTime) {
+            $objDateTime = new \DateTime($upToDateTime);
+            $upToDateTime = $objDateTime->format('c');
+        }
         $client = new SoapClients\Api\RequisitesData();
 
         $requisites = $uid
-            ? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, null )
-            : $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, null );
+            ? $client->getByUid( $client::SUBSCRIBER_TOKEN, $uid, $upToDateTime )
+            : $client->getByInn( $client::SUBSCRIBER_TOKEN, $inn, $upToDateTime );
 
         if ( ! ( $requisites && $requisites->common ) ) {
             throw new \Exception( 'Клиент не найден' );
@@ -370,6 +374,7 @@ SQL;
 
         $inn = $_GET['inn'] ?? null;
         $uid = $_GET['uid'] ?? null;
+        $date = $_GET['date'] ?? null;
 
 
         if ( ! ( $inn || $uid ) ) {
@@ -389,7 +394,7 @@ SQL;
         }
 
         try {
-            $requisitesAll = $this->getRequisites( $inn, $uid );
+            $requisitesAll = $this->getRequisites( $inn, $uid, $date );
 			list( $requisites, $bindings ) = $requisitesAll;
 		} catch ( \SoapFault $e ) {
 //			\Sentry\captureException( $e );
