@@ -16,11 +16,11 @@
 
             <div class="caption">Параметры поиска</div>
             <div class="field">
-                <label for="account" class="fixed">Account:</label>
+                <label for="account" class="fixed">Аккаунт:</label>
                 <input type="text" maxlength="14"  id="account" name="account" placeholder="Account..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
             </div>
             <div class="field">
-                <label for="date" class="fixed">DateTime:</label>
+                <label for="date" class="fixed">Дата:</label>
                 <span class="fixed" style="position: relative; right: 15px">С</span>
                 <input style="position: relative; right: 10px" type="date" name="dateMin" id="dateMin" value="<?php echo $dateMin ?>" style="border-color: #888;">
                <span class="fixed">По</span>
@@ -30,7 +30,7 @@
             <label id="message_err_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 250px;">Выберите дату</label>
             </div>
             <div class="field">
-                    <label for="paySys" class="fixed">PaymentSystem:</label>
+                    <label for="paySys" class="fixed">Система:</label>
                     <select name="paySys" id="paySys" style="padding: 10px; font-size: 16px; color: #000; min-width: 215px; outline: none; position: relative; left: 0px">
                         <option value="">--</option>
                         <?php foreach($PaySys as $sys):  ?>
@@ -42,7 +42,7 @@
             <div class="field buttons">
             <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" >&nbsp;
             <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
-            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_LOG_TERMINAL; ?>'">&nbsp;<br>
+            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_PAYMENT_SOCHI; ?>'">&nbsp;<br>
             </div>
         </form>
 
@@ -51,11 +51,11 @@
         <thead>
         <tr>
 
-            <th class="center" >Account:</th>
-            <th class="center" >DateTime:</th>
-            <th class="center" >SystemName:</th>
-            <th class="center" >Sum:</th>
-            <th class="center" >BillingID:</th>
+            <th class="center" >Аккаунт:</th>
+            <th class="center" >Дата:</th>
+            <th class="center" >Система:</th>
+            <th class="center" >Сумма:</th>
+            <th class="center" >ID Биллинг:</th>
         </tr>
         </thead>
         <tbody>

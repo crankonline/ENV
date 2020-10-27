@@ -81,18 +81,16 @@ SQL;
 
             if ($filters){
 
-
-
-                $count = '';
-
                 $new_array = array_filter($filters, function($element) {
                     return !empty($element);
                 });
 
-
                 if ($filters['account'] && !$filters['paymentSystem']) {
                     $account = new  PayFilter\AccountSochi();
-                    $account->setParams($new_array);
+                    $coun    = new  PayFilter\CountAccountSochi();
+
+                    $account->setParams($new_array, $limits, $offset);
+                    $coun->setParams($new_array);
 
                 }
 
@@ -100,25 +98,36 @@ SQL;
                 if ($filters['account'] && $filters['paymentSystem']) {
 
                     $account = new  PayFilter\AccountAndDateAndPaySysSochi();
-                    $account->setParams($new_array);
+                    $coun    = new  PayFilter\CountAccountAndDateAndPaySysSochi();
+
+                    $account->setParams($new_array, $limits, $offset);
+                    $coun->setParams($new_array);
 
                 }
 
                 if (!$filters['account'] && $filters['paymentSystem']) {
 
                     $account = new  PayFilter\PaySysAndDateSochi();
-                    $account->setParams($new_array);
+                    $coun    = new  PayFilter\CountPaySysDateSochi();
+
+                    $account->setParams($new_array, $limits, $offset);
+                    $coun->setParams($new_array);
 
                 }
 
                 if (!$filters['account'] && !$filters['paymentSystem']) {
 
                     $account = new  PayFilter\DateSochi();
-                    $account->setParams($new_array);
+                    $coun    = new  PayFilter\CountDateSochi();
+
+                    $account->setParams($new_array, $limits, $offset);
+                    $coun->setParams($new_array);
+
 
                 }
 
                 $rows = $account->geRes();
+                $count = $coun->geRes();
 
             } else {
                 $sql  = <<<SQL
@@ -207,6 +216,10 @@ SQL;
 
                         if ($logs) {
                             $this->variables->logs = &$logs;
+                            $this->context->paginator['count'] = (int)ceil($count / $limit);
+
+                            $this->variables->count = $count;
+
                         } else {
                             $this->variables->mes[] = 'Не найдено записей';
                         }
