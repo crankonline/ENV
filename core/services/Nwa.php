@@ -288,8 +288,61 @@ SQL;
             foreach ($data['sf'] as $record) {
                 if($record->PayerState == "Действующие") {
                     if(in_array($record->OKPO{0}, [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ])) {
+                        $map_sf_tariff = array(
+                            array(
+                                'value'=> 1,
+                                'name' => 'ОСН'
+                                ),
+                            array(
+                                'value'=> 2,
+                                'name' => 'БЮД'
+                            ),
+                            array(
+                                'value'=> 3,
+                                'name' => 'КОСГ'
+                            ),
+                            array(
+                                'value'=> 4,
+                                'name' => 'ОБЩ'
+                            ),
+                            array(
+                                'value'=> 5,
+                                'name' => 'ФЛСВ'
+                            ),
+                            array(
+                                'value'=> 6,
+                                'name' => 'МЕЖП'
+                            ),
+                            array(
+                                'value'=> 7,
+                                'name' => 'ФЗШП'
+                            ),
+                            array(
+                                'value'=> 8,
+                                'name' => 'ПВТ'
+                            ),
+                            array(
+                                'value'=> 9,
+                                'name' => 'СК по ПСП'
+                            ),
+                            array(
+                                'value'=> 11,
+                                'name' => 'ЗАГР'
+                            ),
+                            array(
+                                'value'=> 12,
+                                'name' => 'ЮЛШП'
+                            )
+                        );
+                        foreach ($map_sf_tariff as $item) {
+                            if($item['name'] == $record->RateType){
+                                $result['ratetype'] = $item['value'];
+                                break;
+                            }
+                        }
                         $result['okpo'] = $record->OKPO;
                         $result['rnsf'] = $record->PayerId;
+                        $result['sfdepartmentcode'] = $record->DepartmentCode;
                         break;
                     }
                 }
