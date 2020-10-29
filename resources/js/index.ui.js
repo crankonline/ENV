@@ -2361,6 +2361,8 @@
                                 $('[name="common-full-name"]').val(response.data.name);
                                 $('[name="common-full-name"]').keyup();
                                 $('[name="common-rnmj"]').val(response.data.mj);
+                                $('[name="sf-tariff"]').val(response.data.ratetype);
+                                $('[name="sf-region"]').val(response.data.sfdepartmentcode);
 
 
                                 console.log('success');
