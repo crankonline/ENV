@@ -5,7 +5,36 @@ require 'core/configuration.php';
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 
-class migrate12 {
+class migrate15 {
+
+
+
+
+    public function insertReiuisitesIdField( ) {
+        $sql = <<<SQL
+alter table "Statistics"."Action"
+    add "RequisitesID" integer null;
+SQL;
+
+        $stmt = Connections::getConnection( 'Reregister' )->prepare( $sql );
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+    public function insertUserIdField( ) {
+        $sql = <<<SQL
+alter table "Statistics"."Action"
+    add "UserID" integer null;
+SQL;
+
+        $stmt = Connections::getConnection( 'Reregister' )->prepare( $sql );
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
 
     public function insertModule() {
         $sql = <<<SQL
@@ -29,9 +58,9 @@ SQL;
 
         $stmt->execute( [
             'moduleGroupId' => null,
-            'accesKey' => "diff-requisites",
-            'handleClass' => "DiffRequisites",
-            'namemg' => "сравнение реквизитов",
+            'accesKey' => "client-registration-statistics-detail",
+            'handleClass' => "ClientRegistrationStatisticsDetail",
+            'namemg' => "Cтатистика регистрации клиентов детальная",
             'isEntryPoint' => 0
         ] );
 
@@ -63,18 +92,24 @@ SQL;
         return $stmt->fetchColumn();
     }
 
+
 }
 
-$migrate = new migrate12();
+$migrate = new migrate15();
+$m1 = $migrate->insertReiuisitesIdField();
+$m2 = $migrate->insertUserIdField();
+
+print_r( "migrate success - \n" . $m1 ."\n");
+print_r( "migrate success - \n" . $m2 ."\n");
 
 
-$m = $migrate->insertModule();
+$moduleGroup = 2;
+$m = $migrate->insertModule($moduleGroup);
 $ma = $migrate->insertModuleAccess($m);
 
 print_r( "migrate success - \n");
 print_r($m."\n");
 print_r($ma);
-
 
 
 

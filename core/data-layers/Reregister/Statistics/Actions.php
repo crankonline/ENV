@@ -16,15 +16,17 @@ class Actions extends \Unikum\Core\DataLayer {
             $row,
             [
                 'action-type-id' => 'actionTypeId',
-                'ip-address'     => 'ipAddress'
+                'ip-address'     => 'ipAddress',
+                'user-id'        => 'userId',
+                'requisites-id'  => 'reqisitesId'
             ]
         );
 
         $sql = <<<SQL
 INSERT INTO "Statistics"."Action"
-    ("IDAction", "ActionTypeID", "IpAddress", "DateTime")
+    ("IDAction", "ActionTypeID", "IpAddress", "DateTime", "RequisitesID", "UserID")
 VALUES
-    (DEFAULT, :actionTypeId, :ipAddress, DEFAULT)
+    (DEFAULT, :actionTypeId, :ipAddress, DEFAULT, :reqisitesId, :userId)
 RETURNING
     "IDAction";
 SQL;
