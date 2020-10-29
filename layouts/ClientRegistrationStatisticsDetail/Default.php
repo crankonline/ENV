@@ -1,7 +1,7 @@
 <form class="form" action="index.php" method="GET">
 
     <input type="hidden" name="view" value="<?php echo $this::AK_CLIENT_REGISTRATION_STATISTICS; ?>" />
-    <div class="caption">Просмотр статистики регистрации клиентов</div>
+    <div class="caption">Просмотр статистики регистрации клиентов (Детальный)</div>
 
     <div class="field">
         <label for="period-from" class="fixed">Период с:</label>
@@ -38,8 +38,7 @@
         <th>Дата</th>
         <th>IP-адрес</th>
         <th>Оператор</th>
-        <th>Регистрации</th>
-        <th>Корректировки</th>
+        <th>Реквизиты</th>
     </tr>
     <?php
         $totals = [
@@ -56,35 +55,28 @@
         <td class="center"><?php
             echo htmlspecialchars($action['date']);
         ?></td>
-        <td class="center"><a href="/index.php?view=client-registration-statistics-detail&ip=<?php
-            echo htmlspecialchars($action['ip-address']);?>"><?php echo htmlspecialchars($action['ip-address']);?></a>
-        </td>
-        <?php $operName = htmlspecialchars($this->getOperatorName($action['userId']));
-        if ($operName == "-") {?>
-        <td class="center">-</td><?php } else {?>
-        <td class="center"><a href="/index.php?view=client-registration-statistics-detail&userId=<?php
-            echo $action['userId']?>"><?php echo $operName;?></a></td>
         <td class="center"><?php
-            echo $action['register-count'];
+            echo htmlspecialchars($action['ip-address']);
         ?></td>
-        <?php } ?>
         <td class="center"><?php
-            echo $action['update-count'];
+            echo htmlspecialchars($t->getOperatorName($action['userId']));
         ?></td>
+<!--        <td class="center"><a href="index.php?view=requisites&inn=02307201910148&uid=&date=2019-12-23 12:51:19.61176"/></td>-->
+        <td class="center"><a href="index.php?view=client-registration-statistics-detail&ip=<?php
+            echo $_GET['ip'];?>&action=getRequisites&req= <?php echo $action['reqId'];
+        ?>"><?php echo $action['reqId']; ?></a></td>
     </tr>
     <?php
-            foreach($totals as $key => $value):
-                $totals[$key] += $action[$key];
-            endforeach;
+            $action['action'] == 1 ? $totals['register-count']++ : $totals['update-count']++;
 
         endforeach;
     ?>
     <tr>
-        <th colspan="4">Итого:</td>
-        <td class="center"><b><?php
+        <th colspan="3">Итого:</td>
+        <td class="center"><b>созданных - <?php
             echo $totals['register-count'];
         ?></b></td>
-        <td class="center"><b><?php
+        <td class="center"><b>обновленных - <?php
             echo $totals['update-count'];
         ?></b></td>
     </tr>
