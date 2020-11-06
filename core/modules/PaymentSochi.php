@@ -3,8 +3,15 @@
 namespace Environment\Modules;
 
 
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 use Environment\Modules\PayFilter as PayFilter;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
 class PaymentSochi extends \Environment\Core\Module
@@ -172,6 +179,203 @@ SQL;
             exit;
         }
         return [&$count, &$rows];
+    }
+
+    function conExcel ()
+    {
+        $resault = file_get_contents('php://input');
+        $resault = json_decode($resault, true);
+        $account = $resault['account'] ?? null;
+        $system = $resault['system'] ?? null;
+        $dateMin = !empty($resault['dateMin'] ) ? $resault['dateMin'] .' 00:00:00' : date('Y-m-01 00:00:00');
+        $dateMax = !empty($resault['dateMax']) ? $resault['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
+
+        if ($account && !$system && $dateMin && $dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+WHERE "p"."Account" LIKE :f_account AND ("p"."PayDateTime" BETWEEN :f_d_min AND :f_d_max)        
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([
+                'f_account' => '%'.$account.'%',
+                'f_d_min'  => $dateMin,
+                'f_d_max'  => $dateMax,
+            ] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+        if ($account && $system && $dateMin && $dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+WHERE "p"."Account" LIKE :f_account AND ("p"."PayDateTime" BETWEEN :f_d_min AND :f_d_max) AND "p"."PaymentSystemID" = :f_paymentSystem        
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([
+                'f_account' => '%'.$account.'%',
+                'f_paymentSystem'  => $system,
+                'f_d_min'  => $dateMin,
+                'f_d_max'  => $dateMax,
+            ] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+
+        if (!$account && $system && $dateMin && $dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+WHERE  ("p"."PayDateTime" BETWEEN :f_d_min AND :f_d_max) AND "p"."PaymentSystemID" = :f_paymentSystem        
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([
+                'f_paymentSystem'  => $system,
+                'f_d_min'  => $dateMin,
+                'f_d_max'  => $dateMax,
+            ] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+        if (!$account && !$system && $dateMin && $dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+WHERE  ("p"."PayDateTime" BETWEEN :f_d_min AND :f_d_max)        
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([
+                'f_d_min'  => $dateMin,
+                'f_d_max'  => $dateMax,
+            ] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+        if (!$account && !$system && !$dateMin && !$dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+
+        $rb = [
+            'font' => [
+                'name' => 'Arial',
+                'bold' => true,
+                'italic' => false,
+                'underline' => Font::UNDERLINE_DOUBLE,
+                'strikethrough' => false,
+                'color' => [
+                    'rgb' => '228B22'
+                ]
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => [
+                        'rgb' => '228B22'
+                    ]
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ]
+        ];
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getStyle('A1')->applyFromArray($rb);
+        $sheet->getStyle('B1')->applyFromArray($rb);
+        $sheet->getStyle('C1')->applyFromArray($rb);
+        $sheet->getStyle('D1')->applyFromArray($rb);
+        $sheet->getStyle('E1')->applyFromArray($rb);
+        $sheet->getStyle('F1')->applyFromArray($rb);
+
+        $sheet->setTitle('Платежи Сочи');
+        $sheet->setCellValueByColumnAndRow(1, 1, 'Аккаунт');
+        $sheet->setCellValueByColumnAndRow(2, 1, 'Дата');
+        $sheet->setCellValueByColumnAndRow(3, 1, 'Система');
+        $sheet->setCellValueByColumnAndRow(4, 1, 'Сумма');
+        $sheet->setCellValueByColumnAndRow(5, 1, 'ID транзакции');
+        $row = 2;
+        foreach($res as $index => $rs) {
+            $sheet->setCellValueExplicitByColumnAndRow(1, $row, $rs['Account'],  DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(2, $row, $rs['PayDateTime'], DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(3, $row, $rs['Name'], DataType::TYPE_STRING);
+            $sheet->setCellValueByColumnAndRow(4, $row, $rs['Sum']);
+            $sheet->setCellValueExplicitByColumnAndRow(5, $row, $rs['TXNID'], DataType::TYPE_STRING);
+            $row ++;
+        }
+        $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(true);
+        $per = 'D'.$row;
+        $sheet->setCellValue($per, "=SUM(D2:$per)" );
+        $sheet->getStyle($per)->applyFromArray($rb);
+        foreach ($cellIterator as $cell) {
+            $sheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
+        }
+        $writer = new Xlsx($spreadsheet);
+        ob_start();
+        $writer->save('php://output');
+        $xlsData = ob_get_contents();
+        ob_end_clean();
+        echo json_encode('data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'.base64_encode($xlsData));
+        exit();
+
+
+
+
     }
 
     protected function main() {
