@@ -50,7 +50,7 @@
             <input type="button" name="btn_excel" id="btn_excel" class="button form-filter" value="Excel">&nbsp;<br>
             </div>
         </form>
-
+<div class="failure" id="failure" style="display: none">Невозможно выгрузить в Excel</div>
 <div class="" id="divSticky">
     <table  id="table-id" class=" data  myTable">
         <thead>
@@ -110,13 +110,16 @@
 
 {plugin:paginator}
 <script>
-    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+    const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
-    let frm = $('#form_filter');
+    const frm = $('#form_filter');
+    const failure = document.getElementById("failure");
+    failure.style.display = "none";
 
     frm.submit(() => {
-        let frm_dMin = document.getElementById("dateMin");
-        let frm_dMax = document.getElementById("dateMax");
+        failure.style.display = "none";
+        const frm_dMin = document.getElementById("dateMin");
+        const frm_dMax = document.getElementById("dateMax");
         if (frm_dMin.value && (frm_dMax.value === '')) {
             frm_dMax.style.borderColor = "darkred";
             document.getElementById("message_err_max").style.display = "block";
@@ -154,6 +157,7 @@
             .then(response => response.json())
 
             .then((data) => {
+                failure.style.display = "none";
                     let $a = $("<a>");
                     $a.attr("href",data);
                     $("body").append($a);
@@ -162,20 +166,13 @@
                     $a.remove();
             })
             .catch(() => {
-                let frm_dMin = document.getElementById("dateMin");
-                frm_dMin.style.borderColor = "darkred";
-                document.getElementById("message_err_min").style.display = "block";
-
-                sleep(2000).then(()=> {
-                    frm_dMin.style.borderColor = "#888";
-                    document.getElementById("message_err_min").style.display = "none";
-
+                failure.style.display = "block";
             })
 
     }
 
     document.getElementById("btn_excel").onclick = () => {
-        let  $data = {};
+        const  $data = {};
         frm.find ('input').each(function() {
             $data[this.name] = $(this).val();
         });
