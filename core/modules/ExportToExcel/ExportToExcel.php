@@ -56,22 +56,25 @@ class ExportToExcel
         $sheet->getStyle('D1')->applyFromArray($rb);
         $sheet->getStyle('E1')->applyFromArray($rb);
         $sheet->getStyle('F1')->applyFromArray($rb);
+
         if ($def  == 'dealer') {
             $sheet->setTitle('Платежи дилерки');
             $sheet->setCellValueByColumnAndRow(self::ONE_COL, self::ONE_COL, 'Аккаунт');
             $sheet->setCellValueByColumnAndRow(self::TWO_COL, self::ONE_COL, 'ИНН');
             $sheet->setCellValueByColumnAndRow(self::THREE_COL, self::ONE_COL, 'Дата');
             $sheet->setCellValueByColumnAndRow(self::FOUR_COL, self::ONE_COL, 'Система');
-            $sheet->setCellValueByColumnAndRow(self::FIVE_COL, self::ONE_COL, 'Сумма');
-            $sheet->setCellValueByColumnAndRow(self::SIX_COL, self::ONE_COL, 'ID транзакции');
+            $sheet->setCellValueByColumnAndRow(self::FIVE_COL, self::ONE_COL, 'ID транзакции');
+            $sheet->setCellValueByColumnAndRow(self::SIX_COL, self::ONE_COL, 'Сумма');
+
             $row = 2;
             foreach ($Arr as $index => $rs) {
+                $date = date_create($rs['DateTime']);
                 $sheet->setCellValueExplicitByColumnAndRow(self::ONE_COL, $row, $rs['Account'], DataType::TYPE_STRING);
                 $sheet->setCellValueExplicitByColumnAndRow(self::TWO_COL, $row, $rs['inn'], DataType::TYPE_STRING);
-                $sheet->setCellValueExplicitByColumnAndRow(self::THREE_COL, $row, $rs['DateTime'], DataType::TYPE_STRING);
+                $sheet->setCellValueExplicitByColumnAndRow(self::THREE_COL, $row, date_format($date, 'Y-m-d H:i:s'), DataType::TYPE_STRING);
                 $sheet->setCellValueExplicitByColumnAndRow(self::FOUR_COL, $row, $rs['Name'], DataType::TYPE_STRING);
-                $sheet->setCellValueByColumnAndRow(self::FIVE_COL, $row, $rs['Sum']);
-                $sheet->setCellValueExplicitByColumnAndRow(self::SIX_COL, $row, $rs['TXNID'], DataType::TYPE_STRING);
+                $sheet->setCellValueExplicitByColumnAndRow(self::FIVE_COL, $row, $rs['TXNID'], DataType::TYPE_STRING);
+                $sheet->setCellValueByColumnAndRow(self::SIX_COL, $row, $rs['Sum']);
                 $row++;
             }
         } else {
@@ -79,13 +82,14 @@ class ExportToExcel
             $sheet->setCellValueByColumnAndRow(self::ONE_COL, self::ONE_COL, 'Аккаунт');
             $sheet->setCellValueByColumnAndRow(self::TWO_COL, self::ONE_COL, 'Дата');
             $sheet->setCellValueByColumnAndRow(self::THREE_COL, self::ONE_COL, 'Система');
-            $sheet->setCellValueByColumnAndRow(self::FOUR_COL, self::ONE_COL, 'ID Биллитнг');
+            $sheet->setCellValueByColumnAndRow(self::FOUR_COL, self::ONE_COL, 'ID Биллинг');
             $sheet->setCellValueByColumnAndRow(self::FIVE_COL, self::ONE_COL, 'Сумма');
 
             $row = 2;
             foreach ($Arr as $index => $rs) {
+                $date = date_create($rs['PayDateTime']);
                 $sheet->setCellValueExplicitByColumnAndRow(self::ONE_COL, $row, $rs['Account'], DataType::TYPE_STRING);
-                $sheet->setCellValueExplicitByColumnAndRow(self::TWO_COL, $row, $rs['PayDateTime'], DataType::TYPE_STRING);
+                $sheet->setCellValueExplicitByColumnAndRow(self::TWO_COL, $row, date_format($date, 'Y-m-d H:i:s'), DataType::TYPE_STRING);
                 $sheet->setCellValueExplicitByColumnAndRow(self::THREE_COL, $row, $rs['Name'], DataType::TYPE_STRING);
                 $sheet->setCellValueExplicitByColumnAndRow(self::FOUR_COL, $row, $rs['BillingID'], DataType::TYPE_STRING);
                 $sheet->setCellValueByColumnAndRow(self::FIVE_COL, $row, $rs['Sum']);
