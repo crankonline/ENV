@@ -77,6 +77,8 @@ class ExportToExcel
                 $sheet->setCellValueByColumnAndRow(self::SIX_COL, $row, $rs['Sum']);
                 $row++;
             }
+            $lets = 'F';
+            $stCol = $lets.'2';
         } else {
             $sheet->setTitle('Платежи Сочи');
             $sheet->setCellValueByColumnAndRow(self::ONE_COL, self::ONE_COL, 'Аккаунт');
@@ -95,14 +97,15 @@ class ExportToExcel
                 $sheet->setCellValueByColumnAndRow(self::FIVE_COL, $row, $rs['Sum']);
                 $row++;
             }
-
+            $lets = 'E';
+            $stCol = $lets.'2';
 
         }
         $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
         $cellIterator->setIterateOnlyExistingCells(true);
-        $per = 'E'.$row;
-        $sheet->setCellValue($per, "=SUM(E2:$per)" );
-        $sheet->getStyle($per)->applyFromArray($rb);
+        $res = $lets.$row;
+        $sheet->setCellValue($res, "=SUM($stCol:$res)" );
+        $sheet->getStyle($res)->applyFromArray($rb);
         foreach ($cellIterator as $cell) {
             $sheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
         }
