@@ -13,7 +13,8 @@ class Person {
         $passport,
         $surname,
         $name,
-        $middleName;
+        $middleName,
+        $pin;
 
     public static function create(array & $values){
         $self = new self();
@@ -44,6 +45,10 @@ class Person {
 
         $self->middleName = isset($values['middle-name'])
             ? (Utils::monoSpace($values['middle-name']) ?: null)
+            : null;
+
+        $self->pin = isset($values['pin'])
+            ? (Utils::monoSpace($values['pin']) ?: null)
             : null;
 
         return $self;

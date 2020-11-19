@@ -837,6 +837,7 @@
             surname:    'common-chief-surname',
             name:       'common-chief-name',
             middleName: 'common-chief-middle-name',
+            pin:        'common-chief-pin',
 
             workPhone: 'common-chief-work-phone',
 
@@ -1796,6 +1797,7 @@
         elements[map.surname].value    = person.surname;
         elements[map.name].value       = person.name;
         elements[map.middleName].value = person.middleName;
+        elements[map.pin].value        = person.pin;
 
         if(representative.position){
             selectOptionByValue(
@@ -2886,6 +2888,10 @@
                         '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
                     '</tr>',
                     '<tr>',
+                        '<th>ПИН</th>',
+                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+                    '</tr>',
+                    '<tr>',
                         '<th>Должность</th>',
                         '<td><select required name="common-representative-position-{2}"></select></td>',
                     '</tr>',
@@ -2909,6 +2915,7 @@
                     surname:    'common-representative-surname-' + idx,
                     name:       'common-representative-name-' + idx,
                     middleName: 'common-representative-middle-name-' + idx,
+                    pin:        'common-representative-pin-' + idx,
 
                     workPhone: 'common-representative-work-phone-' + idx,
 
@@ -3041,6 +3048,7 @@
             elements[fldMap.surname].onblur    = monospaceFieldBlurHandler;
             elements[fldMap.name].onblur       = monospaceFieldBlurHandler;
             elements[fldMap.middleName].onblur = monospaceFieldBlurHandler;
+            elements[fldMap.pin].onblur        = monospaceFieldBlurHandler;
             elements[fldMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
             elements[fldMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
@@ -3524,6 +3532,7 @@
         elements[chiefMap.surname].onblur    = monospaceFieldBlurHandler;
         elements[chiefMap.name].onblur       = monospaceFieldBlurHandler;
         elements[chiefMap.middleName].onblur = monospaceFieldBlurHandler;
+        elements[chiefMap.pin].onblur =        monospaceFieldBlurHandler;
         elements[chiefMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
         elements[chiefMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
