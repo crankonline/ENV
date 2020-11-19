@@ -9,6 +9,7 @@ class Person {
         $passport,
         $surname,
         $name,
-        $middleName;
+        $middleName,
+        $pin;
 }
 ?>
