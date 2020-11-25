@@ -129,7 +129,7 @@
         </div>
 
         <div class="field">
-            <label for="eRepresentativePin" class="fixed">ПИН:</label>
+            <label for="eRepresentativePin" class="fixed">ПИН <span class="required">*</span>:</label>
             <input type="text" name="representative-pin" id="eRepresentativePin" maxlength="14" value="<?php echo htmlspecialchars($cRepresentative['representative-pin']); ?>" placeholder="Укажите ПИН">
             <span class="hint">ПИН, 14 символов максимум.</span>
             <?php //if(isset($validations, $validations['representative-middle-name'])): ?>
