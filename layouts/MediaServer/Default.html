@@ -1,0 +1,588 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="resources/js/jquery.dataTables.min.js"></script>
+
+
+<style>
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal .modal_content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+        z-index: 99999;
+    }
+    .modal .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .modal .button {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .modal #inpt_name {
+        margin: 5px;
+        width: 180px;
+        border: 1px solid #888;
+    }
+
+    .modal .strong {
+        font-size: 17px;
+        color: #080808;
+    }
+    .modal .mt {
+        font-size: 20px;
+
+    }
+
+
+    .modal_nw {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 1000;
+        vertical-align: middle;
+    }
+    .modal_nw .modal_content {
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        z-index: 99999;
+    }
+    .modal_nw .modal_content {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal_nw .strong {
+        font-size: 16px;
+        color: #080808;
+    }
+</style>
+
+<?php if(isset($serviceName)):?>
+    <table class="data client" id="service-name">
+        <tr>
+            <th class="center">id:</th>
+            <th class="center">Наименование сервисов:</th>
+            <th class="center">Количество файлов:</th>
+            <th class="center">Размер файлов:</th>
+            <th class="center">Файлы:</th>
+        </tr>
+        <tr>
+
+            <?php foreach($serviceName as $index => &$serviceN): ?>
+            <td class="center"><?php
+                           echo htmlspecialchars($serviceN['id']);
+                        ?></td>
+            <td onclick='editName("<?php echo $serviceN['id']; ?>", "<?php echo $serviceN['name']; ?>")'><a href="#"><?php
+                            echo htmlspecialchars($serviceN['name']);
+                        ?></a></td>
+            <td class="center"><?php
+                            echo htmlspecialchars($serviceN['files_count']);
+                        ?></td>
+            <td class="center"><?php
+                            echo htmlspecialchars(round($serviceN['sum_files'], 2));
+                        ?> Мб</td>
+            <td class="center">
+                <a  id="href_file" href="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&idService=<?php echo $serviceN['id']; ?>">Просмотр</a>
+            </td>
+
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<input type="submit" style="float: left" name="client-list-all" id="add_service_name" class="button" value="Добавить запись"><br>
+
+<?php else :?>
+    <strong>Ошибка подключения к базе данных </strong>
+<?php endif ?>
+<br>
+<br>
+<form action="index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&сhkAnalize=true" method="POST">
+    <input type="submit" style="float: left" name="client-list-all" class="button" value="Анализатор">
+</form><br><br><br>
+<?php if(isset($files)):?>
+
+<input type="submit" style="float: left" name="client-list-all" id="add_filter"  class="button" value="Фильтр"><br><br><br>
+<div class="floating" id="divSticky">
+
+    <table  id="table-id" class=" data  myTable">
+
+        <div style=" border: 1px solid #ddd; color: black; height: 120px; display: none" id="dv-form">
+            <label style="color: #aaa; font-size: 28px; font-weight: bold; float: left">Фильтр</label>
+            <div style="position: relative; top: 20px">
+
+                <form id="form_filter" action="" method="POST" style="position: relative; top: 200px">
+                     <label>
+                        <span class="fixed" style="font-size: 16px"><b>Наименование:</b></span>
+                         <input type="text" name="file_name" placeholder="Наименование..." value="<?php echo $file_name; ?>" style="border-color: #888;">
+                    </label>
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>Размер файлов:</b></span>
+                    </label>
+                    <label>
+                        <span class="fixed" style="font-size: 16px">С:</span>
+                        <input type="number" id="file_zie_min" step="0.01" name="file_zie_min" placeholder="Мб..." value="<?php echo $file_size_min; ?>" style="border-color: #888;">
+
+                    </label>
+                    <label>
+                        <span class="fixed" style="font-size: 16px">До:</span>
+                        <input type="number" name="file_zie_max" step="0.01" id="file_zie_max" placeholder="Мб..." value="<?php echo $file_size_max; ?>" style="border-color: #888;">
+
+                    </label><br>
+                    <label id="message_err_zie_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 100px">Заполните поле</label>
+                    <label id="message_err_zie_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 300px">Заполните поле</label>
+                    <br>
+                    <label>
+                        <span class="fixed" style="font-size: 16px"><b>Время создания:</b></span>
+                    </label>
+                    <label>
+                        <span class="fixed">С</span>
+                        <input type="date" name="from" id="from" value="<?php echo $from; ?>" style="border-color: #888;">
+                    </label>
+                    <label>
+                        <span class="fixed">По</span>
+                        <input type="date" name="to" id="to" value="<?php echo $to; ?>" style="border-color: #888;">
+                    </label>&nbsp;
+
+                    <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" style="text-align: center; top: 0">&nbsp;
+                    <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
+                    <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить" style="text-align: center; top: 0" onclick="window.location.href = 'index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&idService=<?php echo $url ?>'">&nbsp;<br>
+                    <label id="message_err_to" style="font-size: 12px; color: darkred; display: none; position: relative; right: 150px">Выберите дату</label>
+                    <label id="message_err_from" style="font-size: 12px; color: darkred; display: none; position: relative; left: 0px">Выберите дату</label>
+
+                </form>
+
+
+                </div>
+            </div>
+
+
+        <caption>Файлы</caption>
+        <thead>
+            <tr>
+                <th class="center" style="width: 20px;">#</th>
+                <th class="center" style="width: 400px;">Наименование:</th>
+                <th class="center" style="width: 50px;">Размер файла:</th>
+                <th class="center" style="width: 700px;">Собственное имя:</th>
+                <th class="center" style="width: 120px;">Время создания:</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach($files as $index => &$file): ?>
+
+        <tr id="tr-file">
+            <td class="center"><?php
+                       echo ++$index;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file['name']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars(round($file['size'], 2));
+                    ?> Мб</td>
+            <td>
+                <a href="<?php echo $link . $file['given_name']?>"><?php echo htmlspecialchars($file['given_name']); ?></a>
+            </td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file['time_stamp']);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif ?>
+
+<?php if(isset($jsonfile)):?>
+    <table class="data form">
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Файлы которых нет на диске:</th>
+        </tr>
+        <?php foreach($jsonfile['Db_Files'] as $index => &$file): ?>
+        <tr>
+            <td class="center"><?php
+                       echo ++$index;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+
+    <table class="data form">
+        <tr>
+            <th class="center">#</th>
+            <th class="center">Файлы которых нет в БД:</th>
+        </tr>
+        <?php $ind = 0;
+         foreach($jsonfile['Dir_Files'] as $index => &$file): ?>
+        <tr>
+            <td class="center"><?php
+                        echo ++$ind;
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($file);
+                    ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif ?>
+<?php if(!isset($jsonfile) &&  isset($сhkAnalize)):?>
+<br><label style="font-size: 18px; color: darkred; position: relative; left: 80px">Ошибка получения данных</label>
+<?php endif ?>
+<div id="my_modal" class="modal">
+    <div class="modal_content">
+        <label id="editLab" style="display: none">Редактирование</label>
+        <label id="addLab" style="display: none">Добавить</label>
+
+        <strong class="strong">Наименование:</strong>
+        <input type="text" name="" id="inpt_name"><br>
+        <label id="message_err" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Заполните наименование</label>
+        <label id="message_err_dub" style="font-size: 17px; color: darkred; display: none; position: relative; left: 55px">Такое наименование уже есть</label>
+        <input type="submit" name="save_window" id="save_window" class="button" value="Сохранить"><br>
+        <input type="submit" name="close_window" id="close_window" class="button" value="Закрыть">
+    </div>
+</div>
+<div id="my_modal_nw" class="modal_nw">
+    <div class="modal_content" id="dv_mss">
+     </div>
+</div>
+{plugin:paginator}
+
+<script type="text/javascript">
+
+    let tb = $('#table-id').DataTable();
+
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
+    function chkElm(serName) {
+         let ar = '<?php echo json_encode($serviceName) ?>';
+         let chkName;
+         ar = JSON.parse(ar);
+         ar.forEach(item => item.name == serName && (chkName = true) );
+       return chkName;
+    }
+
+    function getMessageError(value) {
+        document.getElementById("inpt_name").style.borderColor = "darkred";
+        document.getElementById(value).style.display = "block";
+
+        sleep(2000).then(()=>{
+            document.getElementById("inpt_name").style.borderColor = "#888";
+            document.getElementById(value).style.display = "none";
+
+        });
+
+    }
+
+    function editName(id,name) {
+
+        let modal = document.getElementById("my_modal");
+        let inpName = document.getElementById("inpt_name");
+
+
+        modal.style.display = "block";
+            inpName.value = name;
+            document.getElementById("editLab").style.display = "block";
+            document.getElementById("addLab").style.display = "none";
+            document.getElementById("save_window").onclick = () => {
+                if (inpName.value && chkElm(inpName.value)) {
+                    getMessageError("message_err_dub");
+                } else if (inpName.value == "") {
+                    getMessageError("message_err");
+                } else {
+                    saveName(id, inpName.value);
+                }
+            };
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+    }
+
+    function saveName(id, name) {
+        let modal = document.getElementById("my_modal_nw");
+        let mod = document.getElementById("my_modal");
+
+        let postForm = {
+            'id'     : id,
+            'name'   : name,
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?view=media-server&action=editName',
+            dataType: 'json',
+            data: postForm
+        })
+            .done(function (ret) {
+                if (ret) {
+
+                     $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px; position: relative; left: 55px">Сохранено</strong>`
+                    );
+
+                     modal.style.display = "block";
+                     sleep(2000).then(()=>{
+                         modal.style.display = "none";
+                         mod.style.display = "none";
+                         $("#message").remove();
+                         location.reload();
+                     });
+
+                } else {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px; position: relative; left: 55px">Ошибка сохранения.</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(2000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
+                }
+
+            })
+            .fail(function (res) {
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;  position: relative; left: 55px">Ошибка редактирования.</strong>`
+                );
+
+                modal.style.display = "block";
+                sleep(3000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
+
+            });
+    }
+
+    document.getElementById("add_service_name").onclick = addName;
+
+    function addName() {
+        let modal = document.getElementById("my_modal");
+        let inpName = document.getElementById("inpt_name");
+        inpName.value = "";
+        modal.style.display = "block";
+        document.getElementById("editLab").style.display = "none";
+        document.getElementById("addLab").style.display = "block";
+        document.getElementById("save_window").onclick = () => {
+                if (inpName.value && chkElm(inpName.value)) {
+                    getMessageError("message_err_dub");
+                } else if (inpName.value == "") {
+                    getMessageError("message_err");
+                } else {
+                    saveNameAdd(inpName.value);
+                }
+        };
+        document.getElementById("close_window").onclick = ()=> modal.style.display = "none";
+    }
+
+    function saveNameAdd(name) {
+        let modal = document.getElementById("my_modal_nw");
+        let mod = document.getElementById("my_modal");
+
+        let postForm = {
+            'name'   : name,
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?view=media-server&action=addName',
+            dataType: 'json',
+            data: postForm
+        })
+            .done(function (ret) {
+                if (ret) {
+
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: #008d00;  font-size: 50px;  position: relative; left: 55px">Сохранено</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(2000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                        location.reload();
+                    });
+
+                } else {
+                    $("#dv_mss").append(
+                        `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;  position: relative; left: 55px">Ошибка сохранения.</strong>`
+                    );
+
+                    modal.style.display = "block";
+                    sleep(3000).then(()=>{
+                        modal.style.display = "none";
+                        mod.style.display = "none";
+                        $("#message").remove();
+                    });
+                }
+
+            })
+            .fail(function () {
+
+                $("#dv_mss").append(
+                    `<strong class="switch" id="message" style="top: 0.6em; color: darkred;  font-size: 50px;  position: relative; left: 55px">Ошибка редактирования.</strong>`
+                );
+
+                modal.style.display = "block";
+                sleep(2000).then(()=>{
+                    modal.style.display = "none";
+                    mod.style.display = "none";
+                    $("#message").remove();
+                });
+
+            });
+    }
+
+    $('#service-name tr:last').after('<tr><td class="center"></td> <td class="center"></td> <td class="center">Всего файлов: <?php echo htmlspecialchars($FileSum); ?></td> <td class="center">Всего занято: <?php echo htmlspecialchars(round($FileSize, 2)); ?> Мб</td> <td class="center"></td></tr>');
+
+
+    function send_ajax_form(frm) {
+        let file_zie_min = document.getElementById("file_zie_min");
+        let file_zie_max = document.getElementById("file_zie_max");
+        let frm_ss = document.getElementById("from");
+        let frm_to = document.getElementById("to");
+        let per = '&pst_tru=true';
+        let url = `<?php echo $url = 'index.php?' . http_build_query($_GET). '&chkFilter=true';?>`;
+        let postForm = frm.serialize() + per;
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: url,
+            data:postForm,
+            success: function (data) {
+                if (file_zie_min.value && (file_zie_max.value === '')) {
+                    file_zie_max.style.borderColor = "darkred";
+                    document.getElementById("message_err_zie_max").style.display = "block";
+
+                    sleep(2000).then(()=> {
+                             file_zie_max.style.borderColor = "#888";
+                            document.getElementById("message_err_zie_max").style.display = "none";
+                        }
+                    )
+
+                } else if (file_zie_max.value && (file_zie_min.value === '')) {
+                        file_zie_min.style.borderColor = "darkred";
+                        document.getElementById("message_err_zie_min").style.display = "block";
+
+                        sleep(2000).then(()=> {
+                                file_zie_min.style.borderColor = "#888";
+                                document.getElementById("message_err_zie_min").style.display = "none";
+                            }
+                        )
+
+                } else if (frm_ss.value && (frm_to.value === '')) {
+                    frm_to.style.borderColor = "darkred";
+                    document.getElementById("message_err_from").style.display = "block";
+
+                    sleep(2000).then(()=> {
+                            frm_to.style.borderColor = "#888";
+                            document.getElementById("message_err_from").style.display = "none";
+                        }
+                    )
+
+                } else if (frm_to.value && (frm_ss.value === '')) {
+                    frm_ss.style.borderColor = "darkred";
+                    document.getElementById("message_err_to").style.display = "block";
+
+                    sleep(2000).then(()=> {
+                            frm_ss.style.borderColor = "#888";
+                            document.getElementById("message_err_to").style.display = "none";
+                        }
+                    )
+
+                } else {
+                    tb.clear();
+
+                    let person = JSON.parse(data);
+
+                    if (person.length > 0){
+                        person.forEach(value =>
+                            tb.row.add([
+                                value['id'],
+                                value['name'],
+                                (parseInt(value['size'] * 100) / 100) + " Мб",
+                                value['given_name'].link('<?php echo $link?>' + value['given_name']),
+                                value['time_stamp']
+                            ]).draw()
+                        );
+
+                    } else {
+                        tb.clear();
+                        tb.row.add(['Ничего не найдено','','','','','']).draw();
+                       $("#table-id td.sorting_1").css("text-align",  "center");
+                       $('#table-id td.sorting_1').css('font-size', '17px');
+                       $('#table-id td.sorting_1').css('color', 'darkred');
+                       $("#table-id td.sorting_1").attr("colspan", "6");
+                        disNoneFilt();
+
+                   }
+                }
+            },
+            error: function (data) {
+                $("#table-id #tr-file").remove();
+                $("#table-id").append(`<tbody id="tb-files"></tbody>`);
+                $("#table-id #tb-files").append(`<tr id="tr-files"><td colspan="6" style="text-align: center; font-size: 17px; color: darkred">Данных не найдено</td></tr>`);
+
+            },
+        });
+    }
+
+    let frm = $('#form_filter');
+
+    frm.submit(() => {
+        send_ajax_form(frm);
+        return false;
+    });
+
+    $('#add_filter').click( ()=> $('#dv-form').toggle() );
+
+    $('.dataTables_empty').css('text-align', 'center');
+
+    function disNoneFilt() {
+        $('.dataTables_length').css('display', 'none');
+        $('.dataTables_filter').css('display', 'none');
+        $('.dataTables_paginate').css('display', 'none');
+        $('.dataTables_info').css('display', 'none');
+    }
+
+    if ($('.dataTables_empty').text() === "Файлы отсутствуют") {
+        $('.dataTables_empty').css('text-align', 'center');
+        $('.dataTables_empty').css('font-size', '17px');
+        $('.dataTables_empty').css('color', 'darkred');
+        disNoneFilt();
+    }
+
+</script>
+
+

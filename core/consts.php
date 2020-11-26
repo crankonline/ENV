@@ -40,6 +40,9 @@ define('PATH_DATA_LAYERS', PATH_CORE . 'data-layers' . DS);
 define('PATH_SOAP_CLIENTS', PATH_CORE . 'soap-clients' . DS);
 define('PATH_SOAP_SERVICES', PATH_CORE . 'soap-services' . DS);
 define('PATH_SOAP_TYPES', PATH_CORE . 'soap-types' . DS);
+define('PATH_MIGRATIONS', PATH_CORE . 'migrations' . DS);
+define('PATH_DOCS', SYSTEM_ROOT . 'docs' . DS);
+
 
 /***/
 

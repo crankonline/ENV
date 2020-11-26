@@ -1,0 +1,181 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery-3.5.1.js"></script>
+<link rel="stylesheet" href="resources/css/ui-misc-form.css">
+<link rel="stylesheet" href="resources/css/ui-misc-stripes.css">
+<link rel="stylesheet" href="resources/css/ui-representatives-search.css">
+
+<?php  if($errors): ?>
+<?php foreach($errors as $error): ?>
+<div class="failure"><?php echo $error; ?></div>
+<?php endforeach; ?>
+<?php return; ?>
+<?php endif; ?>
+        <form class="form" id="form_filter" action="index.php" method="GET">
+            <input type="hidden" name="view" value="<?php echo $this::AK_LOG_TERMINAL; ?>" />
+
+            <div class="caption">Параметры поиска</div>
+            <div class="field">
+                <label for="account" class="fixed">Account:</label>
+                <input type="text" maxlength="14"  id="account" name="account" placeholder="Account..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
+            </div>
+            <div class="field">
+                <label for="date" class="fixed">DateTime:</label>
+                <span class="fixed" style="position: relative; right: 15px">С</span>
+                <input style="position: relative; right: 10px" type="date" name="dateMin" id="dateMin" value="<?php echo $dateMin ?>" style="border-color: #888;">
+               <span class="fixed">По</span>
+                <input type="date" name="dateMax" id="dateMax" value="<?php echo $dateMax; ?>" style="border-color: #888;">
+
+            <label id="message_err_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 80px">Выберите дату</label>
+            <label id="message_err_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 250px;">Выберите дату</label>
+            </div>
+            <div class="field">
+                    <label for="paySys" class="fixed">PaymentSystem:</label>
+                    <select name="paySys" id="paySys" style="padding: 10px; font-size: 16px; color: #000; min-width: 215px; outline: none; position: relative; left: 0px">
+                        <option value="">--</option>
+                        <?php foreach($PaySys as $sys):  ?>
+                        <option value="<?php echo $sys['IDPaymentSystem']; ?>"<?php echo $sys['IDPaymentSystem'] == $paySysD ? ' selected' : ''; ?>><?php
+                            echo  htmlspecialchars($sys['Name']); ?></option>
+                        <?php endforeach; ?>
+                  </select>
+            </div>
+            <div class="field">
+                <label for="type" class="fixed">Type:</label>
+                <select name="type" id="">
+                    <option value="">--</option>
+                    <?php foreach($gtType as $sys): ?>
+                    <option value="<?php echo $sys; ?>"<?php echo $sys == $type ? ' selected' : ''; ?>><?php
+                            echo  htmlspecialchars($sys); ?></option>
+                    <?php endforeach; ?>
+                  </select>
+            </div>
+            <div class="field buttons">
+            <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" >&nbsp;
+            <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
+            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_LOG_TERMINAL; ?>'">&nbsp;<br>
+            </div>
+        </form>
+
+<div class="" id="divSticky">
+    <table  id="table-id" class=" data  myTable">
+        <thead>
+        <tr>
+            <th class="center" >IDLog</th>
+            <th class="center" style="width: 50px">Account:</th>
+            <th class="center" >DateTime:</th>
+            <th class="center" >txnid:</th>
+            <th class="center" style="width: 50px">SystemName:</th>
+            <th class="center" >Type:</th>
+            <th class="center" >Content:</th>
+            <th class="center" >IP:</th>
+            <th class="center" style="width: 150px">Answer:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if($mes): ?>
+        <?php foreach($mes as $mess): ?>
+        <tr>
+            <td class="center" colspan="11" style="font-size: 18px; color: darkred;"><?php
+                       echo $mess;
+                    ?></td>
+        <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if(!empty($logs)): ?>
+        <?php foreach($logs as $index => &$log): ?>
+
+        <tr id="tr-file">
+            <td class="center"><?php
+                        echo htmlspecialchars($log['IDLog']);
+                    ?></td>
+            <td class="center" style="width: 50px"><?php
+                        echo htmlspecialchars($log['Account']);
+                    ?></td>
+            <td class="center" width="100px"><?php $date = date_create($log['DateTime']);
+                        echo htmlspecialchars(date_format($date, 'Y-m-d'));
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['txnid']);
+                    ?></td>
+            <td class="center" style="width: 50px"><?php
+                        echo htmlspecialchars($log['Name']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['Type']);
+                    ?></td>
+
+            <td class="left" ><?php $str = json_encode(json_decode($log['Content']), JSON_PRETTY_PRINT);
+                                 $vowels = array("{", "}", "\n");
+                        echo str_replace($vowels, "<br>", $str);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['IP']);
+                    ?></td>
+            <td class="left" style="width: 150px;  "><?php   if ($log['Answer']): ?>
+                <?php
+            $dom = new DOMDocument();
+
+                             $dom->preserveWhiteSpace = true;
+                $dom->formatOutput = true;
+                $documentElement = $dom->createElement("Entry");
+                $dom->appendChild ($documentElement);
+                $message = new DOMDocument();
+                $message->loadXML($log['Answer']);
+                $node=$dom->importNode($message->documentElement,true);
+                $documentElement->appendChild($node);
+                $res = $dom->saveXML($dom->documentElement);
+
+                ?>
+                <?php
+                echo str_replace("\n", "<br>", htmlspecialchars( $res));?>
+                <?php endif; ?></td>
+
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+<br><br><br>
+<?php   if(!empty($count)):  ?>
+<div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
+<?php endif; ?>
+
+{plugin:paginator}
+<script>
+    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+
+    let frm = $('#form_filter');
+
+    frm.submit(() => {
+        let frm_dMin = document.getElementById("dateMin");
+        let frm_dMax = document.getElementById("dateMax");
+        if (frm_dMin.value && (frm_dMax.value === '')) {
+            frm_dMax.style.borderColor = "darkred";
+            document.getElementById("message_err_max").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMax.style.borderColor = "#888";
+                    document.getElementById("message_err_max").style.display = "none";
+                }
+            )
+            return false;
+        } else if (frm_dMax.value && (frm_dMin.value === '')) {
+            frm_dMin.style.borderColor = "darkred";
+            document.getElementById("message_err_min").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMin.style.borderColor = "#888";
+                    document.getElementById("message_err_min").style.display = "none";
+                }
+            )
+            return false;
+        }
+
+    });
+
+</script>
+
+
+
+

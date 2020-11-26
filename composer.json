@@ -4,6 +4,17 @@
     },
     "require": {
         "vlucas/phpdotenv": "^3.3",
-        "sentry/sdk": "2.0.0"
+        "sentry/sdk": "2.0.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "phpoffice/phpspreadsheet": "^1.15",
+        "ext-dom": "*",
+        "ext-soap": "*",
+        "ext-pdo": "*"
+    },
+    "scripts": {
+        "post-update-cmd": "php workers/migrations.php migrate",
+        "post-install-cmd": "php workers/migrations.php migrate"
     }
+
 }

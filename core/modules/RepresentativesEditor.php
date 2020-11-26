@@ -43,6 +43,7 @@ SELECT
     "c-rp"."Surname" as "representative-surname",
     "c-rp"."Name" as "representative-name",
     "c-rp"."MiddleName" as "representative-middle-name",
+    "c-rp"."Pin" as "representative-pin",
     STRING_AGG("c-rq"."Inn", ',') as "company-inns",
     COUNT("c-rq"."IDRequisites") as "company-count",
     string_agg("c-rr"."Phone", ' | ' ) as "phone",
@@ -238,7 +239,8 @@ SQL;
 			'representative-id',
 			'representative-surname',
 			'representative-name',
-			'representative-middle-name'
+			'representative-middle-name',
+            'representative-pin'
 		] );
 
 		$validations = (
@@ -292,7 +294,8 @@ UPDATE
 SET
     "Surname"    = :rSurname,
     "Name"       = :rName,
-    "MiddleName" = :rMiddleName
+    "MiddleName" = :rMiddleName,
+    "Pin"        = :rPin
 WHERE
     ("PassportID" = :passportId)
     AND
@@ -305,6 +308,7 @@ SQL;
 					'rSurname'    => $representative['representative-surname'],
 					'rName'       => $representative['representative-name'],
 					'rMiddleName' => $representative['representative-middle-name'],
+					'rPin'        => $representative['representative-pin'],
 					'passportId'  => $passport['passport-id'],
 					'id'          => $representative['representative-id']
 				] );

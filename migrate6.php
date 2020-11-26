@@ -161,7 +161,7 @@ SQL;
         $sql = <<<SQL
 INSERT INTO "Core"."ModulePermission"
     ("IDModulePermission", "ModuleID", "Mark", "Name")
-VALUES
+VALUES 
     (
         DEFAULT,
         :id,

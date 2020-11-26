@@ -56,15 +56,18 @@
         <td class="center"><?php
             echo htmlspecialchars($action['date']);
         ?></td>
-        <td class="center"><?php
-            echo htmlspecialchars($action['ip-address']);
-        ?></td>
-        <td class="center"><?php
-            echo htmlspecialchars($this->getAuthorByIp($action['ip-address']));
-        ?></td>
+        <td class="center"><a href="/index.php?view=client-registration-statistics-detail&ip=<?php
+            echo htmlspecialchars($action['ip-address']);?>"><?php echo htmlspecialchars($action['ip-address']);?></a>
+        </td>
+        <?php $operName = htmlspecialchars($this->getOperatorName($action['userId']));
+        if ($operName == "-") {?>
+        <td class="center">-</td><?php } else {?>
+        <td class="center"><a href="/index.php?view=client-registration-statistics-detail&userId=<?php
+            echo $action['userId']?>"><?php echo $operName;?></a></td>
         <td class="center"><?php
             echo $action['register-count'];
         ?></td>
+        <?php } ?>
         <td class="center"><?php
             echo $action['update-count'];
         ?></td>

@@ -570,7 +570,7 @@ class Statement extends \Environment\Core\Module {
 			if ( ! empty( $json->person ) ) {
 				$persons = [
 					$json->person->chief,
-					$json->person->accountant
+					$json->person->accountant ?? null
 				];
 
 				foreach ( $persons as $person ) {

@@ -570,6 +570,19 @@
                 echo htmlspecialchars($person->pin);
             ?></td>
         </tr>
+            <?php if(!empty($person->edsusagemodel)): ?>
+
+                    <tr>
+                        <th>Модель использования ЭЦП:</th>
+                        <td><?php if($person->edsusagemodel == 'token'): ?>
+                            <?php  echo htmlspecialchars('Рутокен'); ?>
+                           <?php endif; ?>
+                            <?php if($person->edsusagemodel == 'cloud'): ?>
+                            <?php  echo htmlspecialchars('Облачное хранилище'); ?>
+                           <?php endif; ?>
+                        </td>
+                    </tr>
+            <?php endif; ?>
         <?php endif; ?>
     <?php
             endforeach;

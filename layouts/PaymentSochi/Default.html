@@ -1,0 +1,181 @@
+<script type="text/javascript" src="resources/js/utils.js"></script>
+<script type="text/javascript" src="resources/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery-3.5.1.js"></script>
+<link rel="stylesheet" href="resources/css/ui-misc-form.css">
+<link rel="stylesheet" href="resources/css/ui-misc-stripes.css">
+<link rel="stylesheet" href="resources/css/ui-representatives-search.css">
+
+<?php  if($errors): ?>
+<?php foreach($errors as $error): ?>
+<div class="failure"><?php echo $error; ?></div>
+<?php endforeach; ?>
+<?php return; ?>
+<?php endif; ?>
+        <form class="form" id="form_filter" action="index.php" method="GET">
+            <input type="hidden" name="view" value="<?php echo $this::AK_PAYMENT_SOCHI; ?>" />
+
+            <div class="caption">Параметры поиска</div>
+            <div class="field">
+                <label for="account" class="fixed">Аккаунт:</label>
+                <input type="text" maxlength="14"  id="account" name="account" placeholder="Account..." value="<?php echo $account; ?>" style="border-color: #888;"><br>
+            </div>
+            <div class="field">
+                <label for="date" class="fixed">Дата:</label>
+                <span class="fixed" style="position: relative; right: 15px">С</span>
+                <input style="position: relative; right: 10px" type="date" name="dateMin" id="dateMin" value="<?php echo $dateMin ?>" style="border-color: #888;">
+               <span class="fixed">По</span>
+                <input type="date" name="dateMax" id="dateMax" value="<?php echo $dateMax; ?>" style="border-color: #888;">
+
+            <label id="message_err_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 80px">Выберите дату</label>
+            <label id="message_err_max" style="font-size: 12px; color: darkred; display: none; position: relative; left: 250px;">Выберите дату</label>
+            </div>
+            <div class="field">
+                    <label for="paySys" class="fixed">Система:</label>
+                    <select name="paySys" id="paySys" style="padding: 10px; font-size: 16px; color: #000; min-width: 215px; outline: none; position: relative; left: 0px">
+                        <option value="">--</option>
+                        <?php foreach($PaySys as $sys):  ?>
+                        <option value="<?php echo $sys['IDPaymentSystem']; ?>"<?php echo $sys['IDPaymentSystem'] == $paySysD ? ' selected' : ''; ?>><?php
+                            echo  htmlspecialchars($sys['Name']); ?></option>
+                        <?php endforeach; ?>
+                  </select>
+            </div>
+            <div class="field buttons">
+            <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" >&nbsp;
+            <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
+            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_PAYMENT_SOCHI; ?>'">&nbsp;
+             <input type="button" name="btn_excel" id="btn_excel" class="button form-filter" value="Excel">&nbsp;<br>
+            </div>
+        </form>
+<div class="failure" id="failure" style="display: none">Невозможно выгрузить в Excel</div>
+<div class="" id="divSticky">
+    <table  id="table-id" class=" data  myTable">
+        <thead>
+        <tr>
+
+            <th class="center" >Аккаунт:</th>
+            <th class="center" >Дата:</th>
+            <th class="center" >Система:</th>
+            <th class="center" >Сумма:</th>
+            <th class="center" >ID Биллинг:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if($mes): ?>
+        <?php foreach($mes as $mess): ?>
+        <tr>
+            <td class="center" colspan="11" style="font-size: 18px; color: darkred;"><?php
+                       echo $mess;
+                    ?></td>
+        <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if(!empty($logs)): ?>
+        <?php foreach($logs as $index => &$log): ?>
+
+        <tr id="tr-file">
+            <td class="center" ><?php
+                        echo htmlspecialchars($log['Account']);
+                    ?></td>
+            <td class="center" ><?php $date = date_create($log['PayDateTime']);
+                        echo htmlspecialchars(date_format($date, 'Y-m-d H:i:s'));
+                    ?></td>
+            <td class="center" ><?php
+                        echo htmlspecialchars($log['Name']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['Sum']);
+                    ?></td>
+            <td class="center"><?php
+                        echo htmlspecialchars($log['BillingID']);
+                    ?></td>
+
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+<br><br><br>
+<?php   if(!empty($count)):  ?>
+<div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
+<?php endif; ?>
+
+{plugin:paginator}
+<script>
+    const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+    const frm = $('#form_filter');
+    const failure = document.getElementById("failure");
+    failure.style.display = "none";
+
+    frm.submit(() => {
+        failure.style.display = "none";
+        const frm_dMin = document.getElementById("dateMin");
+        const frm_dMax = document.getElementById("dateMax");
+        if (frm_dMin.value && (frm_dMax.value === '')) {
+            frm_dMax.style.borderColor = "darkred";
+            document.getElementById("message_err_max").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMax.style.borderColor = "#888";
+                    document.getElementById("message_err_max").style.display = "none";
+                }
+            )
+            return false;
+        } else if (frm_dMax.value && (frm_dMin.value === '')) {
+            frm_dMin.style.borderColor = "darkred";
+            document.getElementById("message_err_min").style.display = "block";
+
+            sleep(2000).then(()=> {
+                    frm_dMin.style.borderColor = "#888";
+                    document.getElementById("message_err_min").style.display = "none";
+                }
+            )
+            return false;
+        }
+
+    });
+
+    function sendP( $data) {
+
+        fetch('/index.php?view=payment-sochi&action=conExcel', {
+            method: 'post',
+            body: JSON.stringify($data)
+        })
+            .then(response => (response.status !== 200)
+                ? Promise.reject(new Error(response.statusText))
+                : Promise.resolve(response)
+            )
+            .then(response => response.json())
+
+            .then((data) => {
+                let $a = $("<a>");
+                $a.attr("href",data);
+                $("body").append($a);
+                $a.attr("download","ReportSochi.xlsx");
+                $a[0].click();
+                $a.remove();
+            })
+            .catch(() => {
+                failure.style.display = "none";
+            })
+    }
+
+    document.getElementById("btn_excel").onclick = () => {
+        const  $data = {};
+        frm.find ('input').each(function() {
+            $data[this.name] = $(this).val();
+        });
+        lv = document.getElementById("paySys");
+
+        rs = lv.value;
+
+        $data['system'] = rs;
+        sendP($data);
+        return false;
+
+    }
+</script>
+
+
+
+

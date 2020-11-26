@@ -123,6 +123,7 @@
                     <th class="center">UIN:</th>
                     <th class="center no-wrap">Дата отправки:</th>
                     <th class="center no-wrap">Период:</th>
+                    <th class="center no-wrap">Район:</th>
                     <th class="center no-wrap">Состояние:</th>
                 </tr>
             <?php
@@ -176,6 +177,9 @@
                     ?></td>
                     <td class="center no-wrap"><?php
                         echo $period;
+                    ?></td>
+                    <td class="center no-wrap"><?php
+                        echo $report['region'] ?? $report['region_new'];
                     ?></td>
                     <td class="center"><?php
                         echo htmlspecialchars($report['status']);
