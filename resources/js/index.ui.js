@@ -2889,7 +2889,7 @@
                     '</tr>',
                     '<tr>',
                         '<th>ПИН</th>',
-                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+                        '<td><input required type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
                     '</tr>',
                     '<tr>',
                         '<th>Должность</th>',
