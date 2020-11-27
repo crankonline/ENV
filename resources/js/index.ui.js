@@ -2780,6 +2780,7 @@
                     delete map.workPhone;
                     delete map.edsUsageModels;
                     delete map.deviceSerial;
+                    delete map.pin;
 
                     setReadOnlyByMap(map, isData);
                 } else {
