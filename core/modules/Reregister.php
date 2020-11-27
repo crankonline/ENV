@@ -37,6 +37,7 @@ class Reregister extends \Environment\Core\Module {
                 'user-id' => $_SESSION['user']['id']
 			];
 
+			file_put_contents('/application/save.json',json_encode($requisites));
 			if ( $uid ) {
 				$dataClient->update( API_SUBSCRIBER_TOKEN, $uid, $requisites );
 
