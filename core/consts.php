@@ -56,5 +56,7 @@ define('SESSION_ACTION_INTERVAL_KEY', 'interval');
 
 define('SESSION_USER_KEY', 'user');
 
+define('HTTP_AUTH_1C_USR', 'sochi');
+define('HTTP_AUTH_1C_PWD', 'ufvguygbvjvbugjsb6546fg964b96');
 
 ?>
