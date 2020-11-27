@@ -1845,6 +1845,7 @@
         delete map.edsUsageModels;
         delete map.roles;
         delete map.deviceSerial;
+        delete map.pin;
 
         setReadOnlyByMap(map, protect);
     }
@@ -2779,6 +2780,7 @@
                     delete map.workPhone;
                     delete map.edsUsageModels;
                     delete map.deviceSerial;
+                    delete map.pin;
 
                     setReadOnlyByMap(map, isData);
                 } else {
@@ -2889,7 +2891,7 @@
                     '</tr>',
                     '<tr>',
                         '<th>ПИН</th>',
-                        '<td><input required type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
                     '</tr>',
                     '<tr>',
                         '<th>Должность</th>',
