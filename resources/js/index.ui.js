@@ -1094,17 +1094,19 @@
     }
 
     function cacheRole(role, isUsed){
-        if(isUsed){
-            if(role in rolesCache){
-                rolesCache[role]++;
+        if(role != 4 ) {
+            if (isUsed) {
+                if (role in rolesCache) {
+                    rolesCache[role]++;
+                } else {
+                    rolesCache[role] = 1;
+                }
             } else {
-                rolesCache[role] = 1;
-            }
-        } else {
-            if(rolesCache[role] > 1){
-                rolesCache[role]--;
-            } else {
-                delete rolesCache[role];
+                if (rolesCache[role] > 1) {
+                    rolesCache[role]--;
+                } else {
+                    delete rolesCache[role];
+                }
             }
         }
     }
