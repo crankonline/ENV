@@ -137,22 +137,23 @@
             <label style="color: #aaa; font-size: 28px; font-weight: bold; float: left">Фильтр</label>
             <div style="position: relative; top: 20px">
 
-                <form id="form_filter" action="" method="POST" style="position: relative; top: 200px">
+                <form id="form_filter" action="index.php" method="GET" style="position: relative; top: 200px">
+                    <input type="hidden" name="view" value="<?php echo $this::AK_MEDIA_SERVER; ?>" />
                      <label>
                         <span class="fixed" style="font-size: 16px"><b>Наименование:</b></span>
-                         <input type="text" name="file_name" placeholder="Наименование..." value="<?php echo $file_name; ?>" style="border-color: #888;">
+                         <input type="text" name="file_name" placeholder="Наименование..." value="<?php echo $_GET['file_name'] ?? null; ?>" style="border-color: #888;">
                     </label>
                     <label>
                         <span class="fixed" style="font-size: 16px"><b>Размер файлов:</b></span>
                     </label>
                     <label>
                         <span class="fixed" style="font-size: 16px">С:</span>
-                        <input type="number" id="file_zie_min" step="0.01" name="file_zie_min" placeholder="Мб..." value="<?php echo $file_size_min; ?>" style="border-color: #888;">
+                        <input type="number" id="file_zie_min" step="0.01" name="file_zie_min" placeholder="Мб..." value="<?php echo $_GET['file_zie_min'] ?? null; ?>" style="border-color: #888;">
 
                     </label>
                     <label>
                         <span class="fixed" style="font-size: 16px">До:</span>
-                        <input type="number" name="file_zie_max" step="0.01" id="file_zie_max" placeholder="Мб..." value="<?php echo $file_size_max; ?>" style="border-color: #888;">
+                        <input type="number" name="file_zie_max" step="0.01" id="file_zie_max" placeholder="Мб..." value="<?php echo $_GET['file_zie_max'] ?? null; ?>" style="border-color: #888;">
 
                     </label><br>
                     <label id="message_err_zie_min" style="font-size: 12px; color: darkred; display: none; position: relative; left: 100px">Заполните поле</label>
@@ -163,11 +164,11 @@
                     </label>
                     <label>
                         <span class="fixed">С</span>
-                        <input type="date" name="from" id="from" value="<?php echo $from; ?>" style="border-color: #888;">
+                        <input type="date" name="from" id="from" value="<?php echo $_GET['from'] ?? null; ?>" style="border-color: #888;">
                     </label>
                     <label>
                         <span class="fixed">По</span>
-                        <input type="date" name="to" id="to" value="<?php echo $to; ?>" style="border-color: #888;">
+                        <input type="date" name="to" id="to" value="<?php echo  $_GET['to'] ?? null; ?>" style="border-color: #888;">
                     </label>&nbsp;
 
                     <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" style="text-align: center; top: 0">&nbsp;
@@ -175,6 +176,8 @@
                     <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить" style="text-align: center; top: 0" onclick="window.location.href = 'index.php?view=<?php echo $this::AK_MEDIA_SERVER; ?>&idService=<?php echo $url ?>'">&nbsp;<br>
                     <label id="message_err_to" style="font-size: 12px; color: darkred; display: none; position: relative; right: 150px">Выберите дату</label>
                     <label id="message_err_from" style="font-size: 12px; color: darkred; display: none; position: relative; left: 0px">Выберите дату</label>
+                    <input type="number"  name="idService" value="<?php echo  $_GET['idService']; ?>" style="display: none">
+                    <input type="number"  name="pstTru" id="pstTru" value="<?php echo  1; ?>" style="display: none">
 
                 </form>
 
@@ -186,7 +189,7 @@
         <caption>Файлы</caption>
         <thead>
             <tr>
-                <th class="center" style="width: 20px;">#</th>
+                <th class="center" style="width: 20px;">id</th>
                 <th class="center" style="width: 400px;">Наименование:</th>
                 <th class="center" style="width: 50px;">Размер файла:</th>
                 <th class="center" style="width: 700px;">Собственное имя:</th>
@@ -198,7 +201,7 @@
 
         <tr id="tr-file">
             <td class="center"><?php
-                       echo ++$index;
+                        echo htmlspecialchars($file['id']);
                     ?></td>
             <td class="center"><?php
                         echo htmlspecialchars($file['name']);
@@ -217,6 +220,12 @@
         </tbody>
     </table>
 </div>
+<br><br><br>
+<?php   if(!empty($count)):  ?>
+<div class="stripe-count">Всего: <b><?php echo $count; ?></b>.</div>
+<?php endif; ?>
+
+{plugin:paginator}
 <?php endif ?>
 
 <?php if(isset($jsonfile)):?>
@@ -275,11 +284,16 @@
     <div class="modal_content" id="dv_mss">
      </div>
 </div>
-{plugin:paginator}
 
 <script type="text/javascript">
 
-    let tb = $('#table-id').DataTable();
+    let paramsString = document.location.search;
+    let searchParams = new URLSearchParams(paramsString);
+
+
+    if (searchParams.get("pstTru")) {
+        $('#dv-form').toggle();
+    }
 
     let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
@@ -465,105 +479,6 @@
     }
 
     $('#service-name tr:last').after('<tr><td class="center"></td> <td class="center"></td> <td class="center">Всего файлов: <?php echo htmlspecialchars($FileSum); ?></td> <td class="center">Всего занято: <?php echo htmlspecialchars(round($FileSize, 2)); ?> Мб</td> <td class="center"></td></tr>');
-
-
-    function send_ajax_form(frm) {
-        let file_zie_min = document.getElementById("file_zie_min");
-        let file_zie_max = document.getElementById("file_zie_max");
-        let frm_ss = document.getElementById("from");
-        let frm_to = document.getElementById("to");
-        let per = '&pst_tru=true';
-        let url = `<?php echo $url = 'index.php?' . http_build_query($_GET). '&chkFilter=true';?>`;
-        let postForm = frm.serialize() + per;
-
-        $.ajax({
-            type: frm.attr('method'),
-            url: url,
-            data:postForm,
-            success: function (data) {
-                if (file_zie_min.value && (file_zie_max.value === '')) {
-                    file_zie_max.style.borderColor = "darkred";
-                    document.getElementById("message_err_zie_max").style.display = "block";
-
-                    sleep(2000).then(()=> {
-                             file_zie_max.style.borderColor = "#888";
-                            document.getElementById("message_err_zie_max").style.display = "none";
-                        }
-                    )
-
-                } else if (file_zie_max.value && (file_zie_min.value === '')) {
-                        file_zie_min.style.borderColor = "darkred";
-                        document.getElementById("message_err_zie_min").style.display = "block";
-
-                        sleep(2000).then(()=> {
-                                file_zie_min.style.borderColor = "#888";
-                                document.getElementById("message_err_zie_min").style.display = "none";
-                            }
-                        )
-
-                } else if (frm_ss.value && (frm_to.value === '')) {
-                    frm_to.style.borderColor = "darkred";
-                    document.getElementById("message_err_from").style.display = "block";
-
-                    sleep(2000).then(()=> {
-                            frm_to.style.borderColor = "#888";
-                            document.getElementById("message_err_from").style.display = "none";
-                        }
-                    )
-
-                } else if (frm_to.value && (frm_ss.value === '')) {
-                    frm_ss.style.borderColor = "darkred";
-                    document.getElementById("message_err_to").style.display = "block";
-
-                    sleep(2000).then(()=> {
-                            frm_ss.style.borderColor = "#888";
-                            document.getElementById("message_err_to").style.display = "none";
-                        }
-                    )
-
-                } else {
-                    tb.clear();
-
-                    let person = JSON.parse(data);
-
-                    if (person.length > 0){
-                        person.forEach(value =>
-                            tb.row.add([
-                                value['id'],
-                                value['name'],
-                                (parseInt(value['size'] * 100) / 100) + " Мб",
-                                value['given_name'].link('<?php echo $link?>' + value['given_name']),
-                                value['time_stamp']
-                            ]).draw()
-                        );
-
-                    } else {
-                        tb.clear();
-                        tb.row.add(['Ничего не найдено','','','','','']).draw();
-                       $("#table-id td.sorting_1").css("text-align",  "center");
-                       $('#table-id td.sorting_1').css('font-size', '17px');
-                       $('#table-id td.sorting_1').css('color', 'darkred');
-                       $("#table-id td.sorting_1").attr("colspan", "6");
-                        disNoneFilt();
-
-                   }
-                }
-            },
-            error: function (data) {
-                $("#table-id #tr-file").remove();
-                $("#table-id").append(`<tbody id="tb-files"></tbody>`);
-                $("#table-id #tb-files").append(`<tr id="tr-files"><td colspan="6" style="text-align: center; font-size: 17px; color: darkred">Данных не найдено</td></tr>`);
-
-            },
-        });
-    }
-
-    let frm = $('#form_filter');
-
-    frm.submit(() => {
-        send_ajax_form(frm);
-        return false;
-    });
 
     $('#add_filter').click( ()=> $('#dv-form').toggle() );
 
