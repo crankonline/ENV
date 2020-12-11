@@ -262,6 +262,16 @@
         displayEl.innerHTML = '';
     }
 
+    function doStep(step){
+        if('render' in step){
+            step.render.call(cfg.context, u.wizard.elements.display);
+        }
+
+        if('onStart' in step){
+            step.onStart.call(cfg.context, cfg.steps, step, idx);
+        }
+    }
+
     function nextStep(){
         if('onComplete' in step){
             step.onComplete.call(cfg.context, cfg.steps, step, idx);
@@ -280,16 +290,6 @@
             }
 
             free();
-        }
-    }
-
-    function doStep(step){
-        if('render' in step){
-            step.render.call(cfg.context, u.wizard.elements.display);
-        }
-
-        if('onStart' in step){
-            step.onStart.call(cfg.context, cfg.steps, step, idx);
         }
     }
 
@@ -467,14 +467,6 @@
         message: '<div class="{0}">{1}</div>',
     };
 
-    function renderMessage(type, message){
-        if(type){
-            type = 'message ' + type;
-        }
-
-        return u.string.format(templates.message, type, message);
-    }
-
     function renderUsageStatus(usageStatus){
         var escapeFn = u.string.escapeHTML;
 
@@ -488,6 +480,14 @@
                 ? escapeFn(usageStatus.description)
                 : '(комментарий отсутствует)'
         );
+    }
+
+    function renderMessage(type, message){
+        if(type){
+            type = 'message ' + type;
+        }
+
+        return u.string.format(templates.message, type, message);
     }
 
     var getUsageStatusesFn = (function(){
@@ -592,10 +592,6 @@
         };
     })();
 
-    var btnUsageStateСancelClickHandlerFn = function(){
-        u.usageStatusManager.hide();
-    };
-
     var btnUsageStateApplyClickHandlerFn = (function(){
         var ajaxSuccessTpl = [
                 '<b>Состояние успешно назначено.</b>',
@@ -641,9 +637,9 @@
                     response.status == 200
                         ? 'Ошибка при обработке ответа.'
                         : u.string.format(
-                        ajaxCommonErrorTpl,
-                        u.string.escapeHTML(response.statusText),
-                        u.string.escapeHTML(response.status)
+                            ajaxCommonErrorTpl,
+                            u.string.escapeHTML(response.statusText),
+                            u.string.escapeHTML(response.status)
                         )
                 );
             },
@@ -681,6 +677,10 @@
             $.ajax(config);
         };
     })();
+
+    var btnUsageStateСancelClickHandlerFn = function(){
+        u.usageStatusManager.hide();
+    };
 
     u.usageStatusManager = {
         initialize: function(){
@@ -978,40 +978,6 @@
         };
     })();
 
-    function cacheElements(){
-        var els  = cfg.form.elements,
-            eLen = els.length,
-            e, el,
-            name;
-
-        elements = {};
-
-        for(e = 0; el = els[e], e < eLen; e++){
-            if(el.name && (el.type != 'radio') && (el.type != 'checkbox')){
-                name = el.name;
-            } else if(el.id) {
-                name = '#' + el.id
-            } else {
-                continue;
-            }
-
-            if(name in elements){
-                if(elements[name] instanceof Array){
-                    if($.inArray(el, elements[name]) === -1){
-                        elements[name].push(el);
-                    }
-                } else if(elements[name] != el) {
-                    elements[name] = [
-                        elements[name],
-                        el
-                    ];
-                }
-            } else {
-                elements[name] = el;
-            }
-        }
-    }
-
     var updateUsageModelAnchorsFn = (function(){
         var mapVFn   = function(value){
                 return value;
@@ -1024,11 +990,11 @@
             },
             getEdsCountFn = function(map){
                 var roles = $.map(
-                    $.grep(
-                        getValues(map.roles),
-                        grepFn
-                    ),
-                    mapIntFn
+                        $.grep(
+                            getValues(map.roles),
+                            grepFn
+                        ),
+                        mapIntFn
                     ),
                     result = 0;
 
@@ -1111,6 +1077,44 @@
         }
     }
 
+    function cacheElements(){
+        var els  = cfg.form.elements,
+            eLen = els.length,
+            e, el,
+            name;
+
+        elements = {};
+
+        for(e = 0; el = els[e], e < eLen; e++){
+            if(el.name && (el.type != 'radio') && (el.type != 'checkbox')){
+                name = el.name;
+            } else if(el.id) {
+                name = '#' + el.id
+            } else {
+                continue;
+            }
+
+            if(name in elements){
+                if(elements[name] instanceof Array){
+                    if($.inArray(el, elements[name]) === -1){
+                        elements[name].push(el);
+                    }
+                } else if(elements[name] != el) {
+                    elements[name] = [
+                        elements[name],
+                        el
+                    ];
+                }
+            } else {
+                elements[name] = el;
+            }
+        }
+    }
+
+    function fixEvent(e){
+        return e || w.event;
+    }
+
     function skipEvent(e){
         e = fixEvent(e);
 
@@ -1121,10 +1125,6 @@
         }
 
         return false;
-    }
-
-    function fixEvent(e){
-        return e || w.event;
     }
 
     function setDisabled(fields, is){
@@ -1148,31 +1148,6 @@
                 elements[field].disabled = is;
             }
         }
-    }
-
-    function getFieldValue(field){
-        if(!field.disabled){
-            switch(field.type.toLowerCase()){
-                case 'checkbox':
-                case 'radio':
-                    if(field.checked){
-                        return field.value;
-                    }
-                break;
-
-                case 'select':
-                    if(field.options.length && (field.selectedIndex > -1)){
-                        return field.options[field.selectedIndex];
-                    }
-                break;
-
-                default:
-                    return field.value;
-                break;
-            }
-        }
-
-        return null;
     }
 
     function getValues(fields){
@@ -1200,6 +1175,31 @@
         }
 
         return result;
+    }
+
+    function getFieldValue(field){
+        if(!field.disabled){
+            switch(field.type.toLowerCase()){
+                case 'checkbox':
+                case 'radio':
+                    if(field.checked){
+                        return field.value;
+                    }
+                    break;
+
+                case 'select':
+                    if(field.options.length && (field.selectedIndex > -1)){
+                        return field.options[field.selectedIndex];
+                    }
+                    break;
+
+                default:
+                    return field.value;
+                    break;
+            }
+        }
+
+        return null;
     }
 
     function resetField(field){
@@ -1344,6 +1344,24 @@
         }
     }
 
+    var detectBtnAddCommonRepresentativeStateFn = (function(){
+        var mapFn = function(record){
+                return record.id;
+            },
+            extractFn = function(value){
+                return value;
+            };
+
+        return function(){
+            var used   = $.map(cfg.representatives.maps, extractFn).length,
+                cached = $.map(rolesCache, extractFn).length,
+                roles  = $.map(cfg.dictionaries['common-representative-role'], mapFn).length,
+                state  = (used < roles) && (cached < roles);
+
+            elements['#btnAddRepresentative'].style.display = state ? 'initial' : 'none';
+        };
+    })();
+
     var isEdsRequiredByMapFn = (function(){
         var grepFn = function(value){
                 return value !== null;
@@ -1372,24 +1390,6 @@
                 ||
                 ($.inArray(consts.ROLES_EDS_USER, roles) > -1)
             );
-        };
-    })();
-
-    var detectBtnAddCommonRepresentativeStateFn = (function(){
-        var mapFn = function(record){
-                return record.id;
-            },
-            extractFn = function(value){
-                return value;
-            };
-
-        return function(){
-            var used   = $.map(cfg.representatives.maps, extractFn).length,
-                cached = $.map(rolesCache, extractFn).length,
-                roles  = $.map(cfg.dictionaries['common-representative-role'], mapFn).length,
-                state  = (used < roles) && (cached < roles);
-
-            elements['#btnAddRepresentative'].style.display = state ? 'initial' : 'none';
         };
     })();
 
@@ -1726,18 +1726,18 @@
         autoHeightTextArea(elements[map.location]);
     }
 
-    function fillFullName(name){
-        elements['common-full-name'].value = name;
-
-        elements['common-full-name'].onkeyup();
-        elements['common-full-name'].onblur();
-    }
-
     function fillName(name){
         elements['common-name'].value = name;
 
         elements['common-name'].onkeyup();
         elements['common-name'].onblur();
+    }
+
+    function fillFullName(name){
+        elements['common-full-name'].value = name;
+
+        elements['common-full-name'].onkeyup();
+        elements['common-full-name'].onblur();
     }
 
     function fillBankBicAndAccount(bic, account){
@@ -1747,6 +1747,18 @@
         elements['common-bank-bic'].onblur();
 
         elements['common-bank-account'].value = account;
+    }
+
+    function fillMainActivity(activity){
+        var fldGked  = elements['#txtCommonMainActivityGked'],
+            fldText  = elements['#txtarCommonMainActivityText'],
+            fldValue = elements['common-main-activity'];
+
+        fldGked.value  = activity.gked;
+        fldText.value  = activity.name;
+        fldValue.value = activity.id;
+
+        autoHeightTextArea(fldText);
     }
 
     function setReadOnlyByMap(map, is){
@@ -1764,18 +1776,6 @@
                 elements[field].readOnly = is;
             }
         }
-    }
-
-    function fillMainActivity(activity){
-        var fldGked  = elements['#txtCommonMainActivityGked'],
-            fldText  = elements['#txtarCommonMainActivityText'],
-            fldValue = elements['common-main-activity'];
-
-        fldGked.value  = activity.gked;
-        fldText.value  = activity.name;
-        fldValue.value = activity.id;
-
-        autoHeightTextArea(fldText);
     }
 
     function fillRepresentativeByMap(map, representative, protect){
@@ -2839,73 +2839,69 @@
         };
     })();
 
-    var btnCommonChiefSearchClickHandler = function(){
-        representativeSearcherFn(chiefMap);
-    };
-
     var btnAddCommonRepresentativeClickHandler = (function(){
         var tpl = [
             '<table class="requisites">',
-                '<caption>Сотрудник ( <a href="javascript: void(0)" id="{0}">Удалить</a> )</caption>',
-                '<tbody>',
-                    '<tr>',
-                        '<td class="section-name" colspan="2">Паспортные данные</td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Серия и номер</th>',
-                        '<td>',
-                            '<div style="display: table; border-spacing: 0px; max-width: 305px;">',
-                                '<div style="display: table-cell;">',
-                                    '<input maxlength="10" required type="text" name="common-representative-passport-series-{2}" style="width: 110px" placeholder="Серия">',
-                                '</div>',
-                                '<div style="display: table-cell; padding: 3px">№</div>',
-                                '<div style="display: table-cell; width: 100%;">',
-                                    '<input maxlength="15" required type="text" name="common-representative-passport-number-{2}" style="width: 100%" placeholder="Номер">',
-                                '</div>',
-                            '</div>',
-                        '</td>',
-                    '</tr>',
-                    '<tr>',
-                        '<td colspan="2" class="centered">',
-                            '<input type="button" class="button" id="{1}" value="Поиск существующих данных">',
-                        '</td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Выдавший орган</th>',
-                        '<td><input required placeholder="Наименование выдавшего органа" type="text" name="common-representative-passport-issuing-authority-{2}"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Дата выдачи</th>',
-                        '<td><input required placeholder="ДД.ММ.ГГГГ" type="text" name="common-representative-passport-issuing-date-{2}"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<td class="section-name" colspan="2">Основные сведения</td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Фамилия</th>',
-                        '<td><input required type="text" placeholder="Фамилия" name="common-representative-surname-{2}"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Имя</th>',
-                        '<td><input required type="text" placeholder="Имя" name="common-representative-name-{2}"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Отчество</th>',
-                        '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>ПИН</th>',
-                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Должность</th>',
-                        '<td><select required name="common-representative-position-{2}"></select></td>',
-                    '</tr>',
-                    '<tr>',
-                        '<th>Рабочий телефон</th>',
-                        '<td><input required type="text" placeholder="Рабочий телефон" name="common-representative-work-phone-{2}"></td>',
-                    '</tr>',
-                '</tbody>',
+            '<caption>Сотрудник ( <a href="javascript: void(0)" id="{0}">Удалить</a> )</caption>',
+            '<tbody>',
+            '<tr>',
+            '<td class="section-name" colspan="2">Паспортные данные</td>',
+            '</tr>',
+            '<tr>',
+            '<th>Серия и номер</th>',
+            '<td>',
+            '<div style="display: table; border-spacing: 0px; max-width: 305px;">',
+            '<div style="display: table-cell;">',
+            '<input maxlength="10" required type="text" name="common-representative-passport-series-{2}" style="width: 110px" placeholder="Серия">',
+            '</div>',
+            '<div style="display: table-cell; padding: 3px">№</div>',
+            '<div style="display: table-cell; width: 100%;">',
+            '<input maxlength="15" required type="text" name="common-representative-passport-number-{2}" style="width: 100%" placeholder="Номер">',
+            '</div>',
+            '</div>',
+            '</td>',
+            '</tr>',
+            '<tr>',
+            '<td colspan="2" class="centered">',
+            '<input type="button" class="button" id="{1}" value="Поиск существующих данных">',
+            '</td>',
+            '</tr>',
+            '<tr>',
+            '<th>Выдавший орган</th>',
+            '<td><input required placeholder="Наименование выдавшего органа" type="text" name="common-representative-passport-issuing-authority-{2}"></td>',
+            '</tr>',
+            '<tr>',
+            '<th>Дата выдачи</th>',
+            '<td><input required placeholder="ДД.ММ.ГГГГ" type="text" name="common-representative-passport-issuing-date-{2}"></td>',
+            '</tr>',
+            '<tr>',
+            '<td class="section-name" colspan="2">Основные сведения</td>',
+            '</tr>',
+            '<tr>',
+            '<th>Фамилия</th>',
+            '<td><input required type="text" placeholder="Фамилия" name="common-representative-surname-{2}"></td>',
+            '</tr>',
+            '<tr>',
+            '<th>Имя</th>',
+            '<td><input required type="text" placeholder="Имя" name="common-representative-name-{2}"></td>',
+            '</tr>',
+            '<tr>',
+            '<th>Отчество</th>',
+            '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
+            '</tr>',
+            '<tr>',
+            '<th>ПИН</th>',
+            '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+            '</tr>',
+            '<tr>',
+            '<th>Должность</th>',
+            '<td><select required name="common-representative-position-{2}"></select></td>',
+            '</tr>',
+            '<tr>',
+            '<th>Рабочий телефон</th>',
+            '<td><input required type="text" placeholder="Рабочий телефон" name="common-representative-work-phone-{2}"></td>',
+            '</tr>',
+            '</tbody>',
             '</table>'
         ].join('');
 
@@ -2945,8 +2941,8 @@
             createConfigFn = (function(){
                 var completeTpl = [
                     '<tr>',
-                        '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
-                        '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
+                    '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
+                    '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
                     '</tr>'
                 ].join('');
 
@@ -3060,6 +3056,10 @@
             elements[fldMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
         };
     })();
+
+    var btnCommonChiefSearchClickHandler = function(){
+        representativeSearcherFn(chiefMap);
+    };
 
     var commonAddressHandlers = (function(){
 
