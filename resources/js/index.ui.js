@@ -1059,24 +1059,6 @@
         };
     })();
 
-    function cacheRole(role, isUsed){
-        if(role != 4 ) {
-            if (isUsed) {
-                if (role in rolesCache) {
-                    rolesCache[role]++;
-                } else {
-                    rolesCache[role] = 1;
-                }
-            } else {
-                if (rolesCache[role] > 1) {
-                    rolesCache[role]--;
-                } else {
-                    delete rolesCache[role];
-                }
-            }
-        }
-    }
-
     function cacheElements(){
         var els  = cfg.form.elements,
             eLen = els.length,
@@ -1107,6 +1089,24 @@
                 }
             } else {
                 elements[name] = el;
+            }
+        }
+    }
+
+    function cacheRole(role, isUsed){
+        if(role != 4 ) {
+            if (isUsed) {
+                if (role in rolesCache) {
+                    rolesCache[role]++;
+                } else {
+                    rolesCache[role] = 1;
+                }
+            } else {
+                if (rolesCache[role] > 1) {
+                    rolesCache[role]--;
+                } else {
+                    delete rolesCache[role];
+                }
             }
         }
     }
@@ -1150,6 +1150,31 @@
         }
     }
 
+    function getFieldValue(field){
+        if(!field.disabled){
+            switch(field.type.toLowerCase()){
+                case 'checkbox':
+                case 'radio':
+                    if(field.checked){
+                        return field.value;
+                    }
+                break;
+
+                case 'select':
+                    if(field.options.length && (field.selectedIndex > -1)){
+                        return field.options[field.selectedIndex];
+                    }
+                break;
+
+                default:
+                    return field.value;
+                break;
+            }
+        }
+
+        return null;
+    }
+
     function getValues(fields){
         var result = [];
 
@@ -1175,31 +1200,6 @@
         }
 
         return result;
-    }
-
-    function getFieldValue(field){
-        if(!field.disabled){
-            switch(field.type.toLowerCase()){
-                case 'checkbox':
-                case 'radio':
-                    if(field.checked){
-                        return field.value;
-                    }
-                    break;
-
-                case 'select':
-                    if(field.options.length && (field.selectedIndex > -1)){
-                        return field.options[field.selectedIndex];
-                    }
-                    break;
-
-                default:
-                    return field.value;
-                    break;
-            }
-        }
-
-        return null;
     }
 
     function resetField(field){
@@ -1344,24 +1344,6 @@
         }
     }
 
-    var detectBtnAddCommonRepresentativeStateFn = (function(){
-        var mapFn = function(record){
-                return record.id;
-            },
-            extractFn = function(value){
-                return value;
-            };
-
-        return function(){
-            var used   = $.map(cfg.representatives.maps, extractFn).length,
-                cached = $.map(rolesCache, extractFn).length,
-                roles  = $.map(cfg.dictionaries['common-representative-role'], mapFn).length,
-                state  = (used < roles) && (cached < roles);
-
-            elements['#btnAddRepresentative'].style.display = state ? 'initial' : 'none';
-        };
-    })();
-
     var isEdsRequiredByMapFn = (function(){
         var grepFn = function(value){
                 return value !== null;
@@ -1390,6 +1372,24 @@
                 ||
                 ($.inArray(consts.ROLES_EDS_USER, roles) > -1)
             );
+        };
+    })();
+
+    var detectBtnAddCommonRepresentativeStateFn = (function(){
+        var mapFn = function(record){
+                return record.id;
+            },
+            extractFn = function(value){
+                return value;
+            };
+
+        return function(){
+            var used   = $.map(cfg.representatives.maps, extractFn).length,
+                cached = $.map(rolesCache, extractFn).length,
+                roles  = $.map(cfg.dictionaries['common-representative-role'], mapFn).length,
+                state  = (used < roles) && (cached < roles);
+
+            elements['#btnAddRepresentative'].style.display = state ? 'initial' : 'none';
         };
     })();
 
@@ -2839,69 +2839,73 @@
         };
     })();
 
+    var btnCommonChiefSearchClickHandler = function(){
+        representativeSearcherFn(chiefMap);
+    };
+
     var btnAddCommonRepresentativeClickHandler = (function(){
         var tpl = [
             '<table class="requisites">',
-            '<caption>Сотрудник ( <a href="javascript: void(0)" id="{0}">Удалить</a> )</caption>',
-            '<tbody>',
-            '<tr>',
-            '<td class="section-name" colspan="2">Паспортные данные</td>',
-            '</tr>',
-            '<tr>',
-            '<th>Серия и номер</th>',
-            '<td>',
-            '<div style="display: table; border-spacing: 0px; max-width: 305px;">',
-            '<div style="display: table-cell;">',
-            '<input maxlength="10" required type="text" name="common-representative-passport-series-{2}" style="width: 110px" placeholder="Серия">',
-            '</div>',
-            '<div style="display: table-cell; padding: 3px">№</div>',
-            '<div style="display: table-cell; width: 100%;">',
-            '<input maxlength="15" required type="text" name="common-representative-passport-number-{2}" style="width: 100%" placeholder="Номер">',
-            '</div>',
-            '</div>',
-            '</td>',
-            '</tr>',
-            '<tr>',
-            '<td colspan="2" class="centered">',
-            '<input type="button" class="button" id="{1}" value="Поиск существующих данных">',
-            '</td>',
-            '</tr>',
-            '<tr>',
-            '<th>Выдавший орган</th>',
-            '<td><input required placeholder="Наименование выдавшего органа" type="text" name="common-representative-passport-issuing-authority-{2}"></td>',
-            '</tr>',
-            '<tr>',
-            '<th>Дата выдачи</th>',
-            '<td><input required placeholder="ДД.ММ.ГГГГ" type="text" name="common-representative-passport-issuing-date-{2}"></td>',
-            '</tr>',
-            '<tr>',
-            '<td class="section-name" colspan="2">Основные сведения</td>',
-            '</tr>',
-            '<tr>',
-            '<th>Фамилия</th>',
-            '<td><input required type="text" placeholder="Фамилия" name="common-representative-surname-{2}"></td>',
-            '</tr>',
-            '<tr>',
-            '<th>Имя</th>',
-            '<td><input required type="text" placeholder="Имя" name="common-representative-name-{2}"></td>',
-            '</tr>',
-            '<tr>',
-            '<th>Отчество</th>',
-            '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
-            '</tr>',
-            '<tr>',
-            '<th>ПИН</th>',
-            '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
-            '</tr>',
-            '<tr>',
-            '<th>Должность</th>',
-            '<td><select required name="common-representative-position-{2}"></select></td>',
-            '</tr>',
-            '<tr>',
-            '<th>Рабочий телефон</th>',
-            '<td><input required type="text" placeholder="Рабочий телефон" name="common-representative-work-phone-{2}"></td>',
-            '</tr>',
-            '</tbody>',
+                '<caption>Сотрудник ( <a href="javascript: void(0)" id="{0}">Удалить</a> )</caption>',
+                '<tbody>',
+                    '<tr>',
+                        '<td class="section-name" colspan="2">Паспортные данные</td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Серия и номер</th>',
+                        '<td>',
+                            '<div style="display: table; border-spacing: 0px; max-width: 305px;">',
+                                '<div style="display: table-cell;">',
+                                    '<input maxlength="10" required type="text" name="common-representative-passport-series-{2}" style="width: 110px" placeholder="Серия">',
+                                '</div>',
+                                '<div style="display: table-cell; padding: 3px">№</div>',
+                                '<div style="display: table-cell; width: 100%;">',
+                                    '<input maxlength="15" required type="text" name="common-representative-passport-number-{2}" style="width: 100%" placeholder="Номер">',
+                                '</div>',
+                            '</div>',
+                        '</td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td colspan="2" class="centered">',
+                            '<input type="button" class="button" id="{1}" value="Поиск существующих данных">',
+                        '</td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Выдавший орган</th>',
+                        '<td><input required placeholder="Наименование выдавшего органа" type="text" name="common-representative-passport-issuing-authority-{2}"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Дата выдачи</th>',
+                        '<td><input required placeholder="ДД.ММ.ГГГГ" type="text" name="common-representative-passport-issuing-date-{2}"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td class="section-name" colspan="2">Основные сведения</td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Фамилия</th>',
+                        '<td><input required type="text" placeholder="Фамилия" name="common-representative-surname-{2}"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Имя</th>',
+                        '<td><input required type="text" placeholder="Имя" name="common-representative-name-{2}"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Отчество</th>',
+                        '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>ПИН</th>',
+                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Должность</th>',
+                        '<td><select required name="common-representative-position-{2}"></select></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<th>Рабочий телефон</th>',
+                        '<td><input required type="text" placeholder="Рабочий телефон" name="common-representative-work-phone-{2}"></td>',
+                    '</tr>',
+                '</tbody>',
             '</table>'
         ].join('');
 
@@ -2941,8 +2945,8 @@
             createConfigFn = (function(){
                 var completeTpl = [
                     '<tr>',
-                    '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
-                    '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
+                        '<th>Серийный номер устройства (<a href = "javascript:insertSerial(\'common-representative-device-serial-{0}\')">Прочитать</a>)</th>',
+                        '<td><input required disabled type="text" maxlength="10" placeholder="Серийный номер" name="common-representative-device-serial-{0}"></td>',
                     '</tr>'
                 ].join('');
 
@@ -3056,10 +3060,6 @@
             elements[fldMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
         };
     })();
-
-    var btnCommonChiefSearchClickHandler = function(){
-        representativeSearcherFn(chiefMap);
-    };
 
     var commonAddressHandlers = (function(){
 
