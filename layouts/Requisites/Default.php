@@ -127,31 +127,36 @@
 		 //tuErr();
 
 
-		 if (typeof obj['result'] !== 'undefined'){
-			 let textOut = '';
-			 if(obj['result']['tundukAct'] == 'successTunduk') {
-				 textOut = textOut + "Компания успешно отправлена в Тундук.";
+		 // if (obj['result'].isArray()){
+			 let textOutRes = '';
+			 let res =  obj["result"];
+			 if(res.tundukAct == "successTunduk") {
+				 textOutRes = textOutRes + "Компания успешно отправлена в Тундук.";
 			 }
-			 if(obj['result']['tundukMFAct'] == 'successTundukMF') {
-				 textOut = textOut + "\n\rКомпания успешно отправлена в ТундукMF.";
+			 if(res.tundukMFAct == "successTundukMF") {
+				 textOutRes = textOutRes + "\n\rКомпания успешно отправлена в ТундукMF.";
 			 }
-			tunSuc.text(textOut);
+			tunSuc.text(textOutRes);
                         tunSuc.css('display', 'block');
                         tunErr.css('display', 'none');
                         tunWacc.css('display', 'none');
-		 }
-		 if (typeof obj['error'] !== 'undefined'){
-			 let textOut = '';
-                         if(obj['error']['tundukAct'] == 'noINNTunduk') {
-                                 textOut = textOut + "Сертификатов для выгрузки не найдено. (Tunduk)";
+		 // }
+		 // if (obj['error'].isArray()){
+                 let err = obj["error"];
+			 let textOutErr = '';
+                         if(err.tundukAct == "noINNTunduk") {
+                                 textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
                          }
-                         if(obj['error']['tundukMFAct'] == 'noINNTunduk') {
-                                 textOut = textOut + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
-			 }
-			 tunErr.text(textOut);
-                         tuErr();
+                         if(err.tundukMFAct == "noINNTunduk") {
+                                 textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
+			             }
+                             if(textOutErr.length>0) {
+                                 tunErr.text(textOutErr);
+                                 tuErr();
 
-		 }
+                             }
+
+		 // }
 
 
                 // if (obj == 'success') {
