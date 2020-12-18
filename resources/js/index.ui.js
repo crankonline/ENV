@@ -1369,6 +1369,8 @@
                 ($.inArray(consts.ROLES_CHIEF, roles) > -1)
                 ||
                 ($.inArray(consts.ROLES_ACCOUNTANT, roles) > -1)
+                ||
+                ($.inArray(consts.ROLES_EDS_USER, roles) > -1)
             );
         };
     })();
