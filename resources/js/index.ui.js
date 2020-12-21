@@ -2125,7 +2125,8 @@
                     passport: passport,
                     surname: personObj.surname,
                     name: personObj.name,
-                    middleName: personObj.fathername
+                    middleName: personObj.fathername,
+                    pin: personObj.representative_pin
                 },
                 representative = {
                     person: person,
