@@ -563,6 +563,13 @@
                 echo htmlspecialchars($person->phone);
             ?></td>
         </tr>
+        <tr>
+            <th>ПИН:</th>
+            <td><?php
+                    if (isset($person->representative_pin))
+                    echo htmlspecialchars($person->representative_pin) ;
+                ?></td>
+        </tr>
         <?php if($abilities[$this::PMS_VIEW_PINS]): ?>
         <tr>
             <th>PIN-код:</th>
