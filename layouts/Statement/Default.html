@@ -447,19 +447,19 @@
     <tr>
         <th>БИК:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->bic);
+            echo htmlspecialchars($json->bank->bic ?? null);
         ?></td>
     </tr>
     <tr>
         <th>Наименование банка:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->bankname);
+            echo htmlspecialchars($json->bank->bankname ?? null);
         ?></td>
     </tr>
     <tr>
         <th>Расчетный счет:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->account);
+            echo htmlspecialchars($json->bank->account ?? null);
         ?></td>
     </tr>
     <?php endif; ?>
