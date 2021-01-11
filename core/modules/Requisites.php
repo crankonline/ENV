@@ -367,7 +367,6 @@ SQL;
 
         $resaultTunduk = null;
         if($tundukAct) {
-//            $resaultTunduk = $this->setTunduk($innTunduk);
             try {
                 $resaultTunduk = $client->send(
                     $token,
@@ -378,7 +377,6 @@ SQL;
             }
         }
         if($tundukMFAct) {
-//            $resaultTundukMF = $this->setTundukMF($innTunduk);
             try {
                 $resaultTundukMF = $client->sendMF(
                     $token,
@@ -388,26 +386,29 @@ SQL;
                 $resaultTundukMF = $ex->getMessage();
             }
         }
-        error_log(json_encode($resaultTunduk));
-        error_log(json_encode($resaultTundukMF));
+
+
 
 
         if ($tundukAct && $resaultTunduk->success == true) {
-            $result[] = ['tundukAct' => 'successTunduk'];
+            $result[0] = ['tundukAct' => 'successTunduk'];
         } else {
-            $error[] = ['tundukAct' => 'noINNTunduk'];
+            $error[0] = ['tundukAct' => 'noINNTunduk'];
         }
         if ($tundukMFAct && $resaultTundukMF->success == true) {
-            $result[] = ['tundukMFAct' => 'successTundukMF'];
+            $result[1] = ['tundukMFAct' => 'successTundukMF'];
         } else {
-            $error[] = ['tundukMFAct' => 'noINNTunduk'];
+            $error[1] = ['tundukMFAct' => 'noINNTunduk'];
         }
 
-        if($error)
-            echo json_encode(['result'=> $result,'error'=>$error] );
-        else
-            echo json_encode(['result'=> $result] );
-
+        if($error) {
+            $resp = json_encode(['result' => $result, 'error' => $error]);
+            echo $resp;
+        }
+        else {
+            $resp = json_encode(['result' => $result]);
+            echo $resp;
+        }
         exit;
 
     }
