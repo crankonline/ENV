@@ -1,0 +1,37 @@
+<div class="form" action="/index.php?view=sochi-zero-report-admin&action=send" method="POST">
+    <div class="caption">Статусы экспортеров</div>
+
+    <?php foreach ($exporters as $exporter): ?>
+        <div class="field">
+            <label for="module-id" class="fixed" style="width: 60%;"><?php echo $exporter['description'] ?></label>
+            <label class="fixed" style="width: 20%; font-weight: bold;">
+                <?php if ($exporter['is_active']) : ?>
+                    <span style="color: #00963c">Включен<span>
+                <?php else: ?>
+                    <span style="color: #FF0000">Выключен</span>
+                <?php endif ?>
+            </label>
+            <label class="fixed" style="width: 18%; text-align: right;">
+                <button class="button" onclick="setStatus('<?php echo $exporter['exporter']; ?>', <?php echo json_encode(!$exporter['is_active']); ?>)">
+                    <?php echo ($exporter['is_active']) ? 'Выключить' : 'Включить'; ?>
+                </button>
+            </label>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<script type="text/javascript">
+    
+    function setStatus(code, status) {
+
+        fetch('/services.php?service=SochiExporters&action=send', {
+            method: 'POST',
+            body: JSON.stringify({
+                code: code,
+                status: status
+            })
+        })
+        .then(response => window.location.reload());
+    }
+
+</script>
