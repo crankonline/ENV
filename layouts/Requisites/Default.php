@@ -81,7 +81,9 @@
             alert('Пожалуйста выберете метод отправки.');
             return false;
         } else {
-            sendAjaxForm();
+            sendAjaxForm().then((data) => {
+            }).catch((error) => {
+            });
             return false;
         }
 
@@ -89,107 +91,78 @@
 
     function sendAjaxForm() {
 
-        let tunWacc = $("#fountainG");
-        let tunSuc = $("#tunduk-success");
-        let tunErr = $("#tunduk-error");
+        return new Promise((resolve, reject) => {
+            let tunWacc = $("#fountainG");
+            let tunSuc = $("#tunduk-success");
+            let tunErr = $("#tunduk-error");
 
-        tunWacc.css('display', 'block');
-        tunSuc.css('display', 'none');
-        tunErr.css('display', 'none');
-
-        function tuErr () {
+            tunWacc.css('display', 'block');
             tunSuc.css('display', 'none');
-            tunErr.css('display', 'block');
-            tunWacc.css('display', 'none');
+            tunErr.css('display', 'none');
 
-        };
+            function tuErr () {
+                tunSuc.css('display', 'none');
+                tunErr.css('display', 'block');
+                tunWacc.css('display', 'none');
 
-        let tundukAct = $("input[id='rdioTunduk']:checked").val() ? "1" : "";
-        let tundukMFAct = $("input[id='rdioMF']:checked").val() ? "1" : "";
+            };
 
-        let postForm = {
-            'inn-tunduk'     : $('#inn').val(),
-            'tundukAct'      : tundukAct,
-            'tundukMFAct'    : tundukMFAct
-        };
+            let tundukAct = $("input[id='rdioTunduk']:checked").val() ? "1" : "";
+            let tundukMFAct = $("input[id='rdioMF']:checked").val() ? "1" : "";
 
-        $.ajax({
+            let postForm = {
+                'inn-tunduk'     : $('#inn').val(),
+                'tundukAct'      : tundukAct,
+                'tundukMFAct'    : tundukMFAct
+            };
 
-            type:'POST',
-            url:'index.php?view=requisites&action=tunduk',
-            dataType:'json',
-            data: postForm
-        })
-             .done(function(ret) {
-                var obj = ret;
+            $.ajax({
+                type:'POST',
+                url:'index.php?view=requisites&action=tunduk',
+                dataType:'json',
+                data: postForm,
+                success: function (data) {
+                    let obj = data;
 
-                 //tunErr.text(obj);
-		 //tuErr();
+                    let textOutRes = '';
+                    let res =  obj["result"];
+                    if(typeof res !== 'undefined' && typeof res[0] !== 'undefined' && res[0].tundukAct == 'successTunduk') {
+                        textOutRes = textOutRes + "Компания успешно отправлена в Тундук.";
+                    }
+                    if(typeof res !== 'undefined' && typeof res[1] !== 'undefined' && res[1].tundukMFAct == 'successTundukMF') {
+                        textOutRes = textOutRes + "\n\rКомпания успешно отправлена в ТундукMF.";
+                    }
+                    tunSuc.text(textOutRes);
+                    tunSuc.css('display', 'block');
+                    tunErr.css('display', 'none');
+                    tunWacc.css('display', 'none');
 
+                    let err = obj["error"];
+                    let textOutErr = '';
+                    if(typeof err !== 'undefined' && typeof err[0] !== 'undefined' && err[0].tundukAct == "noINNTunduk") {
+                        // textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
+                    }
+                    if(typeof err !== 'undefined' && typeof err[1] !== 'undefined' && err[1].tundukMFAct == "noINNTunduk") {
+                        // textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
+                    }
+                    if(textOutErr.length>0) {
+                        tunErr.text(textOutErr);
+                        tuErr();
 
-		 // if (obj['result'].isArray()){
-			 let textOutRes = '';
-			 let res =  obj["result"];
-			 if(res.tundukAct == "successTunduk") {
-				 textOutRes = textOutRes + "Компания успешно отправлена в Тундук.";
-			 }
-			 if(res.tundukMFAct == "successTundukMF") {
-				 textOutRes = textOutRes + "\n\rКомпания успешно отправлена в ТундукMF.";
-			 }
-			tunSuc.text(textOutRes);
-                        tunSuc.css('display', 'block');
-                        tunErr.css('display', 'none');
-                        tunWacc.css('display', 'none');
-		 // }
-		 // if (obj['error'].isArray()){
-                 let err = obj["error"];
-			 let textOutErr = '';
-                         if(err.tundukAct == "noINNTunduk") {
-                                 textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
-                         }
-                         if(err.tundukMFAct == "noINNTunduk") {
-                                 textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
-			             }
-                             if(textOutErr.length>0) {
-                                 tunErr.text(textOutErr);
-                                 tuErr();
-
-                             }
-
-		 // }
-
-
-                // if (obj == 'success') {
-                //
-                //     tunSuc.text("Компания успешно отправлена в Тундук.");
-                //     tunSuc.css('display', 'block');
-                //     tunErr.css('display', 'none');
-                //     tunWacc.css('display', 'none');
-                //
-                // } else if (obj == 'noINN') {
-                //
-                //     tunErr.text("Сертификатов для выгрузки не найдено.");
-                //     tuErr();
-                //
-                // } else if (obj == 'noConn') {
-                //
-                //     tunErr.text("Ошибка отправки в Тундук. Пожалуйста повторите позже.");
-                //     tuErr();
-                // }
-                //
-                // else {
-                //
-                //     tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                //     tuErr();
-                //
-                // }
-
-            }).fail(function() {
-
-                tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                tuErr();
+                    }
+                    resolve(data);
+                },
+                error: function (error) {
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + error);
+                    tuErr();
+                    reject(error);
+                },
+                fail: function (fail) {
+                }
             })
-        ;
+        });
+
+
     };
 </script>
 
