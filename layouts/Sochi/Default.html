@@ -124,6 +124,7 @@
                     <th class="center no-wrap">Дата отправки:</th>
                     <th class="center no-wrap">Период:</th>
                     <th class="center no-wrap">Район:</th>
+                    <th class="center no-wrap">Тип отчета:</th>
                     <th class="center no-wrap">Состояние:</th>
                 </tr>
             <?php
@@ -180,6 +181,9 @@
                     ?></td>
                     <td class="center no-wrap"><?php
                         echo $report['region'] ?? $report['region_new'];
+                    ?></td>
+                    <td class="center no-wrap"><?php
+                        echo (bool)$report['form_type'] ? 'Уточненный' : 'Первоначальный';
                     ?></td>
                     <td class="center"><?php
                         echo htmlspecialchars($report['status']);
