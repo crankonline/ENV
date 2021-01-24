@@ -20,6 +20,74 @@
     <?php endforeach; ?>
 </div>
 
+
+
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="sochi-exporters" />
+    <div class="caption">Параметры просмотра</div>
+
+    <div class="field">
+        <label for="exporter" class="fixed">Экспортер:</label>
+        <select name="exporter" id="exporter">
+            <option value="0">Все</option>
+            <?php foreach($exporters as $exporter): ?>
+            <option value="<?php echo $exporter['id']; ?>"<?php echo $exporter['id'] == $cExporter ? ' selected' : ''; ?>><?php
+                echo htmlspecialchars($exporter['description']);
+            ?></option>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Государственный орган</span>
+    </div>
+    <div class="field">
+        <label for="status" class="fixed">Статус ответа:</label>
+        <select name="status" id="status">
+            <option value="0" <?php if($cStatus == 0): ?> selected <?php endif; ?> >Все</option>
+            <option value="1" <?php if($cStatus == 1): ?> selected <?php endif; ?> >Удачный</option>
+            <option value="2" <?php if($cStatus == 2): ?> selected <?php endif; ?> >Неудачный</option>
+        </select>
+        <span class="hint">Статус ответа</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<table class="data">
+    <tr>
+        <th class="w50">#</th>
+        <th class="w150">Экспортер</th>
+        <th class="w-fit">Сообщение</th>
+        <th class="w150">Дата/время</th>
+    </tr>
+    <?php
+        $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
+
+        foreach($log as $index => $record):
+            $class = $record['status'] ? 'success-log' : 'failure-log';
+    ?>
+    <tr class="<?php echo $class; ?>">
+        <td class="center w50"><?php echo $index + 1; ?></td>
+        <td class="w150"><?php echo htmlspecialchars($record['exporter']); ?></td>
+        <td class="w-fit"><?php echo htmlspecialchars($record['message']); ?></td>
+        <td class="w150"><?php echo htmlspecialchars($record['date_time']); ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+
+
+<style type="text/css">
+    tr.success-log td {
+        background: #e1f9e1;
+    }
+
+    tr.failure-log td {
+        background: #ffdfe5;
+    }
+
+</style>
 <script type="text/javascript">
     
     function setStatus(code, status) {
