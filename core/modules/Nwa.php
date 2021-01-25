@@ -81,6 +81,38 @@ class Nwa extends \Environment\Core\Module {
 		return $result;
 	}
 
+	protected function getStiTunduk( $type, $inn ) {
+
+		switch ( $type ) {
+			default:
+			case 0:
+				$query['tin'] = $inn;
+				break;
+
+			case 1:
+				throw new \Exception( 'Тип реквизита для поиска не поддерживается.' );
+				break;
+
+			case 2:
+				throw new \Exception( 'Тип реквизита для поиска не поддерживается.' );
+				break;
+		}
+
+		$token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
+
+
+		$client = new SoapClients\Api\RequisitesNwa();
+		try {
+			$ret = $client->getDataFromStiByInn(
+				$token,
+				$inn
+			);
+		} catch (\Exception $ex) {
+			$ret = $ex->getMessage();
+		}
+		return $ret;
+	}
+
 	protected function getSti( $type, $value ) {
 
 		$district    = null;
@@ -328,7 +360,8 @@ SQL;
 		}
 
 		try {
-			$this->variables->stiData = $this->getSti( $type, $value );
+//			$this->variables->stiData = $this->getSti( $type, $value );
+			$this->variables->stiData = $this->getStiTunduk( $type, $value );
 		} catch ( \Exception $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors['sti'][] = $e->getMessage();
