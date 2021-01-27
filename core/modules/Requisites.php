@@ -390,15 +390,21 @@ SQL;
 
 
 
-        if ($tundukAct && $resaultTunduk->success == true) {
-            $result[0] = ['tundukAct' => 'successTunduk'];
-        } else {
-            $error[0] = ['tundukAct' => 'noINNTunduk'];
+        if ($tundukAct) {
+            if ($resaultTunduk->success == true) {
+                $result[0] = ['tundukAct' => 'successTunduk'];
+            } else {
+                $result[0] = $resaultTunduk;
+                $error[0] = ['tundukAct' => 'noINNTunduk'];
+            }
         }
-        if ($tundukMFAct && $resaultTundukMF->success == true) {
-            $result[1] = ['tundukMFAct' => 'successTundukMF'];
-        } else {
-            $error[1] = ['tundukMFAct' => 'noINNTunduk'];
+        if ($tundukMFAct) {
+            if ($resaultTundukMF->success == true) {
+                $result[1] = ['tundukMFAct' => 'successTundukMF'];
+            } else {
+                $result[1] = $resaultTundukMF;
+                $error[1] = ['tundukMFAct' => 'noINNTunduk'];
+            }
         }
 
         if($error) {
