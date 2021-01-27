@@ -69,8 +69,7 @@ class Nwa extends \Environment\Core\Module {
 			$result = is_object( $result->PayerInfo )
 				? [ $result->PayerInfo ]
 				: $result->PayerInfo;
-
-			if ( empty( $result ) || ( ! $result[0]->PayerName ) ) {
+			if ( empty( $result ) || !isset($result[0]->PayerName) ) {
 				$result = [];
 			}
 		} catch ( \SoapFault $f ) {
