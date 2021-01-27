@@ -140,10 +140,10 @@
                     let err = obj["error"];
                     let textOutErr = '';
                     if(typeof err !== 'undefined' && typeof err[0] !== 'undefined' && err[0].tundukAct == "noINNTunduk") {
-                        // textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
+                        textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
                     }
                     if(typeof err !== 'undefined' && typeof err[1] !== 'undefined' && err[1].tundukMFAct == "noINNTunduk") {
-                        // textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
+                        textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
                     }
                     if(textOutErr.length>0) {
                         tunErr.text(textOutErr);
@@ -153,7 +153,7 @@
                     resolve(data);
                 },
                 error: function (error) {
-                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + error);
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + JSON.stringify(error));
                     tuErr();
                     reject(error);
                 },
