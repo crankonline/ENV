@@ -101,13 +101,15 @@ class Nwa extends \Environment\Core\Module {
 
 
 		$client = new SoapClients\Api\RequisitesNwa();
+		$ret = null;
 		try {
 			$ret = $client->getDataFromStiByInn(
 				$token,
 				$inn
 			);
 		} catch (\Exception $ex) {
-			$ret = $ex->getMessage();
+            throw new \Exception( $ex->getMessage() );
+//			$ret = $ex->getMessage();
 		}
 		return $ret;
 	}
