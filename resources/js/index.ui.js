@@ -1094,17 +1094,19 @@
     }
 
     function cacheRole(role, isUsed){
-        if(isUsed){
-            if(role in rolesCache){
-                rolesCache[role]++;
+        if(role != 4 ) {
+            if (isUsed) {
+                if (role in rolesCache) {
+                    rolesCache[role]++;
+                } else {
+                    rolesCache[role] = 1;
+                }
             } else {
-                rolesCache[role] = 1;
-            }
-        } else {
-            if(rolesCache[role] > 1){
-                rolesCache[role]--;
-            } else {
-                delete rolesCache[role];
+                if (rolesCache[role] > 1) {
+                    rolesCache[role]--;
+                } else {
+                    delete rolesCache[role];
+                }
             }
         }
     }
@@ -1367,6 +1369,8 @@
                 ($.inArray(consts.ROLES_CHIEF, roles) > -1)
                 ||
                 ($.inArray(consts.ROLES_ACCOUNTANT, roles) > -1)
+                ||
+                ($.inArray(consts.ROLES_EDS_USER, roles) > -1)
             );
         };
     })();
@@ -2123,7 +2127,8 @@
                     passport: passport,
                     surname: personObj.surname,
                     name: personObj.name,
-                    middleName: personObj.fathername
+                    middleName: personObj.fathername,
+                    pin: personObj.representative_pin
                 },
                 representative = {
                     person: person,

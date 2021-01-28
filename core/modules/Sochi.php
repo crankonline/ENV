@@ -184,6 +184,8 @@ SELECT
     TO_CHAR("r"."input_date", 'DD.MM.YYYY HH24:MI:SS') as "input-date-time",
     "r"."period_month" as "period-month",
     "r"."period_year"  as "period-year",
+    "r"."rnsf" as "payerid",
+    "r"."form_type" as "form_type",    
     "s"."id" as "status-id",
     "s"."name" as "status",
     "sfrp".code as "code",

@@ -69,8 +69,7 @@ class Nwa extends \Environment\Core\Module {
 			$result = is_object( $result->PayerInfo )
 				? [ $result->PayerInfo ]
 				: $result->PayerInfo;
-
-			if ( empty( $result ) || ( ! $result[0]->PayerName ) ) {
+			if ( empty( $result ) || !isset($result[0]->PayerName) ) {
 				$result = [];
 			}
 		} catch ( \SoapFault $f ) {
@@ -79,6 +78,40 @@ class Nwa extends \Environment\Core\Module {
 		}
 
 		return $result;
+	}
+
+	protected function getStiTunduk( $type, $inn ) {
+
+		switch ( $type ) {
+			default:
+			case 0:
+				$query['tin'] = $inn;
+				break;
+
+			case 1:
+				throw new \Exception( 'Тип реквизита для поиска не поддерживается.' );
+				break;
+
+			case 2:
+				throw new \Exception( 'Тип реквизита для поиска не поддерживается.' );
+				break;
+		}
+
+		$token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
+
+
+		$client = new SoapClients\Api\RequisitesNwa();
+		$ret = null;
+		try {
+			$ret = $client->getDataFromStiByInn(
+				$token,
+				$inn
+			);
+		} catch (\Exception $ex) {
+            throw new \Exception( $ex->getMessage() );
+//			$ret = $ex->getMessage();
+		}
+		return $ret;
 	}
 
 	protected function getSti( $type, $value ) {
@@ -328,7 +361,8 @@ SQL;
 		}
 
 		try {
-			$this->variables->stiData = $this->getSti( $type, $value );
+//			$this->variables->stiData = $this->getSti( $type, $value );
+			$this->variables->stiData = $this->getStiTunduk( $type, $value );
 		} catch ( \Exception $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors['sti'][] = $e->getMessage();

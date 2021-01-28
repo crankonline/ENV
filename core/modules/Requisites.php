@@ -17,7 +17,7 @@ class Requisites extends \Environment\Core\Module {
         PMS_CAN_SEND_TUNDUK_REQUISITES = 'can-send-tunduk-requisites';
 
     protected $config = [
-        'template' => 'layouts/Requisites/Default.html',
+        'template' => 'layouts/Requisites/Default.php',
         'listen'   => 'action'
     ];
 
@@ -327,38 +327,94 @@ SQL;
         return $ret;
     }
 
+    protected function setTundukMF( $inn) {
+
+        $client = new SoapClients\Tunduk\RequisitesData();
+
+        $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
+
+        try {
+            $ret = $client->sendMF(
+                $token,
+                $inn
+            );
+        } catch (\Exception $ex) {
+            $ret = $ex->getMessage();
+        }
+
+        return $ret;
+    }
+
     public function tunduk() {
 
         if (!isset($_POST['inn-tunduk'])) return $this->main();
 
-            $innTunduk = $_POST['inn-tunduk'];
+        $innTunduk = $_POST['inn-tunduk'];
+        $tundukAct = $_POST['tundukAct'] ?? 0;
+        $tundukMFAct = $_POST['tundukMFAct'] ?? 0;
 
+
+
+        $result = null;
+        $error = null;
+
+        if ($innTunduk && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $innTunduk)) {
+            $error[] = ['error' => 'incINN'];
+        }
+
+        $client = new SoapClients\Tunduk\RequisitesData();
+        $token = $_ENV['configutarion_API_SUBSCRIBER_TOKEN'];
+
+        $resaultTunduk = null;
+        if($tundukAct) {
             try {
-
-                if ($innTunduk && !preg_match('/^(\d{10,10})|(\d{14,14})$/', $innTunduk)) {
-
-                    throw new \Exception( 'incINN' );
-
-                }
-
-                $resaultTunduk = $this->setTunduk($innTunduk);
-
-                    if ($resaultTunduk->success == true) {
-
-                        echo json_encode(['result' => 'success']);
-
-                    } else {
-
-                        throw new \Exception( 'noINN' );
-
-                    }
-
-            } catch (\Exception $e ){
-
-                echo json_encode(['result' => $e->getMessage()]);
-
+                $resaultTunduk = $client->send(
+                    $token,
+                    $innTunduk
+                );
+            } catch (\Exception $ex) {
+                $resaultTunduk = $ex->getMessage();
             }
+        }
+        if($tundukMFAct) {
+            try {
+                $resaultTundukMF = $client->sendMF(
+                    $token,
+                    $innTunduk
+                );
+            } catch (\Exception $ex) {
+                $resaultTundukMF = $ex->getMessage();
+            }
+        }
 
+
+
+
+        if ($tundukAct) {
+            if ($resaultTunduk->success == true) {
+                $result[0] = ['tundukAct' => 'successTunduk'];
+            } else {
+                $result[0] = $resaultTunduk;
+                $error[0] = ['tundukAct' => 'noINNTunduk'];
+            }
+        }
+        if ($tundukMFAct) {
+            if ($resaultTundukMF->success == true) {
+                $result[1] = ['tundukMFAct' => 'successTundukMF'];
+            } else {
+                $result[1] = $resaultTundukMF;
+                $error[1] = ['tundukMFAct' => 'noINNTunduk'];
+            }
+        }
+
+        if($error) {
+            $resp = json_encode(['result' => $result, 'error' => $error]);
+            echo $resp;
+        }
+        else {
+            $resp = json_encode(['result' => $result]);
+            echo $resp;
+        }
         exit;
 
     }

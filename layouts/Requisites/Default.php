@@ -24,7 +24,9 @@
 <?php if($this->isPermitted($this::AK_REQUISITES, $this::PMS_CAN_SEND_TUNDUK_REQUISITES)): ?>
 <form class="form" id="ajax_form" method="POST" action="" style="display: none">
     <div class="field buttons">
-        <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузить в Тундук" disabled/>
+        <input type="checkbox" id="rdioTunduk" name="rdio"/><label for="rdioTunduk">ГНС</label>
+        <input type="checkbox" id="rdioMF" name="rdio"/><label for="rdioMF">Портал ЭГЗ</label>
+        <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузить" disabled/>
     </div>
 
 </form>
@@ -75,78 +77,93 @@
 
     $("#btn-tunduk").click(function() {
 
-            sendAjaxForm();
+        if (!$("input[name='rdio']:checked").val()) {
+            alert('Пожалуйста выберете метод отправки.');
             return false;
+        } else {
+            sendAjaxForm().then((data) => {
+            }).catch((error) => {
+            });
+            return false;
+        }
 
     });
 
     function sendAjaxForm() {
 
-        let tunWacc = $("#fountainG");
-        let tunSuc = $("#tunduk-success");
-        let tunErr = $("#tunduk-error");
+        return new Promise((resolve, reject) => {
+            let tunWacc = $("#fountainG");
+            let tunSuc = $("#tunduk-success");
+            let tunErr = $("#tunduk-error");
 
-        tunWacc.css('display', 'block');
-        tunSuc.css('display', 'none');
-        tunErr.css('display', 'none');
-
-        function tuErr () {
+            tunWacc.css('display', 'block');
             tunSuc.css('display', 'none');
-            tunErr.css('display', 'block');
-            tunWacc.css('display', 'none');
+            tunErr.css('display', 'none');
 
-        };
+            function tuErr () {
+                tunSuc.css('display', 'none');
+                tunErr.css('display', 'block');
+                tunWacc.css('display', 'none');
 
+            };
 
-        let postForm = {
-            'inn-tunduk'     : $('#inn').val()
-        };
+            let tundukAct = $("input[id='rdioTunduk']:checked").val() ? "1" : "";
+            let tundukMFAct = $("input[id='rdioMF']:checked").val() ? "1" : "";
 
-        $.ajax({
+            let postForm = {
+                'inn-tunduk'     : $('#inn').val(),
+                'tundukAct'      : tundukAct,
+                'tundukMFAct'    : tundukMFAct
+            };
 
-            type:'POST',
-            url:'index.php?view=requisites&action=tunduk',
-            dataType:'json',
-            data: postForm
-        })
-             .done(function(ret) {
-                let obj = ret['result'];
+            $.ajax({
+                type:'POST',
+                url:'index.php?view=requisites&action=tunduk',
+                dataType:'json',
+                data: postForm,
+                success: function (data) {
+                    let obj = data;
 
-                if (obj == 'success') {
-
-                    tunSuc.text("Компания успешно отправлена в Тундук.");
+                    let textOutRes = '';
+                    let res =  obj["result"];
+                    if(typeof res !== 'undefined' && typeof res[0] !== 'undefined' && res[0].tundukAct == 'successTunduk') {
+                        textOutRes = textOutRes + "Компания успешно отправлена в ГНС.";
+                    }
+                    if(typeof res !== 'undefined' && typeof res[1] !== 'undefined' && res[1].tundukMFAct == 'successTundukMF') {
+                        textOutRes = textOutRes + "\n\rКомпания успешно отправлена в Портал ЭГЗ.";
+                    }
+                    tunSuc.text(textOutRes);
                     tunSuc.css('display', 'block');
                     tunErr.css('display', 'none');
                     tunWacc.css('display', 'none');
 
-                } else if (obj == 'noINN') {
+                    let err = obj["error"];
+                    let textOutErr = '';
+                    if(typeof err !== 'undefined' && typeof err[0] !== 'undefined' && err[0].tundukAct == "noINNTunduk") {
+                        textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
+                    }
+                    if(typeof err !== 'undefined' && typeof err[1] !== 'undefined' && err[1].tundukMFAct == "noINNTunduk") {
+                        textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
+                    }
+                    if(textOutErr.length>0) {
+                        tunErr.text(textOutErr);
+                        tuErr();
 
-                    tunErr.text("Сертификатов для выгрузки не найдено.");
+                    }
+                    resolve(data);
+                },
+                error: function (error) {
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + JSON.stringify(error));
                     tuErr();
-
-                } else if (obj == 'noConn') {
-
-                    tunErr.text("Ошибка отправки в Тундук. Пожалуйста повторите позже.");
-                    tuErr();
+                    reject(error);
+                },
+                fail: function (fail) {
                 }
-
-                else {
-
-                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                    tuErr();
-
-                }
-
             })
+        });
 
-            .fail(function() {
 
-                tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже");
-                tuErr();
-            })
-        ;
     };
-
 </script>
 
 <?php if($errors): ?>
