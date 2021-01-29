@@ -25,6 +25,8 @@ SQL;
 
         $filters = [];
 
+        $params = [];
+
         if($exporter > 0) {
             $params['exporter_id'] = $exporter;
             $filters[] = 'exporter_id = :exporter_id';
@@ -35,8 +37,7 @@ SQL;
             $filters[] = 'status = :status';
         }
 
-        if(count($params) > 0)
-            $filters = 'WHERE ' . implode(' AND ', $filters);
+        $filters = (count($params) > 0) ? 'WHERE ' . implode(' AND ', $filters) : '';
 
 
         $sql = <<<SQL
