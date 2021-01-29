@@ -24,8 +24,8 @@
 <?php if($this->isPermitted($this::AK_REQUISITES, $this::PMS_CAN_SEND_TUNDUK_REQUISITES)): ?>
 <form class="form" id="ajax_form" method="POST" action="" style="display: none">
     <div class="field buttons">
-        <input type="checkbox" id="rdioTunduk" name="rdio"/><label for="rdioTunduk">Tunduk</label>
-        <input type="checkbox" id="rdioMF" name="rdio"/><label for="rdioMF">MF</label>
+        <input type="checkbox" id="rdioTunduk" name="rdio"/><label for="rdioTunduk">ГНС</label>
+        <input type="checkbox" id="rdioMF" name="rdio"/><label for="rdioMF">Портал ЭГЗ</label>
         <input type="submit" id="btn-tunduk" class="button disabled" value="Выгрузить" disabled/>
     </div>
 
@@ -127,10 +127,10 @@
                     let textOutRes = '';
                     let res =  obj["result"];
                     if(typeof res !== 'undefined' && typeof res[0] !== 'undefined' && res[0].tundukAct == 'successTunduk') {
-                        textOutRes = textOutRes + "Компания успешно отправлена в Тундук.";
+                        textOutRes = textOutRes + "Компания успешно отправлена в ГНС.";
                     }
                     if(typeof res !== 'undefined' && typeof res[1] !== 'undefined' && res[1].tundukMFAct == 'successTundukMF') {
-                        textOutRes = textOutRes + "\n\rКомпания успешно отправлена в ТундукMF.";
+                        textOutRes = textOutRes + "\n\rКомпания успешно отправлена в Портал ЭГЗ.";
                     }
                     tunSuc.text(textOutRes);
                     tunSuc.css('display', 'block');
@@ -140,10 +140,10 @@
                     let err = obj["error"];
                     let textOutErr = '';
                     if(typeof err !== 'undefined' && typeof err[0] !== 'undefined' && err[0].tundukAct == "noINNTunduk") {
-                        // textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
+                        textOutErr = textOutErr + "Сертификатов для выгрузки не найдено. (Tunduk)";
                     }
                     if(typeof err !== 'undefined' && typeof err[1] !== 'undefined' && err[1].tundukMFAct == "noINNTunduk") {
-                        // textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
+                        textOutErr = textOutErr + "\n\rСертификатов для выгрузки не найдено. (TundukMf)";
                     }
                     if(textOutErr.length>0) {
                         tunErr.text(textOutErr);
@@ -153,7 +153,7 @@
                     resolve(data);
                 },
                 error: function (error) {
-                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + error);
+                    tunErr.text("Неизвестная ошибка. Пожалуйста повторите позже " + JSON.stringify(error));
                     tuErr();
                     reject(error);
                 },
