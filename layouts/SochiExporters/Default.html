@@ -62,15 +62,10 @@
         <th class="w-fit">Сообщение</th>
         <th class="w150">Дата/время</th>
     </tr>
-    <?php
-        $canAccessRequisites = $this->isPermitted($this::AK_REQUISITES);
-
-        foreach($log as $index => $record):
-            $class = $record['status'] ? 'success-log' : 'failure-log';
-    ?>
-    <tr class="<?php echo $class; ?>">
+    <?php foreach($log as $index => $record): ?>
+    <tr class="<?php echo $record['status'] ? 'success-log' : 'failure-log'; ?>">
         <td class="center w50"><?php echo $index + 1; ?></td>
-        <td class="w150"><?php echo htmlspecialchars($record['exporter']); ?></td>
+        <td class="w150"><?php echo strtoupper(htmlspecialchars($record['exporter'])); ?></td>
         <td class="w-fit"><?php echo htmlspecialchars($record['message']); ?></td>
         <td class="w150"><?php echo htmlspecialchars($record['date_time']); ?></td>
     </tr>
