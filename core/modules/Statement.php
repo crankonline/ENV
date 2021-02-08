@@ -39,9 +39,6 @@ class Statement extends \Environment\Core\Module {
 		ACTION_REJECT = 'act-reject',
 		ACTION_REMOVE = 'act-remove';
 
-	const
-		URL_FRONT = 'https://reg.dostek.kg/';
-
 	protected $config = [
 		'template' => 'layouts/Statement/Default.html'
 	];
@@ -386,7 +383,7 @@ class Statement extends \Environment\Core\Module {
 
 	protected function getInvoice( $statement ) {
 		$cUrl   = curl_init();
-		$target = self::URL_FRONT . '?page=statementinfo';
+		$target = getenv('online_statement_url') . '?page=statementinfo';
 
 		curl_setopt_array(
 			$cUrl,
@@ -413,7 +410,6 @@ class Statement extends \Environment\Core\Module {
 		$doc = new \DOMDocument( '1.0', 'utf-8' );
 
 		@$doc->loadHTML( $html );
-
 		$form   = $doc->getElementsByTagName( 'form' )->item( 1 );
 		$action = $form->getAttribute( 'action' );
 		$input  = $form->childNodes->item( 1 );
@@ -421,7 +417,7 @@ class Statement extends \Environment\Core\Module {
 		curl_setopt_array(
 			$cUrl,
 			[
-				CURLOPT_URL            => self::URL_FRONT . $action,
+				CURLOPT_URL            => static::URL_FRONT . $action,
 				CURLOPT_SSL_VERIFYPEER => false,
 				CURLOPT_SSL_VERIFYHOST => false,
 				CURLOPT_RETURNTRANSFER => true,
@@ -689,6 +685,7 @@ class Statement extends \Environment\Core\Module {
 		$stages  = $this->detectProcessingStage( $statement );
 		$actions = $this->detectAvailibleActions( $stages, $abilities );
 
+		$this->variables->regUrl = getenv('online_statement_url');
 		$this->variables->actions   = &$actions;
 		$this->variables->abilities = &$abilities;
 

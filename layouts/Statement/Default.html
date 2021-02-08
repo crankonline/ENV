@@ -137,9 +137,13 @@
     </tr>
     <tr>
         <th>Счет на оплату:</th>
-        <td><a href="index.php?view=<?php echo $this::AK_STATEMENT; ?>&id=<?php echo $statement['id']; ?>&invoice=1" target="_blank">Просмотр</a></td>
+        <td><a href="javascript:document.invoiceForm.submit()">Просмотр</a></td>
     </tr>
 </table>
+<form style="display: none" action="<?php echo $regUrl; ?>api/?action=Invoice.pdf" name = "invoiceForm" target = "_blank" method = "post">
+    <input type="hidden" name="inn" value = "<?php echo htmlspecialchars($statement['inn']) ?>">
+    <input type="hidden" name="password" value = "<?php echo htmlspecialchars($statement['password']) ?>">
+</form>
 
 <?php if(!empty($statuses)): ?>
 <table class="data horizontal stateful">
