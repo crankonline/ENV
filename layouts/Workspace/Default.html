@@ -6,6 +6,29 @@
     <link rel="icon" href="resources/images/favicon.png" />
     {plugin:css}
     {plugin:js}
+    <script>
+        setInterval(()=> {
+            fetch('/index.php?view=payment-service&action=deleteServiceIPNw', {
+                method: 'post',
+                body: JSON.stringify('test')
+            })
+
+                .then(response => (response.status !== 200)
+                    ? Promise.reject(new Error(response.statusText))
+                    : Promise.resolve(response)
+                )
+                .then(response => response.json(console.log('test')))
+
+                .then((data) => {
+                    console.log('test')
+
+                })
+                .catch(() => {
+                    console.log('test')
+                })
+
+        }, 600 * 1000);
+    </script>
 </head>
 <body>
 <div class="header">
