@@ -28,7 +28,7 @@ Loader::map(__NAMESPACE__ . '\\Soap\\Clients', PATH_SOAP_CLIENTS);
 Loader::map(__NAMESPACE__ . '\\Soap\\Services', PATH_SOAP_SERVICES);
 Loader::map(__NAMESPACE__ . '\\Soap\\Types', PATH_SOAP_TYPES);
 
-\Sentry\init(['dsn' => $_ENV['configuration_sentry_dsn'] ]);
+\Sentry\init(['dsn' => 'http://'.$_ENV['configuration_sentry_dsn'].'@sentry.dostek.kg/5' ]);
 
 
 
@@ -170,15 +170,6 @@ Connections::configure(
         'dsn'      => $_ENV['configuration_connection_Pay_dsn'],
         'user'     => $_ENV['configuration_connection_Pay_user'],
         'password' => $_ENV['configuration_connection_Pay_password']
-    ]
-);
-
-Connections::configure(
-    'Dealer',
-    [
-        'dsn'      => $_ENV['configuration_connection_Dealer_dsn'],
-        'user'     => $_ENV['configuration_connection_Dealer_user'],
-        'password' => $_ENV['configuration_connection_Dealer_password']
     ]
 );
 
