@@ -46,10 +46,11 @@
             <div class="field buttons">
             <input type="submit" name="btn_submit" id="btn_submit" class="button form-filter" value="Применить" >&nbsp;
             <label style="display: none"> <?php echo $url = $_GET['idService'];?></label>
-            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_PAYMENT_DEALER; ?>'">&nbsp;<br>
+            <input type="reset" name="btn_clear" id="btn_clear" class="button form-filter" value="Сбросить"  onclick="window.location.href = 'index.php?view=<?php echo $this::AK_PAYMENT_DEALER; ?>'">&nbsp;
+            <input type="button" name="btn_excel" id="btn_excel" class="button form-filter" value="Excel">&nbsp;<br>
             </div>
         </form>
-
+<div class="failure" id="failure" style="display: none">Невозможно выгрузить в Excel</div>
 <div class="" id="divSticky">
     <table  id="table-id" class=" data  myTable">
         <thead>
@@ -109,13 +110,16 @@
 
 {plugin:paginator}
 <script>
-    let sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+    const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
 
-    let frm = $('#form_filter');
+    const frm = $('#form_filter');
+    const failure = document.getElementById("failure");
+    failure.style.display = "none";
 
     frm.submit(() => {
-        let frm_dMin = document.getElementById("dateMin");
-        let frm_dMax = document.getElementById("dateMax");
+        failure.style.display = "none";
+        const frm_dMin = document.getElementById("dateMin");
+        const frm_dMax = document.getElementById("dateMax");
         if (frm_dMin.value && (frm_dMax.value === '')) {
             frm_dMax.style.borderColor = "darkred";
             document.getElementById("message_err_max").style.display = "block";
@@ -139,6 +143,50 @@
         }
 
     });
+
+    function sendP( $data) {
+
+        fetch('/index.php?view=payment-dealer&action=conExcel', {
+            method: 'post',
+            body: JSON.stringify($data)
+        })
+            .then(response => (response.status !== 200)
+                ? Promise.reject(new Error(response.statusText))
+                : Promise.resolve(response)
+            )
+            .then(response => response.json())
+
+            .then((data) => {
+                failure.style.display = "none";
+                    let $a = $("<a>");
+                    $a.attr("href",data);
+                    $("body").append($a);
+                    $a.attr("download","ReportDealer.xlsx");
+                    $a[0].click();
+                    $a.remove();
+            })
+            .catch(() => {
+                failure.style.display = "block";
+            })
+
+    }
+
+    document.getElementById("btn_excel").onclick = () => {
+        const  $data = {};
+        frm.find ('input').each(function() {
+            $data[this.name] = $(this).val();
+        });
+         lv = document.getElementById("paySys");
+
+         rs = lv.value;
+
+        $data['system'] = rs;
+        sendP($data);
+        return false;
+
+
+
+    }
 
 </script>
 

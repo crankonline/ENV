@@ -32,7 +32,7 @@ SQL;
             'accesKey' => "diff-requisites",
             'handleClass' => "DiffRequisites",
             'namemg' => "сравнение реквизитов",
-            'isEntryPoint' => true
+            'isEntryPoint' => 0
         ] );
 
         return $stmt->fetchColumn();
@@ -65,7 +65,7 @@ SQL;
 
 }
 
-$migrate = new migrate11();
+$migrate = new migrate12();
 
 
 $m = $migrate->insertModule();

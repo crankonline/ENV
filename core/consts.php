@@ -40,6 +40,9 @@ define('PATH_DATA_LAYERS', PATH_CORE . 'data-layers' . DS);
 define('PATH_SOAP_CLIENTS', PATH_CORE . 'soap-clients' . DS);
 define('PATH_SOAP_SERVICES', PATH_CORE . 'soap-services' . DS);
 define('PATH_SOAP_TYPES', PATH_CORE . 'soap-types' . DS);
+define('PATH_MIGRATIONS', PATH_CORE . 'migrations' . DS);
+define('PATH_DOCS', SYSTEM_ROOT . 'docs' . DS);
+
 
 /***/
 
@@ -53,5 +56,7 @@ define('SESSION_ACTION_INTERVAL_KEY', 'interval');
 
 define('SESSION_USER_KEY', 'user');
 
+define('HTTP_AUTH_1C_USR', 'sochi');
+define('HTTP_AUTH_1C_PWD', 'ufvguygbvjvbugjsb6546fg964b96');
 
 ?>

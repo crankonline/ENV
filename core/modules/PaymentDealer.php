@@ -2,14 +2,17 @@
 
 namespace Environment\Modules;
 
-
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 use Environment\Modules\PayFilter as PayFilter;
+use Environment\Modules\ExportToExcel as Excel;
+use Environment\Modules\ArrayExecToExcel as ExecExcel;
+
 
 
 class PaymentDealer extends \Environment\Core\Module
 {
     const ROWS_PER_PAGE = 50;
+
 
     protected $config = [
         'template' => 'layouts/PaymentDealer/Default.html',
@@ -193,6 +196,91 @@ SQL;
         }
         return [&$count, &$rows];
     }
+
+    function conExcel ()
+    {
+        $result = file_get_contents('php://input');
+        $result = json_decode($result, true);
+        $account = $result['account'] ?? null;
+        $inn = $result['inn'] ?? null;
+        $system = $result['system'] ?? null;
+        $dateMin = !empty($result['dateMin'] ) ? $result['dateMin'] .' 00:00:00' : date('Y-m-01 00:00:00');
+        $dateMax = !empty($result['dateMax']) ? $result['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
+        $nw_array = array_filter($result, function($element) {
+            return !empty($element);
+        });
+
+        if ($account && !$inn && !$system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\AccountDealer();
+            $account->setParams($nw_array);
+        }
+
+        if ($account && $inn && !$system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\AccountInnDealer();
+            $account->setParams($nw_array);
+        }
+
+        if (!$account && $inn && !$system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\InnDealer();
+            $account->setParams($nw_array);
+        }
+
+        if (!$account && $inn && $system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\InnSystemDealer();
+            $account->setParams($nw_array);
+        }
+
+        if (!$account && !$inn && $system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\SystemDealer();
+            $account->setParams($nw_array);
+        }
+
+        if ($account && !$inn && $system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\AccountSystemDealer();
+            $account->setParams($nw_array);
+        }
+
+        if (!$account && !$inn && !$system && $dateMin && $dateMax) {
+            $account = new  ExecExcel\DateDealer();
+            $account->setParams($nw_array);
+        }
+
+        if ($account && $inn && $system && $dateMin && $dateMax) {
+            $account = new  ExecExcel\AccountInnSystemDealer();
+            $account->setParams($nw_array);
+        }
+
+        if (!$account && !$inn && !$system && !$dateMin && !$dateMax) {
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name", "inv". "inn" FROM "Dealer_payments"."PayLog" as "p" 
+
+INNER JOIN "Dealer_payments"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"  
+
+INNER JOIN "Dealer_data"."invoice" AS "inv" ON "p"."Account" = "inv"."invoice_serial_number"   
+ORDER BY 
+    "p"."IDPayLog" DESC, 
+    "p"."DateTime"
+SQL;
+
+        $stmt = Connections::getConnection('Dealer')->prepare($sql);
+
+        $stmt->execute();
+
+        $res = $stmt->fetchAll();
+    }
+        $res = $account->geRes();
+        $exc = new  Excel\ExportToExcel();
+        $exc->getExcel($res, 'dealer');
+
+
+    }
+
 
     protected function main() {
         $this->variables->mes = [];

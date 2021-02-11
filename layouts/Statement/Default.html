@@ -447,19 +447,19 @@
     <tr>
         <th>БИК:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->bic);
+            echo htmlspecialchars($json->bank->bic ?? null);
         ?></td>
     </tr>
     <tr>
         <th>Наименование банка:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->bankname);
+            echo htmlspecialchars($json->bank->bankname ?? null);
         ?></td>
     </tr>
     <tr>
         <th>Расчетный счет:</th>
         <td><?php
-            echo htmlspecialchars($json->bank->account);
+            echo htmlspecialchars($json->bank->account ?? null);
         ?></td>
     </tr>
     <?php endif; ?>
@@ -499,6 +499,13 @@
                 <td><?php
                     echo htmlspecialchars($person->passport_data->issue_date);
                 ?></td>
+            </tr>
+            <tr>
+                <th>ПИН:</th>
+                <td><?php
+                            if (isset($person->representative_pin))
+                    echo htmlspecialchars($person->representative_pin) ;
+                    ?></td>
             </tr>
             <tr>
                 <th>Орган выдачи паспорта:</th>
@@ -563,6 +570,7 @@
                 echo htmlspecialchars($person->phone);
             ?></td>
         </tr>
+
         <?php if($abilities[$this::PMS_VIEW_PINS]): ?>
         <tr>
             <th>PIN-код:</th>
@@ -570,6 +578,19 @@
                 echo htmlspecialchars($person->pin);
             ?></td>
         </tr>
+            <?php if(!empty($person->edsusagemodel)): ?>
+
+                    <tr>
+                        <th>Модель использования ЭЦП:</th>
+                        <td><?php if($person->edsusagemodel == 'token'): ?>
+                            <?php  echo htmlspecialchars('Рутокен'); ?>
+                           <?php endif; ?>
+                            <?php if($person->edsusagemodel == 'cloud'): ?>
+                            <?php  echo htmlspecialchars('Облачное хранилище'); ?>
+                           <?php endif; ?>
+                        </td>
+                    </tr>
+            <?php endif; ?>
         <?php endif; ?>
     <?php
             endforeach;

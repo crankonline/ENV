@@ -1,0 +1,100 @@
+<div class="form" action="/index.php?view=sochi-zero-report-admin&action=send" method="POST">
+    <div class="caption">Статусы экспортеров</div>
+
+    <?php foreach ($exporters as $exporter): ?>
+        <div class="field">
+            <label for="module-id" class="fixed" style="width: 60%;"><?php echo $exporter['description'] ?></label>
+            <label class="fixed" style="width: 20%; font-weight: bold;">
+                <?php if ($exporter['is_active']) : ?>
+                    <span style="color: #00963c">Включен<span>
+                <?php else: ?>
+                    <span style="color: #FF0000">Выключен</span>
+                <?php endif ?>
+            </label>
+            <label class="fixed" style="width: 18%; text-align: right;">
+                <button class="button" onclick="setStatus('<?php echo $exporter['exporter']; ?>', <?php echo json_encode(!$exporter['is_active']); ?>)">
+                    <?php echo ($exporter['is_active']) ? 'Выключить' : 'Включить'; ?>
+                </button>
+            </label>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+
+<form class="form" action="index.php" method="GET">
+
+    <input type="hidden" name="view" value="sochi-exporters" />
+    <div class="caption">Параметры просмотра</div>
+
+    <div class="field">
+        <label for="exporter" class="fixed">Экспортер:</label>
+        <select name="exporter" id="exporter">
+            <option value="0">Все</option>
+            <?php foreach($exporters as $exporter): ?>
+            <option value="<?php echo $exporter['id']; ?>"<?php echo $exporter['id'] == $cExporter ? ' selected' : ''; ?>><?php
+                echo htmlspecialchars($exporter['description']);
+            ?></option>
+            <?php endforeach; ?>
+        </select>
+        <span class="hint">Государственный орган</span>
+    </div>
+    <div class="field">
+        <label for="status" class="fixed">Статус ответа:</label>
+        <select name="status" id="status">
+            <option value="0" <?php if($cStatus == 0): ?> selected <?php endif; ?> >Все</option>
+            <option value="1" <?php if($cStatus == 1): ?> selected <?php endif; ?> >Удачный</option>
+            <option value="2" <?php if($cStatus == 2): ?> selected <?php endif; ?> >Неудачный</option>
+        </select>
+        <span class="hint">Статус ответа</span>
+    </div>
+
+    <div class="field buttons">
+        <input type="submit" class="button" value="Поиск" />
+    </div>
+
+</form>
+
+<table class="data">
+    <tr>
+        <th class="w50">#</th>
+        <th class="w150">Экспортер</th>
+        <th class="w-fit">Сообщение</th>
+        <th class="w150">Дата/время</th>
+    </tr>
+    <?php foreach($log as $index => $record): ?>
+    <tr class="<?php echo $record['status'] ? 'success-log' : 'failure-log'; ?>">
+        <td class="center w50"><?php echo $index + 1; ?></td>
+        <td class="w150"><?php echo strtoupper(htmlspecialchars($record['exporter'])); ?></td>
+        <td class="w-fit"><?php echo htmlspecialchars($record['message']); ?></td>
+        <td class="w150"><?php echo htmlspecialchars($record['date_time']); ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+
+
+<style type="text/css">
+    tr.success-log td {
+        background: #e1f9e1;
+    }
+
+    tr.failure-log td {
+        background: #ffdfe5;
+    }
+
+</style>
+<script type="text/javascript">
+    
+    function setStatus(code, status) {
+
+        fetch('/services.php?service=SochiExporters&action=send', {
+            method: 'POST',
+            body: JSON.stringify({
+                code: code,
+                status: status
+            })
+        })
+        .then(response => window.location.reload());
+    }
+
+</script>

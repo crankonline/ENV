@@ -9,7 +9,8 @@ use Environment\Soap\Clients as SoapClients,
 	Environment\Soap\Types\Requisites\Data as Types;
 
 use Environment\DataLayers\Reregister\Core as CoreSchema,
-	Environment\DataLayers\Reregister\Statistics as StatisticsSchema;
+	Environment\DataLayers\Reregister\Statistics as StatisticsSchema,
+	Environment\DataLayers\Requisites\Main as RequisitesModel;
 
 class Reregister extends \Environment\Core\Module {
 	protected $config = [
@@ -32,7 +33,8 @@ class Reregister extends \Environment\Core\Module {
 			$dlActions = new StatisticsSchema\Actions();
 
 			$actionRow = [
-				'ip-address' => $_SERVER['REMOTE_ADDR']
+				'ip-address' => $_SERVER['REMOTE_ADDR'],
+                'user-id' => $_SESSION['user']['id']
 			];
 
 			if ( $uid ) {
@@ -44,6 +46,10 @@ class Reregister extends \Environment\Core\Module {
 
 				$actionRow['action-type-id'] = 1;
 			}
+
+			$dlReauisites = new RequisitesModel\MainRequisites();
+			$req = $dlReauisites->getByUid($uid);
+			$actionRow['requisites-id'] = $req['IDRequisites'];
 
 			$dlActions->register( $actionRow );
 

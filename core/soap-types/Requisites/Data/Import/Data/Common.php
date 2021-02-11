@@ -246,10 +246,10 @@ class Common {
             }
         }
 
-        foreach($roles as &$role){
+        foreach($roles as $key => &$role){
             if(!$role['count'] && $role['required']){
                 throw new \Exception('Роль "' . $role['name'] . '" не распределена.');
-            } elseif($role['count'] > 1) {
+            } elseif($role['count'] > 1 && $key != 4) {
                 throw new \Exception('Роль "' . $role['name'] . '" может быть использована только единожды.');
             }
         }

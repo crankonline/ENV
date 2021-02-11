@@ -9,56 +9,37 @@ class ClientRegistrationStatistics extends \Environment\Core\Module {
 		'template' => 'layouts/ClientRegistrationStatistics/Default.html'
 	];
 
-	protected function getAuthorByIp( $ip ) {
-		switch ( $ip ) {
-			case '10.0.100.3':
-				return 'Елена Петровна';
-			case '172.16.1.3':
-				return 'Разработчики ПО';
-			case '192.168.1.12':
-				return 'Салтанат';
-			case '192.168.1.13':
-				return 'Гульбара';
-			case '192.168.1.16':
-				return 'Елена Петровна';
-			case '192.168.1.17':
-				return 'Бектур';
-			case '192.168.1.18':
-				return 'Иванов Дмитрий';
-			case '192.168.1.19':
-				return 'Азиза';
-			case '192.168.1.23':
-				return 'Настя';
-			case '192.168.1.29':
-				return 'Гузаля';
-			case '192.168.1.34':
-				return 'Вадим';
-			case '192.168.1.39':
-				return 'Алина';
-			case '192.168.1.40':
-				return 'Света';
-			case '192.168.1.138':
-				return 'Аня';
-			case '192.168.1.145':
-				return 'Женя';
-			case '192.168.1.154':
-				return 'Cтепан';
-			case '192.168.1.238':
-				return 'Святослав';
-			case '192.168.1.157':
-				return 'Эльвира';
-			case '192.168.1.201':
-				return '#6';
-		}
+	public function getOperatorName($userId) {
+        $sql = <<<SQL
+SELECT
+    "c-u"."Login"
+FROM
+    "Core"."User" as "c-u"      
+WHERE
+    ("c-u"."IDUser" = :userId);
+SQL;
 
-		return '?';
-	}
+        $stmt = Connections::getConnection( 'Environment' )->prepare( $sql );
 
-	protected function getRecords( $periodFrom, $periodTo ) {
+        $stmt->execute( [
+            'userId' => $userId,
+        ] );
+        $ret = $stmt->fetch();
+//        var_dump($ret);
+//        die();
+        if($ret) {
+            return $ret['Login'];
+        } else {
+            return '-';
+        }
+    }
+
+	public function getRecords( $periodFrom, $periodTo ) {
 		$sql = <<<SQL
 SELECT
     HOST("s-a"."IpAddress") as "ip-address",
     TO_CHAR("s-a"."DateTime", 'DD.MM.YYYY') as "date",
+    "s-a"."UserID" as "userId",
     SUM(("s-at"."Name" = 'register')::INT) as "register-count",
     SUM(("s-at"."Name" = 'update')::INT) as "update-count"
 FROM
@@ -69,7 +50,8 @@ WHERE
     ("s-a"."DateTime"::DATE BETWEEN :periodFrom AND :periodTo)
 GROUP BY
     1,
-    2
+    2,
+    3
 ORDER BY
     2 DESC,
     3 DESC,

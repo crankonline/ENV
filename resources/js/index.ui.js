@@ -837,6 +837,7 @@
             surname:    'common-chief-surname',
             name:       'common-chief-name',
             middleName: 'common-chief-middle-name',
+            pin:        'common-chief-pin',
 
             workPhone: 'common-chief-work-phone',
 
@@ -1093,17 +1094,19 @@
     }
 
     function cacheRole(role, isUsed){
-        if(isUsed){
-            if(role in rolesCache){
-                rolesCache[role]++;
+        if(role != 4 ) {
+            if (isUsed) {
+                if (role in rolesCache) {
+                    rolesCache[role]++;
+                } else {
+                    rolesCache[role] = 1;
+                }
             } else {
-                rolesCache[role] = 1;
-            }
-        } else {
-            if(rolesCache[role] > 1){
-                rolesCache[role]--;
-            } else {
-                delete rolesCache[role];
+                if (rolesCache[role] > 1) {
+                    rolesCache[role]--;
+                } else {
+                    delete rolesCache[role];
+                }
             }
         }
     }
@@ -1366,6 +1369,8 @@
                 ($.inArray(consts.ROLES_CHIEF, roles) > -1)
                 ||
                 ($.inArray(consts.ROLES_ACCOUNTANT, roles) > -1)
+                ||
+                ($.inArray(consts.ROLES_EDS_USER, roles) > -1)
             );
         };
     })();
@@ -1796,6 +1801,7 @@
         elements[map.surname].value    = person.surname;
         elements[map.name].value       = person.name;
         elements[map.middleName].value = person.middleName;
+        elements[map.pin].value        = person.pin;
 
         if(representative.position){
             selectOptionByValue(
@@ -1843,6 +1849,7 @@
         delete map.edsUsageModels;
         delete map.roles;
         delete map.deviceSerial;
+        delete map.pin;
 
         setReadOnlyByMap(map, protect);
     }
@@ -2120,7 +2127,8 @@
                     passport: passport,
                     surname: personObj.surname,
                     name: personObj.name,
-                    middleName: personObj.fathername
+                    middleName: personObj.fathername,
+                    pin: personObj.representative_pin
                 },
                 representative = {
                     person: person,
@@ -2361,6 +2369,8 @@
                                 $('[name="common-full-name"]').val(response.data.name);
                                 $('[name="common-full-name"]').keyup();
                                 $('[name="common-rnmj"]').val(response.data.mj);
+                                $('[name="sf-tariff"]').val(response.data.ratetype);
+                                $('[name="sf-region"]').val(response.data.sfdepartmentcode);
 
 
                                 console.log('success');
@@ -2775,6 +2785,7 @@
                     delete map.workPhone;
                     delete map.edsUsageModels;
                     delete map.deviceSerial;
+                    delete map.pin;
 
                     setReadOnlyByMap(map, isData);
                 } else {
@@ -2884,6 +2895,10 @@
                         '<td><input type="text" placeholder="Отчество" name="common-representative-middle-name-{2}"></td>',
                     '</tr>',
                     '<tr>',
+                        '<th>ПИН</th>',
+                        '<td><input type="text" placeholder="ПИН" name="common-representative-pin-{2}" maxlength="14"></td>',
+                    '</tr>',
+                    '<tr>',
                         '<th>Должность</th>',
                         '<td><select required name="common-representative-position-{2}"></select></td>',
                     '</tr>',
@@ -2907,6 +2922,7 @@
                     surname:    'common-representative-surname-' + idx,
                     name:       'common-representative-name-' + idx,
                     middleName: 'common-representative-middle-name-' + idx,
+                    pin:        'common-representative-pin-' + idx,
 
                     workPhone: 'common-representative-work-phone-' + idx,
 
@@ -3039,6 +3055,7 @@
             elements[fldMap.surname].onblur    = monospaceFieldBlurHandler;
             elements[fldMap.name].onblur       = monospaceFieldBlurHandler;
             elements[fldMap.middleName].onblur = monospaceFieldBlurHandler;
+            elements[fldMap.pin].onblur        = monospaceFieldBlurHandler;
             elements[fldMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
             elements[fldMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
@@ -3522,6 +3539,7 @@
         elements[chiefMap.surname].onblur    = monospaceFieldBlurHandler;
         elements[chiefMap.name].onblur       = monospaceFieldBlurHandler;
         elements[chiefMap.middleName].onblur = monospaceFieldBlurHandler;
+        elements[chiefMap.pin].onblur =        monospaceFieldBlurHandler;
         elements[chiefMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
         elements[chiefMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;

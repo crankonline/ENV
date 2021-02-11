@@ -2,9 +2,10 @@
 
 namespace Environment\Modules;
 
-
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 use Environment\Modules\PayFilter as PayFilter;
+use Environment\Modules\ExportToExcel as Excel;
+use Environment\Modules\ArrayExecToExcel as ExecExcel;
 
 
 class PaymentSochi extends \Environment\Core\Module
@@ -172,6 +173,70 @@ SQL;
             exit;
         }
         return [&$count, &$rows];
+    }
+
+    function conExcel ()
+    {
+        $result = file_get_contents('php://input');
+        $result = json_decode($result, true);
+        $account = $result['account'] ?? null;
+        $system = $result['system'] ?? null;
+        $dateMin = !empty($result['dateMin'] ) ? $result['dateMin'] .' 00:00:00' : date('Y-m-01 00:00:00');
+        $dateMax = !empty($result['dateMax']) ? $result['dateMax'].' 23:59:59' : date('Y-m-d  23:59:59');
+        $nw_array = array_filter($result, function($element) {
+            return !empty($element);
+        });
+
+        if ($account && !$system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\AccountSochi();
+            $account->setParams($nw_array);
+
+        }
+        if ($account && $system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\AccountAndSysSochi();
+            $account->setParams($nw_array);
+
+        }
+
+        if (!$account && $system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\SystemSochi();
+            $account->setParams($nw_array);
+
+
+        }
+        if (!$account && !$system && $dateMin && $dateMax) {
+
+            $account = new  ExecExcel\DateSochi();
+            $account->setParams($nw_array);
+
+        }
+        if (!$account && !$system && !$dateMin && !$dateMax) {
+
+            $sql = <<<SQL
+SELECT "p".*, "ps"."Name"
+FROM
+    "Payment"."Payment" AS "p"
+    INNER JOIN "Payment"."PaymentSystem" AS "ps" ON "p"."PaymentSystemID" = "ps"."IDPaymentSystem"
+ORDER BY 
+    "p"."IDPayment" DESC,
+    "p"."PayDateTime"
+SQL;
+
+            $stmt = Connections::getConnection('Pay')->prepare($sql);
+
+            $stmt->execute([] );
+
+            $res =  $stmt->fetchAll();
+
+        }
+
+        $res = $account->geRes();
+        $exc = new  Excel\ExportToExcel();
+        $exc->getExcel($res, 'sochi');
+
     }
 
     protected function main() {

@@ -23,6 +23,9 @@ class Users extends \Unikum\Core\Module {
 				$client = new RequisitesClients\Data();
 
 				$data = $client->getByInn( API_SUBSCRIBER_TOKEN, $inn );
+//				print_r(json_encode($data));
+//				die();
+				file_put_contents('save.txt', json_encode($data));
 
 				if ( $data ) {
 					if ( ! ( empty( $data->common ) || empty( $data->common->representatives ) ) ) {
