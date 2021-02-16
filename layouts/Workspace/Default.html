@@ -12,14 +12,7 @@
                 method: 'post',
                 body: JSON.stringify('test')
             })
-                .then(response => (response.status !== 200)
-                    ? Promise.reject(new Error(response.statusText))
-                    : Promise.resolve(response)
-                )
-                .then(response => response.json())
-                .then((data) => {})
-                .catch(() => {})
-        },  600 * 1000);
+         },  600 * 1000);
     </script>
 </head>
 <body>
