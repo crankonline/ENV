@@ -1,6 +1,7 @@
-<form class="form" action="index.php" method="GET">
+<form class="form" action="index.php" method="GET" name = "certificates">
 
     <input type="hidden" name="view" value="<?php echo $this::AK_EDS_EXPIRATIONS; ?>" />
+    <input type="hidden" name="all" value="0" />
     <div class="caption">Параметры просмотра</div>
 
     <div class="field">
@@ -13,6 +14,12 @@
             <?php endforeach; ?>
         </select>
         <span class="hint">Доступные варианции данных</span>
+    </div>
+
+    <div class="field">
+        <label for="inn" class="fixed">ИНН:</label>
+        <input type="text" maxlength="14" name="inn" value="<?php echo $_GET['inn'] ?? ''; ?>" placeholder="ИНН" />
+        <span class="hint">Идентификационный налоговый номер</span>
     </div>
 
     <div class="field buttons">
@@ -139,6 +146,23 @@
         <?php break; ?>
     <?php endswitch; ?>
     </table>
+
+    <?php if($_GET['all'] == 0): ?>
+
+        <div style="text-align: center;">
+            <div style="padding: 15px; font-weight: bold;">Показано только <?php echo count($certificates); ?> записей</div>
+            <div>
+                <button onclick="showAll()" class="button">Показать все записи</button>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            document.certificates.all.value = 1;
+            document.certificates.submit();
+        </script>
+
+    <?php endif; ?>
+
 <?php else: ?>
     <div class="empty-resultset">Записей не найдено.</div>
 <?php endif; ?>
