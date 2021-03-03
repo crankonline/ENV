@@ -147,6 +147,18 @@ SQL;
 					break;
 			}
 
+			if(!empty($_GET['inn'])) {
+				$certificates = array_filter($certificates, function($v) {
+					return $v->Inn == $_GET['inn'];
+				});
+			}
+
+			$_GET['all'] = $_GET['all'] ?? 0;
+
+			if(empty($_GET['inn']) && $_GET['all'] == 0) {
+				$certificates = array_slice($certificates, 0, 50);
+			}
+
 			$statuses = $certificates ? $this->getUsageStatuses( $certificates ) : [];
 
 			$this->variables->certificates = &$certificates;
