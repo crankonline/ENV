@@ -55,6 +55,7 @@
 
 </form>
 
+
 <table class="data">
     <tr>
         <th class="w50">#</th>
@@ -62,9 +63,9 @@
         <th class="w-fit">Сообщение</th>
         <th class="w150">Дата/время</th>
     </tr>
-    <?php foreach($log as $index => $record): ?>
+    <?php foreach($log as $record): ?>
     <tr class="<?php echo $record['status'] ? 'success-log' : 'failure-log'; ?>">
-        <td class="center w50"><?php echo $index + 1; ?></td>
+        <td class="center w50"><?php echo ++$offset; ?></td>
         <td class="w150"><?php echo strtoupper(htmlspecialchars($record['exporter'])); ?></td>
         <td class="w-fit"><?php echo htmlspecialchars($record['message']); ?></td>
         <td class="w150"><?php echo htmlspecialchars($record['date_time']); ?></td>
@@ -72,6 +73,8 @@
     <?php endforeach; ?>
 </table>
 
+
+{plugin:paginator}
 
 <style type="text/css">
     tr.success-log td {
@@ -84,7 +87,7 @@
 
 </style>
 <script type="text/javascript">
-    
+    'use strict';
     function setStatus(code, status) {
 
         fetch('/services.php?service=SochiExporters&action=send', {
