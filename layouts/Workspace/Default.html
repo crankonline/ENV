@@ -6,6 +6,14 @@
     <link rel="icon" href="resources/images/favicon.png" />
     {plugin:css}
     {plugin:js}
+    <script>
+        setInterval(()=> {
+            fetch('/index.php?view=payment-service&action=deleteServiceIPNw', {
+                method: 'post',
+                body: JSON.stringify('test')
+            })
+         },  600 * 1000);
+    </script>
 </head>
 <body>
 <div class="header">
