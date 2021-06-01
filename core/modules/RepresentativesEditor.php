@@ -240,7 +240,8 @@ SQL;
 			'representative-surname',
 			'representative-name',
 			'representative-middle-name',
-            'representative-pin'
+            'representative-pin',
+			'representative-phone'
 		] );
 
 		$validations = (
@@ -312,6 +313,31 @@ SQL;
 					'passportId'  => $passport['passport-id'],
 					'id'          => $representative['representative-id']
 				] );
+
+				if($representative['representative-phone'] != ''){
+					$sql= <<<SQL
+UPDATE 
+    "Common"."RequisitesRepresentative" RR
+SET 
+    "Phone"= :rPhone
+FROM "Common"."Representative" R, 
+     "Common"."Requisites" RQ
+WHERE 
+    R."IDRepresentative" = RR."RepresentativeID" 
+    AND
+      RR."RequisitesID" = RQ."IDRequisites" 
+    AND
+      R."IDRepresentative" = :id 
+    AND
+      RQ."IsActive" = true
+SQL;
+					$stmt = $dbms->prepare( $sql );
+
+					$stmt->execute([
+					    'rPhone' => $representative['representative-phone'],
+                        'id'     => $representative['representative-id']
+                    ]);
+				}
 
 				$dbms->commit();
 
