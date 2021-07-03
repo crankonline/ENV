@@ -287,7 +287,10 @@ SQL;
 
             foreach ($data['sf'] as $record) {
                 if($record->PayerState == "Действующие") {
-                    if(in_array($record->OKPO{0}, [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ])) {
+                    if (
+                        !empty($record->OKPO) &&
+                        in_array($record->OKPO{0}, [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ])
+                    ) {
                         $map_sf_tariff = array(
                             array(
                                 'value'=> 1,
