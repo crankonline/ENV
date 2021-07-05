@@ -68,7 +68,7 @@ SQL;
         $resault    = json_decode($resault,true);
 
         $IDPaymentSys       = $resault['PaymentSystemID'] ?? null;
-        $ip         = $resault['IP'] ?? null;
+        $ip         = trim($resault['IP'] ?? null, ' ');
 
         if ($this->chkSysIP($ip, $IDPaymentSys) >= 1) {
             echo json_encode('dublicate');
@@ -134,7 +134,7 @@ SQL;
     $resault    = json_decode($resault,true);
     $name       = $resault['inpt_name'] ?? null;
     $token      = $resault['inpt-token'] ?? null;
-    $ip         = $resault['inpt-ip'] ?? null;
+    $ip         = trim($resault['inpt-ip'] ?? null, ' ');
     $count      = $this->countSys();
 
      if ($this->chkSys($name) >= 1) {
@@ -237,7 +237,7 @@ SQL;
     $resault    = file_get_contents('php://input');
     $resault    = json_decode($resault,true);
     $id_s       = $resault['PaymentSystemID'] ?? null;
-    $ip         = $resault['IP'] ?? null;
+    $ip         = trim($resault['IP'] ?? null, ' ');
     $ip_st      = $resault['IP_ST'] ?? null;
 
         if ($this->chkSysIP($ip, $id_s) >= 1) {
