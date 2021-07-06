@@ -1808,12 +1808,6 @@
             x.value = !elements[map.passportSeriesCheckbox].checked ? 'N/A' : '';
         }
 
-        /*
-                elements[map.passportSeriesCheckbox].onclick = ()=>{
-                    console.log(map.passportSeriesCheckbox);
-                    elements[map.passportSeries].readOnly = !elements[map.passportSeriesCheckbox].checked;
-                }
-        */
         elements[map.passportIssuingAuthority].value = passport.issuingAuthority;
         elements[map.passportIssingDate].value       = passport.issuingDate;
 
