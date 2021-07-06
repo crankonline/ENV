@@ -54,7 +54,7 @@
         <div class="field">
             <label for="eSeries" class="fixed">Cерия <span class="required">*</span>:</label>
             <input type="text" name="passport-series" id="eSeries" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-series']); ?>" placeholder="Укажите серию паспорта" required>
-            <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знак "-".</span>
+            <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знаки "- /".</span>
             <?php if(isset($validations, $validations['passport-series'])): ?>
                 <div class="validation-error"><?php
                     echo $validations['passport-series'];

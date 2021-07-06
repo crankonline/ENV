@@ -5,7 +5,7 @@ namespace Environment\Modules;
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class RepresentativesEditor extends \Environment\Core\Module {
-	const REGEX_INVALID_PASSPORT = '/[^A-Z0-9\-]+/i';
+	const REGEX_INVALID_PASSPORT = '/[^A-Z0-9\-\/]+/i';
 
 	protected $config = [
 		'template' => 'layouts/RepresentativesEditor/Default.html'
