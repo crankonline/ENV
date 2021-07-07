@@ -25,7 +25,6 @@
                    onclick="seriesCheckboxOnClick('search')">
             Серия <span class="required">*</span>:
         </label>
-<!--        <label for="sSeries" class="fixed">Cерия <span class="required">*</span>:</label>-->
         <input type="text" name="series" id="sSeries" maxlength="10" value="<?php echo $cSeries ? htmlspecialchars($cSeries) : null; ?>" placeholder="введите серию" required>
         <span class="hint">Серия паспорта для поиска</span>
     </div>
@@ -67,7 +66,6 @@
                 <input type = "checkbox" id="eSeries-checkbox" onclick="seriesCheckboxOnClick('form')">
                 Серия <span class="required">*</span>:
             </label>
-<!--            <label for="eSeries" class="fixed">Cерия <span class="required">*</span>:</label>-->
             <input type="text" name="passport-series" id="eSeries" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-series']); ?>" placeholder="Укажите серию паспорта" required>
             <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знаки: "-", "/".</span>
             <?php if(isset($validations, $validations['passport-series'])): ?>
