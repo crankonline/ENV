@@ -14,9 +14,7 @@ let elements = {
     }
 };
 
-let loadElement = (element) => {
-    return d.getElementById(element)
-}
+let loadElement = (element) => d.getElementById(element);
 let seriesCheckboxOnClick = (pointer) => {
     let Checked = (series, seriesCheckbox) => {
         series.readOnly = !seriesCheckbox.checked;
