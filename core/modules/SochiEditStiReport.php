@@ -12,7 +12,7 @@ class SochiEditStiReport extends \Environment\Core\Module {
         'listen'   => 'action'
     ];
 
-    function getData(string $uin) {
+    function getData(string $uin):string {
 
         $client = new SoapClients\Api\StiReports();
 
