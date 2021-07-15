@@ -21,7 +21,7 @@ class Passport {
             : null;
 
         if($values['series']){
-            if(!preg_match('/^[A-Z0-9\-]+$/', $values['series'])){
+            if($values['series'] !== 'N/A' && !preg_match('/^[A-Z0-9\-]+$/', $values['series'])){
                 throw new \Exception('Cерия паспорта должна состоять только из латинских букв, цифр и символа тире.');
             } else {
                 $self->series = $values['series'];

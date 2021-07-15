@@ -830,6 +830,8 @@
             passportSeries: 'common-chief-passport-series',
             passportNumber: 'common-chief-passport-number',
 
+            passportSeriesCheckbox: '#common-chief-passport-series-checkbox',
+
             passportIssuingAuthority: 'common-chief-passport-issuing-authority',
             passportIssingDate:       'common-chief-passport-issuing-date',
 
@@ -1795,6 +1797,17 @@
         elements[map.passportSeries].value = passport['series'];
         elements[map.passportNumber].value = passport['number'];
 
+
+        elements[map.passportSeries].readOnly = [ '', 'N/A' ].includes(passport['series']);
+        elements[map.passportSeriesCheckbox].checked = !elements[map.passportSeries].readOnly;
+
+        let x = elements[map.passportSeries];
+
+        elements[map.passportSeriesCheckbox].onclick = ()=>{
+            x.readOnly = !elements[map.passportSeriesCheckbox].checked;
+            x.value = !elements[map.passportSeriesCheckbox].checked ? 'N/A' : '';
+        }
+
         elements[map.passportIssuingAuthority].value = passport.issuingAuthority;
         elements[map.passportIssingDate].value       = passport.issuingDate;
 
@@ -2337,9 +2350,6 @@
 
                         var inn = elements['common-inn'].value;
 
-                        console.log(inn);
-
-
                         delete u.data;
 
                         elements['uid'].value = '';
@@ -2853,7 +2863,7 @@
                         '<td class="section-name" colspan="2">Паспортные данные</td>',
                     '</tr>',
                     '<tr>',
-                        '<th>Серия и номер</th>',
+                        '<th>Серия и номер (<label><input type="checkbox" id="common-representative-passport-series-checkbox-{2}">Серия присутствует</label>)</th>',
                         '<td>',
                             '<div style="display: table; border-spacing: 0px; max-width: 305px;">',
                                 '<div style="display: table-cell;">',
@@ -2914,6 +2924,8 @@
                 var map = {
                     passportSeries: 'common-representative-passport-series-' + idx,
                     passportNumber: 'common-representative-passport-number-' + idx,
+
+                    passportSeriesCheckbox: '#common-representative-passport-series-checkbox-' + idx,
 
                     passportIssuingAuthority: 'common-representative-passport-issuing-authority-' + idx,
                     passportIssingDate:       'common-representative-passport-issuing-date-' + idx,
@@ -3059,6 +3071,14 @@
             elements[fldMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
             elements[fldMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
+
+            elements[fldMap.passportSeriesCheckbox].onclick = ()=>{
+                elements[fldMap.passportSeries].readOnly = !elements[fldMap.passportSeriesCheckbox].checked;
+                elements[fldMap.passportSeries].value = !elements[fldMap.passportSeriesCheckbox].checked ? 'N/A' : '';
+            }
+
+            elements[fldMap.passportSeriesCheckbox].onclick();
+
         };
     })();
 
@@ -3543,6 +3563,13 @@
         elements[chiefMap.workPhone].onblur  = monospaceFieldBlurHandler;
 
         elements[chiefMap.deviceSerial].onblur = txtDeviceSerialBlurHandler;
+
+        elements[chiefMap.passportSeriesCheckbox].onclick = ()=>{
+            elements[chiefMap.passportSeries].readOnly = !elements[chiefMap.passportSeriesCheckbox].checked;
+            elements[chiefMap.passportSeries].value = !elements[chiefMap.passportSeriesCheckbox].checked ? 'N/A' : '';
+        }
+
+        setTimeout(elements[chiefMap.passportSeriesCheckbox].onclick, 1000);
 
         elements['#btnAddRepresentative'].onclick
             = btnAddCommonRepresentativeClickHandler;

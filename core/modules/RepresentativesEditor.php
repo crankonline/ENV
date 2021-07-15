@@ -5,7 +5,7 @@ namespace Environment\Modules;
 use Unikum\Core\Dbms\ConnectionManager as Connections;
 
 class RepresentativesEditor extends \Environment\Core\Module {
-	const REGEX_INVALID_PASSPORT = '/[^A-Z0-9\-]+/i';
+	const REGEX_INVALID_PASSPORT = '/[^A-Z0-9\-\/]+/i';
 
 	protected $config = [
 		'template' => 'layouts/RepresentativesEditor/Default.html'
@@ -169,16 +169,22 @@ SQL;
 			$e['passport-series'] = 'Серия паспорта не указана.';
 		} elseif ( preg_match( self::REGEX_INVALID_PASSPORT, $record['passport-series'] ) ) {
 			$e['passport-series'] = 'Серия паспорта содержит неверные символы.';
-		} elseif ( mb_strlen( $record['passport-series'], 'UTF-8' ) > 10 ) {
-			$e['passport-series'] = 'Длина серии паспорта превышает 10 символов.';
 		}
 
 		if ( empty( $record['passport-number'] ) ) {
 			$e['passport-number'] = 'Номер паспорта не указан.';
 		} elseif ( preg_match( self::REGEX_INVALID_PASSPORT, $record['passport-number'] ) ) {
 			$e['passport-number'] = 'Номер паспорта содержит неверные символы.';
-		} elseif ( mb_strlen( $record['passport-number'], 'UTF-8' ) > 15 ) {
-			$e['passport-number'] = 'Длина номера паспорта превышает 15 символов.';
+		}
+
+		if(in_array($record['passport-series'], ['AN', 'ID', 'AC'])){
+			if (!preg_match('/^(\d{7,7})$/', $record['passport-number'])){
+				$e['passport-number'] = 'Номер паспорта КР должен состоять из 7 цифр.';
+			}
+		} elseif (mb_strlen($record['passport-series'], 'UTF-8') > 6) {
+			$e['passport-series'] = 'Длина серии паспорта превышает 6 символов.';
+		} elseif (mb_strlen($record['passport-number'], 'UTF-8') < 6){
+			$e['passport-number'] = 'Длина номера паспорта не может быть меньше 6 символов.';
 		}
 
 		if ( empty( $record['passport-issuing-authority'] ) ) {

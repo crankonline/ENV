@@ -25,10 +25,11 @@ class CuratorSti extends \Environment\Core\Module {
 		$fileMap = [
 		1 => 'fileshare/data/',
 		2 => 'fileshare/rendered/',
-		3 => 'fileshare/notes/'
+		3 => 'fileshare/notes/',
+        4 => 'fileshare/data'
 	];
 
-	protected function getMonthName( $number ) {
+	protected function getMonthName(int $number):string {
 		switch ( $number ) {
 			case 1:
 				return 'Январь';
@@ -57,7 +58,7 @@ class CuratorSti extends \Environment\Core\Module {
 		}
 	}
 
-	protected function getReportByUin( $uin ) {
+	protected function getReportByUin(string $uin) {
 		$sql = <<<SQL
 SELECT
     "r-rpt"."IDReport" as "id",
@@ -515,5 +516,3 @@ SQL;
 		}
 	}
 }
-
-?>
