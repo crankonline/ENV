@@ -28,6 +28,7 @@ Loader::map(__NAMESPACE__ . '\\Soap\\Clients', PATH_SOAP_CLIENTS);
 Loader::map(__NAMESPACE__ . '\\Soap\\Services', PATH_SOAP_SERVICES);
 Loader::map(__NAMESPACE__ . '\\Soap\\Types', PATH_SOAP_TYPES);
 Loader::map(__NAMESPACE__ . '\\Migrations', PATH_MIGRATIONS);
+Loader::map(__NAMESPACE__ . '\\UI', PATH_UI);
 
 
 \Sentry\init(['dsn' => $_ENV['configuration_sentry_dsn'] ]);
