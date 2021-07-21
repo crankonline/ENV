@@ -21,7 +21,7 @@
     }
 </style>
 
-<?php if(!empty($success)): ?>
+<?php if(!empty($success) || isset($_GET['success'])): ?>
     <div class="success">Сохранено успешно</div>
 <?php endif; ?>
 

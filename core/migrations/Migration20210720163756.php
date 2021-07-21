@@ -27,7 +27,7 @@ SQL;
             [ $idModuleGroup, "meta-legal-form", "RequisitesMeta\\LegalForm", "Организационно-правовая форма", true ],
             [ $idModuleGroup, "meta-bank", "RequisitesMeta\\Bank", "Банки", true ],
             [ $idModuleGroup, "meta-gked", "RequisitesMeta\\Gked", "ГКЭД", true ],
-            [ $idModuleGroup, "meta-chief-basis", "RequisitesMeta\\ChiefBasis", "Основание на занимаемой должности", true ]
+            [ $idModuleGroup, "meta-chief-basis", "RequisitesMeta\\ChiefBasis.php", "Основание на занимаемой должности", true ]
         ];
 
         $modules = [];

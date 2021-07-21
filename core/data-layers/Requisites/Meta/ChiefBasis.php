@@ -25,7 +25,7 @@ class ChiefBasis  extends \Unikum\Core\DataLayer {
 SELECT
     *
 FROM
-    "Common"."ChiefBasis" as "c-cb"
+    "Common"."ChiefBasis.php" as "c-cb"
         
 {$params}
 ORDER BY
@@ -45,7 +45,7 @@ SQL;
 
 		$sql = <<<SQL
 UPDATE
-    "Common"."ChiefBasis"
+    "Common"."ChiefBasis.php"
 SET
 	"Name" = :name
 WHERE

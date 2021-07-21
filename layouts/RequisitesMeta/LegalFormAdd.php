@@ -38,7 +38,7 @@
         <select name = "ownershipform">
             <option value="0" selected disabled>-- Выберите значение из списка --</option>
             <?php foreach ($ownershipForms as $i => $ownershipForm): ?>
-                <option value="<?php echo $i; ?>"><?php echo $ownershipForm; ?></option>
+                <option <?php if($i == ($_POST['ownershipform'] ?? 0)): ?>selected<?php endif; ?> value="<?php echo $i; ?>"><?php echo $ownershipForm; ?></option>
             <?php endforeach; ?>
         </select>
         <span class="hint">Форма собственности (выберите из списка)</span>
@@ -46,19 +46,19 @@
 
     <div class="field">
         <label class="fixed">Наименование <span class="required">*</span>:</label>
-        <input type="text" name="name" placeholder="Укажите форму собстенности" required>
+        <input type="text" name="name" placeholder="Наименование" required value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
         <span class="hint">Наименование ОПФ</span>
     </div>
 
     <div class="field">
         <label class="fixed">Сокращенное наименование <span class="required">*</span>:</label>
-        <input type="text" name="shortname" placeholder="Укажите форму собстенности" required>
+        <input type="text" name="shortname" placeholder="Сокращенное наименование" required value="<?php echo htmlspecialchars($_POST['shortname'] ?? ''); ?>">
         <span class="hint">Сокращенное наименование ОПФ</span>
     </div>
 
     <div class="field">
         <label class="fixed">Фасет <span class="required">*</span>:</label>
-        <input type="text" name="facet" placeholder="Укажите форму собстенности" required>
+        <input type="text" name="facet" placeholder="Фасет" required value="<?php echo htmlspecialchars($_POST['facet'] ?? ''); ?>">
         <span class="hint">Фасет (числово код)</span>
     </div>
 

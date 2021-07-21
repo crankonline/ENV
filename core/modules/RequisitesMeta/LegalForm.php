@@ -22,6 +22,30 @@ class LegalForm extends \Environment\Core\Module {
     }
 
     public function add():void {
+        $_POST['ownershipform'] = $_POST['ownershipform'] ?? 0;
+        $this->addView();
+        if(
+            in_array(
+                0,
+                [
+                    strlen(trim($_POST['name'] ?? '')),
+                    strlen(trim($_POST['shortname'] ?? '')),
+                    strlen(trim($_POST['facet'] ?? '')),
+                    strlen(trim($_POST['ownershipform'] ?? ''))
+                ]
+            )
+            ||
+            (string)($_POST['ownershipform'] ?? '') === '0'
+        ) {
+            $this->variables->errorMessage = 'Все поля должны быть заполнены';
+            return;
+        }
+
+        if(!is_numeric($_POST['facet'])) {
+            $this->variables->errorMessage = 'Фасет должен быть целочисленным';
+            return;
+        }
+
         try {
             $dlLegalForm = new DLLegalForm();
             $id = $dlLegalForm->add(
@@ -32,7 +56,7 @@ class LegalForm extends \Environment\Core\Module {
             );
             $_POST = [];
             $this->variables->success = true;
-            header("Location: index.php?view=meta-legal-form&id=" . $id);
+            header("Location: index.php?view=meta-legal-form&id=" . $id . '&success');
         }
         catch (\Exception $e) {
             $this->variables->errorMessage = $e->getMessage();
@@ -40,6 +64,29 @@ class LegalForm extends \Environment\Core\Module {
     }
 
     public function edit():void {
+
+        if(
+            in_array(
+                0,
+                [
+                    strlen(trim($_POST['name'] ?? '')),
+                    strlen(trim($_POST['shortname'] ?? '')),
+                    strlen(trim($_POST['facet'] ?? '')),
+                    strlen(trim($_POST['ownershipform'] ?? ''))
+                ]
+            )
+            ||
+            (string)($_POST['ownershipform'] ?? '') === '0'
+        ) {
+            $this->variables->errorMessage = 'Все поля должны быть заполнены';
+            return;
+        }
+
+        if(!is_numeric($_POST['facet'])) {
+            $this->variables->errorMessage = 'Фасет должен быть целочисленным';
+            return;
+        }
+
         try {
             $dlLegalForm = new DLLegalForm();
             $dlLegalForm->edit(
