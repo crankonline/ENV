@@ -16,7 +16,7 @@
 
 (new \Environment\UI\Table([
     [ 'Name' => 'UITableNumberer', 'Caption' => '#' ],
-    [ 'Name' => 'Name',	'Caption' => 'Полное аименование' ],
+    [ 'Name' => 'Name',	'Caption' => 'Полное наименование' ],
     [ 'Name' => 'ShortName',	'Caption' => 'Сокращенное наименование' ],
     [ 'Name' => 'Facet',	'Caption' => 'Фасет' ],
     [
