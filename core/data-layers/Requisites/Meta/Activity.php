@@ -34,7 +34,26 @@ SQL;
 		return $stmt->fetchAll();
 	}
 
-	public function edit(int $id, string $gked, string $name, string $parentGked) {
+    /**
+     * @param int $id
+     * @param string $gked
+     * @param string $name
+     * @param string $parentGked
+     * @throws \Exception
+     */
+    public function edit(int $id, string $gked, string $name, string $parentGked) {
+	    $sql = <<<SQL
+            SELECT "IDActivity" FROM "Common"."Activity" WHERE "Gked" = ?;
+SQL;
+	    $stmt = $this->dbms->prepare($sql);
+	    $stmt->execute([ $parentGked ]);
+	    $parentID = $stmt->fetchColumn();
+
+	    if($parentID === null || $parentID === false) {
+            throw new \Exception("Parent GKED is null");
+        }
+
+
 	    $sql = <<<SQL
             UPDATE "Common"."Activity" SET
                 "ActivityID" = (
@@ -48,7 +67,26 @@ SQL;
         $stmt->execute([ $parentGked, $name, $gked, $id ]);
     }
 
+    /**
+     * @param string $gked
+     * @param string $name
+     * @param string $parentGked
+     * @return int
+     * @throws \Exception
+     */
     public function add(string $gked, string $name, string $parentGked):int {
+        $sql = <<<SQL
+            SELECT "IDActivity" FROM "Common"."Activity" WHERE "Gked" = ?;
+SQL;
+        $stmt = $this->dbms->prepare($sql);
+        $stmt->execute([ $parentGked ]);
+        $parentID = $stmt->fetchColumn();
+
+        if($parentID === null || $parentID === false) {
+            throw new \Exception("Parent GKED is null");
+        }
+
+
         $sql = <<<SQL
             INSERT INTO "Common"."Activity" ("IDActivity", "Gked", "Name", "ActivityID")
             VALUES (

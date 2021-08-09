@@ -16,8 +16,14 @@ class Gked extends \Environment\Core\Module {
     protected function view(int $id):void {
         $dlActivity = new Activity();
         $this->variables->data = $dlActivity->getById($id);
-        $parent = $dlActivity->getById($this->variables->data['ActivityID']);
-        $this->variables->data['ParentGked'] = $parent['Gked'];
+        if($this->variables->data['ActivityID'] !== null) {
+            $parent = $dlActivity->getById($this->variables->data['ActivityID']);
+            $this->variables->data['ParentGked'] = $parent['Gked'];
+        }
+        else
+        {
+            $this->variables->data['ParentGked'] = '';
+        }
         $this->config->template = 'layouts/RequisitesMeta/GkedEdit.php';
     }
 
