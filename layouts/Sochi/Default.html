@@ -126,6 +126,7 @@
                     <th class="center no-wrap">Район:</th>
                     <th class="center no-wrap">Тип отчета:</th>
                     <th class="center no-wrap">Состояние:</th>
+                    <th class="center">Действие:</th>
                 </tr>
             <?php
                 $uinRegEx        = '/^\d{49,49}$/';
@@ -185,9 +186,14 @@
                     <td class="center no-wrap"><?php
                         echo (bool)$report['form_type'] ? 'Уточненный' : 'Первоначальный';
                     ?></td>
-                    <td class="center"><?php
+                    <td class="center" id = "report-<?php echo $report['uin'] ?>"><?php
                         echo htmlspecialchars($report['status']);
-                    ?></td>
+                        ?></td>
+                    <td class="center">
+                        <?php if((int)$report['status-id'] === 6) : ?>
+                            <button class="cancel" onclick="cancelReport('<?php echo $report['uin']; ?>', 'Sf')">Отменить</button>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             </table>
@@ -203,6 +209,7 @@
                     <th class="center no-wrap">Дата отправки:</th>
                     <th class="center">Период:</th>
                     <th class="center">Состояние:</th>
+                    <th class="center">Действие:</th>
                 </tr>
 
             <?php
@@ -271,9 +278,14 @@
                         <td class="center"><?php
                             echo $period;
                         ?></td>
-                        <td class="center"><?php
+                        <td class="center" id = "report-<?php echo $report['uin'] ?>"><?php
                             echo htmlspecialchars($report['status']);
                         ?></td>
+                        <td class="center">
+                            <?php if((int)$report['status-id'] === 6) : ?>
+                                <button class="cancel" onclick="cancelReport('<?php echo $report['uin']; ?>', 'Sti')">Отменить</button>
+                            <?php endif; ?>
+                        </td>
                     </tr>
             <?php endforeach; ?>
             </table>
@@ -287,6 +299,7 @@
                     <th class="center">Дата отправки:</th>
                     <th class="center">Период:</th>
                     <th class="center">Состояние:</th>
+                    <th class="center">Действие:</th>
                 </tr>
             <?php
                 $isCuratorAccess = $this->isPermitted($this::AK_CURATOR_SF);
@@ -345,9 +358,14 @@
                     <td class="center"><?php
                         echo $period;
                     ?></td>
-                    <td class="center"><?php
+                    <td class="center" id = "report-<?php echo $report['uin'] ?>"><?php
                         echo htmlspecialchars($report['status']);
-                    ?></td>
+                        ?></td>
+                    <td class="center">
+                        <?php if((int)$report['status-id'] === 6) : ?>
+                            <button class="delete" onclick="cancelReport('<?php echo $report['uin']; ?>', 'Stat')">Отменить</button>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             </table>
@@ -399,4 +417,30 @@
     w.addEventListener('load', initFn);
 
 })(window, document);
+
+function cancelReport(uin, state) {
+    fetch(`/index.php?view=sochi&action=cancel${state}&uin=${uin}`)
+        .then(r => r.json())
+        .then(r => (
+            r?.changed &&
+            (document.getElementById(`report-${uin}`).innerHTML = 'Отправка отменена') &&
+            (document.getElementById(`report-${uin}`).nextElementSibling.innerHTML = '')
+        ));
+}
+
 </script>
+<style>
+    button.cancel {
+        border: red;
+        background: #cd1c1c;
+        color: #FFF;
+        padding: 10px;
+    }
+
+    button.cancel:hover {
+        border: red;
+        background: #a70606;
+        color: #FFF;
+        cursor: pointer;
+    }
+</style>

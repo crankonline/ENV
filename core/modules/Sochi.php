@@ -41,6 +41,79 @@ class Sochi extends \Environment\Core\Module {
 		return null;
 	}
 
+	public function cancelSf() {
+		$dbms = Connections::getConnection( 'Sochi' );
+		$uin = $_GET['uin'];
+		$sql = <<<SQL
+			SELECT "status" FROM "sf_reporting"."pass_reports" WHERE "uin" = ?;
+SQL;
+		$stmt = $dbms->prepare($sql);
+		$stmt->execute([ $uin ]);
+
+		if((int)$stmt->fetchColumn() !== 6) {
+			echo json_encode([ 'changed' => false ]);
+		}
+		else
+		{
+			$sql = <<<SQL
+				UPDATE "sf_reporting"."pass_reports" SET "status" = 9 WHERE "uin" = ?;
+SQL;
+			$stmt = $dbms->prepare($sql);
+			$stmt->execute([ $uin ]);
+			echo json_encode([ 'changed' => true ]);
+		}
+		exit;
+	}
+
+
+	public function cancelStat() {
+		$dbms = Connections::getConnection( 'Sochi' );
+		$uin = $_GET['uin'];
+		$sql = <<<SQL
+			SELECT "status" FROM "stat_reporting"."reports" WHERE "uin" = ?;
+SQL;
+		$stmt = $dbms->prepare($sql);
+		$stmt->execute([ $uin ]);
+
+		if((int)$stmt->fetchColumn() !== 6) {
+			echo json_encode([ 'changed' => false ]);
+		}
+		else
+		{
+			$sql = <<<SQL
+				UPDATE "stat_reporting"."reports" SET "status" = 9 WHERE "uin" = ?;
+SQL;
+			$stmt = $dbms->prepare($sql);
+			$stmt->execute([ $uin ]);
+			echo json_encode([ 'changed' => true ]);
+		}
+		exit;
+	}
+
+	public function cancelSti() {
+		$dbms = Connections::getConnection( 'Sochi' );
+		$uin = $_GET['uin'];
+		$sql = <<<SQL
+			SELECT "status" FROM "sti_reporting"."reports" WHERE "uin" = ?;
+SQL;
+		$stmt = $dbms->prepare($sql);
+		$stmt->execute([ $uin ]);
+
+		if((int)$stmt->fetchColumn() !== 6) {
+			echo json_encode([ 'changed' => false ]);
+		}
+		else
+		{
+			$sql = <<<SQL
+				UPDATE "sti_reporting"."reports" SET "status" = 9 WHERE "uin" = ?;
+SQL;
+			$stmt = $dbms->prepare($sql);
+			$stmt->execute([ $uin ]);
+			echo json_encode([ 'changed' => true ]);
+		}
+		exit;
+	}
+
 	public function getUser( $inn, $uid ) {
 		$params = [];
 		$values = [];
