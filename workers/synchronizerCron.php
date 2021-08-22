@@ -31,6 +31,10 @@ function log()
 
 $dlSync = new CoreSchema\Sync();
 
+if(!is_dir(SYSTEM_ROOT . 'logs')) {
+    mkdir(SYSTEM_ROOT . 'logs');
+}
+
 $log = fopen(PATH_LOGS . basename(__FILE__) . '.log', 'a+');
 
 list($hour, $minute) = explode(':', date('H:i'));
@@ -124,4 +128,3 @@ if (($hour == 23) && ($minute >= 58)) {
 
 
 fclose($log);
-?>
