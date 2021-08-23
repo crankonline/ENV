@@ -253,6 +253,33 @@ SQL;
 		] );
 	}
 
+
+    protected function getSochiReportSf( $uin ) {
+        $sql = <<<SQL
+SELECT 
+	rep.uin as "uin",
+	form."name" as "form_name",
+	COALESCE(rep.form_type, 0) as "form_type",
+	rep.region as "region_code",
+	rep.input_date as "input_date",
+	null as "period_quarter",
+	rep.period_year as "period_year",
+	rep.period_month as "period_month",
+	rep.status as "status"
+FROM sf_reporting.pass_reports as rep
+LEFT JOIN sf_reporting.forms as form on rep.form_id = form.id
+WHERE rep.uin = :uin;
+SQL;
+
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
+
+        $stmt->execute( [
+            'uin' => $uin
+        ] );
+
+        return $stmt->fetchAll();
+    }
+
 	protected function getSochiReportSti( $uin ) {
 		$sql = <<<SQL
 SELECT 
@@ -278,6 +305,18 @@ SQL;
 
 		return $stmt->fetchAll();
 	}
+
+    protected function updateSochiReportStatusSf( $uin, $status ) {
+        $sql  = <<<SQL
+UPDATE sf_reporting.pass_reports SET status = :status WHERE uin = :uin;
+SQL;
+        $stmt = Connections::getConnection( 'Sochi' )->prepare( $sql );
+
+        return $stmt->execute( [
+            'uin'    => $uin,
+            'status' => $status
+        ] );
+    }
 
 	protected function updateSochiReportStatusSti( $uin, $status ) {
 		$sql  = <<<SQL
@@ -474,7 +513,9 @@ SQL;
 							: 'Не удалось очистить протокол проверки.';
 					} elseif ( $isChangeStatusSochi ) {
 						$sochiRepStatus = $_POST['sochi-status-sti-report'];
-						$result         = $this->updateSochiReportStatusSti( $uin, $sochiRepStatus );
+						$result         = $report['form-code'] === 'SF-001'
+                            ? $this->updateSochiReportStatusSf( $uin, $sochiRepStatus )
+                            : $this->updateSochiReportStatusSti( $uin, $sochiRepStatus );
 						$status         = $result
 							? 'Статус отчета сочи изменен'
 							: 'Не удалось изменить статус отчета сочи.' . $_POST['sochi-status-sti-report'];
@@ -506,10 +547,10 @@ SQL;
 					$report['id']
 				);
 
-				$this->variables->rsvi_sochi = $this->getSochiReportSti(
-					$uin
-				);
-			}
+				$this->variables->rsvi_sochi = ($report['form-code'] === 'SF-001')
+                    ? $this->getSochiReportSf($uin)
+                    : $this->getSochiReportSti($uin);
+            }
 		} catch ( \Exception $e ) {
 			\Sentry\captureException( $e );
 			$this->variables->errors[] = $e->getMessage();
