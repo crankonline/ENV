@@ -1,266 +1,304 @@
 <link rel="stylesheet" href="resources/css/style.css">
 <script type="text/javascript" src="resources/js/RepresentativesEditor.ui.js"></script>
 <?php if($errors): ?>
-    <?php foreach($errors as $error): ?>
-    <div class="failure"><?php echo $error; ?></div>
-    <?php endforeach; ?>
-    <?php return; ?>
+<?php foreach($errors as $error): ?>
+<div class="failure"><?php echo $error; ?></div>
+<?php endforeach; ?>
+<?php return; ?>
 <?php endif; ?>
 
 <?php if(isset($result, $status)): ?>
-    <div class="<?php echo $result ? 'success' : 'failure'; ?>">
-        <?php echo $status; ?>
-    </div>
+<div class="<?php echo $result ? 'success' : 'failure'; ?>">
+    <?php echo $status; ?>
+</div>
 <?php endif; ?>
 
 <form class="form" action="index.php" method="GET">
 
     <div class="caption">Поиск по паспортым данным</div>
 
-    <input type="hidden" name="view" value="<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>" />
+    <input type="hidden" name="view" value="<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>"/>
 
     <div class="field">
         <label class="fixed">
-            <input type = "checkbox" id="sSeries-checkbox"
+            <input type="checkbox" id="sSeries-checkbox"
                    onclick="seriesCheckboxOnClick('search')">
             Серия <span class="required">*</span>:
         </label>
-        <input type="text" name="series" id="sSeries" maxlength="10" value="<?php echo $cSeries ? htmlspecialchars($cSeries) : null; ?>" placeholder="введите серию" required>
+        <input type="text" name="series" id="sSeries" maxlength="10"
+               value="<?php echo $cSeries ? htmlspecialchars($cSeries) : null; ?>" placeholder="введите серию" required>
         <span class="hint">Серия паспорта для поиска</span>
     </div>
 
     <div class="field">
         <label for="sNumber" class="fixed">Номер <span class="required">*</span>:</label>
-        <input type="text" name="number" id="sNumber" maxlength="15" value="<?php echo $cNumber ? htmlspecialchars($cNumber) : null; ?>" placeholder="введите номер" required>
+        <input type="text" name="number" id="sNumber" maxlength="15"
+               value="<?php echo $cNumber ? htmlspecialchars($cNumber) : null; ?>" placeholder="введите номер" required>
         <span class="hint">Номер паспорта для поиска</span>
     </div>
 
     <div class="field buttons">
-        <input type="submit" class="button" value="Поиск" />
+        <input type="submit" class="button" value="Поиск"/>
     </div>
 
 </form>
 
 <?php if(empty($cRepresentative)): ?>
-    <div class="empty-resultset">
-        <?php if(isset($cRepresentative)): ?>
-            Данных не найдено.
-        <?php else: ?>
-            Укажите данные для поиска.
-        <?php endif; ?>
-    </div>
+<div class="empty-resultset">
+    <?php if(isset($cRepresentative)): ?>
+    Данных не найдено.
+    <?php else: ?>
+    Укажите данные для поиска.
+    <?php endif; ?>
+</div>
 <?php else: ?>
-    <form class="form" action="index.php?<?php echo $_SERVER['QUERY_STRING']; ?>" method="POST">
+<form class="form" action="index.php?<?php echo $_SERVER['QUERY_STRING']; ?>" method="POST">
 
-        <div class="caption">Данные представителя</div>
+    <div class="caption">Данные представителя</div>
 
-        <input type="hidden" name="passport-id" value="<?php echo $cRepresentative['passport-id'] ?>">
-        <input type="hidden" name="representative-id" value="<?php echo $cRepresentative['representative-id'] ?>">
+    <input type="hidden" name="passport-id" value="<?php echo $cRepresentative['passport-id'] ?>">
+    <input type="hidden" name="representative-id" value="<?php echo $cRepresentative['representative-id'] ?>">
 
-        <div class="field">
+    <div class="field">
 
-        </div>
+    </div>
 
-        <div class="field">
-            <label class="fixed">
-                <input type = "checkbox" id="eSeries-checkbox" onclick="seriesCheckboxOnClick('form')">
-                Серия <span class="required">*</span>:
-            </label>
-            <input type="text" name="passport-series" id="eSeries" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-series']); ?>" placeholder="Укажите серию паспорта" required>
-            <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знаки: "-", "/".</span>
-            <?php if(isset($validations, $validations['passport-series'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label class="fixed">
+            <input type="checkbox" id="eSeries-checkbox" onclick="seriesCheckboxOnClick('form')">
+            Серия <span class="required">*</span>:
+        </label>
+        <input type="text" name="passport-series" id="eSeries" maxlength="10"
+               value="<?php echo htmlspecialchars($cRepresentative['passport-series']); ?>"
+               placeholder="Укажите серию паспорта" required>
+        <span class="hint">Серия паспорта, 10 символов: латиница, цифры или знаки: "-", "/".</span>
+        <?php if(isset($validations, $validations['passport-series'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['passport-series'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eNumber" class="fixed">Номер <span class="required">*</span>:</label>
-            <input type="text" name="passport-number" id="eNumber" maxlength="15" value="<?php echo htmlspecialchars($cRepresentative['passport-number']); ?>" placeholder="Укажите номер паспорта" required>
-            <span class="hint">Номер паспорта, 15 символов: латиница, цифры или знак "-".</span>
-            <?php if(isset($validations, $validations['passport-number'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eNumber" class="fixed">Номер <span class="required">*</span>:</label>
+        <input type="text" name="passport-number" id="eNumber" maxlength="15"
+               value="<?php echo htmlspecialchars($cRepresentative['passport-number']); ?>"
+               placeholder="Укажите номер паспорта" required>
+        <span class="hint">Номер паспорта, 15 символов: латиница, цифры или знак "-".</span>
+        <?php if(isset($validations, $validations['passport-number'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['passport-number'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eIssuingAuthority" class="fixed">Орган выдачи <span class="required">*</span>:</label>
-            <input type="text" name="passport-issuing-authority" id="eIssuingAuthority" maxlength="255" value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-authority']); ?>" placeholder="Укажите орган выдачи паспорта" required>
-            <span class="hint">Орган выдачи паспорта, 255 символов максимум.</span>
-            <?php if(isset($validations, $validations['passport-issuing-authority'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eIssuingAuthority" class="fixed">Орган выдачи <span class="required">*</span>:</label>
+        <input type="text" name="passport-issuing-authority" id="eIssuingAuthority" maxlength="255"
+               value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-authority']); ?>"
+               placeholder="Укажите орган выдачи паспорта" required>
+        <span class="hint">Орган выдачи паспорта, 255 символов максимум.</span>
+        <?php if(isset($validations, $validations['passport-issuing-authority'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['passport-issuing-authority'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eIssuingDate" class="fixed">Дата выдачи <span class="required">*</span>:</label>
-            <input type="text" name="passport-issuing-date" id="eIssuingDate" maxlength="10" value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-date']); ?>" placeholder="ДД.ММ.ГГГГ" required>
-            <span class="hint">Дата выдачи паспорта, 10 символов максимум.</span>
-            <?php if(isset($validations, $validations['passport-issuing-date'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eIssuingDate" class="fixed">Дата выдачи <span class="required">*</span>:</label>
+        <input type="text" name="passport-issuing-date" id="eIssuingDate" maxlength="10"
+               value="<?php echo htmlspecialchars($cRepresentative['passport-issuing-date']); ?>"
+               placeholder="ДД.ММ.ГГГГ" required>
+        <span class="hint">Дата выдачи паспорта, 10 символов максимум.</span>
+        <?php if(isset($validations, $validations['passport-issuing-date'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['passport-issuing-date'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eRepresentativeSurname" class="fixed">Фамилия <span class="required">*</span>:</label>
-            <input type="text" name="representative-surname" id="eRepresentativeSurname" maxlength="25" value="<?php echo htmlspecialchars($cRepresentative['representative-surname']); ?>" placeholder="Укажите фамилию" required>
-            <span class="hint">Фамилия представителя, 25 символов максимум.</span>
-            <?php if(isset($validations, $validations['representative-surname'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eRepresentativeSurname" class="fixed">Фамилия <span class="required">*</span>:</label>
+        <input type="text" name="representative-surname" id="eRepresentativeSurname" maxlength="25"
+               value="<?php echo htmlspecialchars($cRepresentative['representative-surname']); ?>"
+               placeholder="Укажите фамилию" required>
+        <span class="hint">Фамилия представителя, 25 символов максимум.</span>
+        <?php if(isset($validations, $validations['representative-surname'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['representative-surname'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eRepresentativeName" class="fixed">Имя <span class="required">*</span>:</label>
-            <input type="text" name="representative-name" id="eRepresentativeName" maxlength="20" value="<?php echo htmlspecialchars($cRepresentative['representative-name']); ?>" placeholder="Укажите имя" required>
-            <span class="hint">Имя представителя, 20 символов максимум.</span>
-            <?php if(isset($validations, $validations['representative-name'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eRepresentativeName" class="fixed">Имя <span class="required">*</span>:</label>
+        <input type="text" name="representative-name" id="eRepresentativeName" maxlength="20"
+               value="<?php echo htmlspecialchars($cRepresentative['representative-name']); ?>"
+               placeholder="Укажите имя" required>
+        <span class="hint">Имя представителя, 20 символов максимум.</span>
+        <?php if(isset($validations, $validations['representative-name'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['representative-name'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eRepresentativeMiddleName" class="fixed">Отчество:</label>
-            <input type="text" name="representative-middle-name" id="eRepresentativeMiddleName" maxlength="25" value="<?php echo htmlspecialchars($cRepresentative['representative-middle-name']); ?>" placeholder="Укажите отчество">
-            <span class="hint">Отчество представителя, 25 символов максимум.</span>
-            <?php if(isset($validations, $validations['representative-middle-name'])): ?>
-                <div class="validation-error"><?php
+    <div class="field">
+        <label for="eRepresentativeMiddleName" class="fixed">Отчество:</label>
+        <input type="text" name="representative-middle-name" id="eRepresentativeMiddleName" maxlength="25"
+               value="<?php echo htmlspecialchars($cRepresentative['representative-middle-name']); ?>"
+               placeholder="Укажите отчество">
+        <span class="hint">Отчество представителя, 25 символов максимум.</span>
+        <?php if(isset($validations, $validations['representative-middle-name'])): ?>
+        <div class="validation-error"><?php
                     echo $validations['representative-middle-name'];
                 ?></div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eRepresentativePin" class="fixed">ПИН <span class="required">*</span>:</label>
-            <input type="text" name="representative-pin" id="eRepresentativePin" maxlength="14" value="<?php echo htmlspecialchars($cRepresentative['representative-pin']); ?>" placeholder="Укажите ПИН">
-            <span class="hint">ПИН, 14 символов максимум.</span>
-            <?php //if(isset($validations, $validations['representative-middle-name'])): ?>
-            <!--div class="validation-error"><?php
-                    //echo $validations['representative-middle-name'];
-                ?></div-->
-            <?php //endif; ?>
-        </div>
+    <div class="field">
+        <label for="eRepresentativePin" class="fixed">ПИН <span class="required">*</span>:</label>
+        <input type="text" name="representative-pin" id="eRepresentativePin" maxlength="14"
+               value="<?php echo htmlspecialchars($cRepresentative['representative-pin']); ?>"
+               placeholder="Укажите ПИН">
+        <span class="hint">ПИН, 14 символов максимум.</span>
+        <?php //if(isset($validations, $validations['representative-middle-name'])): ?>
+        <!--div class="validation-error"><?php
+                //echo $validations['representative-middle-name'];
+            ?></div-->
+        <?php //endif; ?>
+    </div>
 
-        <div class="field">
-            <label for="eRepresentativePin" class="fixed">Номер телефона <span class="required"></span>:</label>
-            <input type="text" name="representative-phone" id="eRepresentativePhone" maxlength="14" value="" placeholder="Укажите номер телефона">
-            <span class="hint">Номер телефона, для обновления в компаниях, где учавствует этот представитель. Оставвте пустым, если действие не нужно.</span>
-        </div>
-<!--        <div class="field">-->
-<!--            <label for="phone" class="fixed">Телефон:</label>-->
-<!--            <input id="phone" type="text" value="<?php //echo htmlspecialchars($cRepresentative['phone']); ?>" readonly size="100">-->
+    <div class="field">
+        <label for="eRepresentativePin" class="fixed">Номер телефона <span class="required"></span>:</label>
+        <input type="text" name="representative-phone" id="eRepresentativePhone" maxlength="14" value=""
+               placeholder="Укажите номер телефона">
+        <span class="hint">Номер телефона, для обновления в компаниях, где учавствует этот представитель. Оставвте пустым, если действие не нужно.</span>
+    </div>
+    <!--        <div class="field">-->
+    <!--            <label for="phone" class="fixed">Телефон:</label>-->
+    <!--            <input id="phone" type="text" value="<?php //echo htmlspecialchars($cRepresentative['phone']); ?>" readonly size="100">-->
 
-<!--        </div>-->
+    <!--        </div>-->
 
-<!--        <div class="field">-->
-<!--            <label for="full-name" class="fixed">Имя компании:</label>-->
-<!--            <textarea id="full-name"><?php //echo htmlspecialchars($cRepresentative['full-name']); ?></textarea>-->
+    <!--        <div class="field">-->
+    <!--            <label for="full-name" class="fixed">Имя компании:</label>-->
+    <!--            <textarea id="full-name"><?php //echo htmlspecialchars($cRepresentative['full-name']); ?></textarea>-->
 
-<!--        </div>-->
+    <!--        </div>-->
 
-        <div class="field buttons">
-            <input type="submit" class="button" name="update" value="Изменить" />
-            <input type="submit" class="button" name="remove" value="Удалить" onclick="return window.confirm('Вы осознанно хотите УДАЛИТЬ паспортные данные, представителя и его участие во всех организациях?')" />
-        </div>
+    <div class="field buttons">
+        <input type="submit" class="button" name="update" value="Изменить"/>
+        <input type="submit" class="button" name="remove" value="Удалить"
+               onclick="return window.confirm('Вы осознанно хотите УДАЛИТЬ паспортные данные, представителя и его участие во всех организациях?')"/>
+    </div>
 
-    </form>
+</form>
 
-    <div style="text-align: left; display: none">
-        <table>
+<div style="text-align: left; display: none">
+    <table>
         <?php
             $json = json_decode($cRepresentative['company-inns2']);
             //print_r($json);
             foreach($json as $key => $company):
-                echo '<tr>  <td><div class="field">'.$company->idReqRep.'</div></td>
-                            <td><div class="field">'.$company->idRep.'</div></td>
-                            <td><div class="field">'.$company->inn.'</div></td>
-                            <td><div class="field">'.$company->name.'</div></td>
-                            <td><div class="field">'.$company->phone.'</div></td></tr>';
-            endforeach;
+        echo '
+        <tr>
+            <td>
+                <div class="field">'.$company->idReqRep.'</div>
+            </td>
+            <td>
+                <div class="field">'.$company->idRep.'</div>
+            </td>
+            <td>
+                <div class="field">'.$company->inn.'</div>
+            </td>
+            <td>
+                <div class="field">'.$company->name.'</div>
+            </td>
+            <td>
+                <div class="field">'.$company->phone.'</div>
+            </td>
+        </tr>
+        ';
+        endforeach;
         ?>
-        </table>
-    </div>
+    </table>
+</div>
 
-    <div class="columns">
-        <div class="col-companies">
-            <div class="form">
-                <div class="caption">
-                    Cвязанные организации
-                    [ <b>Всего <?php echo $cRepresentative['company-count']; ?></b> ]
-                </div>
+<div class="columns">
+    <div class="col-companies">
+        <div class="form">
+            <div class="caption">
+                Cвязанные организации
+                [ <b>Всего <?php echo $cRepresentative['company-count']; ?></b> ]
+            </div>
 
-                <?php
+            <?php
                     if($cRepresentative['company-count']):
                         $companies2 = json_decode($cRepresentative['company-inns2']);
 
                         $companies = explode(',', $cRepresentative['company-inns']);
 
                         $isRequisites = $this->isPermitted($this::AK_REQUISITES);
-                        $isSochi      = $this->isPermitted($this::AK_SOCHI);
+            $isSochi = $this->isPermitted($this::AK_SOCHI);
 
-                        //foreach($companies as $company):
-                        foreach($companies2 as $company):
-                ?>
-                <div class="field">
+            //foreach($companies as $company):
+            foreach($companies2 as $company):
+            ?>
+            <div class="field">
                     <span class="text">
                         <?php echo $company->inn ?>
                         <?php if($isRequisites): ?>
-                            <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $company->inn; ?>" target="_blank">Реквизиты</a>
+                        <a href="index.php?view=<?php echo $this::AK_REQUISITES; ?>&inn=<?php echo $company->inn; ?>"
+                           target="_blank">Реквизиты</a>
                         <?php endif; ?>
                         <?php if($isSochi): ?>
-                            <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $company->inn; ?>" target="_blank">СОчИ</a>
+                        <a href="index.php?view=<?php echo $this::AK_SOCHI; ?>&inn=<?php echo $company->inn; ?>"
+                           target="_blank">СОчИ</a>
                         <?php endif; ?>
                         ( <?php echo $company->phone; ?> )
                         <?php echo $company->name; ?>
 
                     </span>
-                </div>
-                <?php
+            </div>
+            <?php
                         endforeach;
                     else:
                 ?>
-                <div class="field">
-                    <span class="text">Перечень пуст</span>
-                </div>
-                <?php endif; ?>
+            <div class="field">
+                <span class="text">Перечень пуст</span>
             </div>
+            <?php endif; ?>
         </div>
-        <div class="col-similars">
-            <div class="form">
-                <div class="caption">Похожие представители</div>
+    </div>
+    <div class="col-similars">
+        <div class="form">
+            <div class="caption">Похожие представители</div>
 
             <?php if(empty($similars)): ?>
-                <div class="field">
-                    <span class="text">Перечень пуст</span>
-                </div>
+            <div class="field">
+                <span class="text">Перечень пуст</span>
+            </div>
             <?php else: ?>
-                <?php foreach($similars as $similar): ?>
-                <div class="field">
-                    <a class="text" href="index.php?view=<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>&series=<?php echo $similar['passport-series']; ?>&number=<?php echo $similar['passport-number']; ?>" target="_blank"><?php
+            <?php foreach($similars as $similar): ?>
+            <div class="field">
+                <a class="text"
+                   href="index.php?view=<?php echo $this::AK_REPRESENTATIVES_EDITOR; ?>&series=<?php echo $similar['passport-series']; ?>&number=<?php echo $similar['passport-number']; ?>"
+                   target="_blank"><?php
                         echo
                             $similar['passport-series'],
                             ' ',
                             $similar['passport-number'];
                     ?></a>
-                    <span class="text">
+                <span class="text">
                         <?php if(preg_match($this::REGEX_INVALID_PASSPORT, $similar['passport-series'])): ?>
-                            (криллица в серии)
-                        <?php elseif(preg_match($this::REGEX_INVALID_PASSPORT, $similar['passport-number'])): ?>
-                            (криллица в номере)
-                        <?php endif; ?>
+                    (криллица в серии)
+                    <?php elseif(preg_match($this::REGEX_INVALID_PASSPORT, $similar['passport-number'])): ?>
+                    (криллица в номере)
+                    <?php endif; ?>
                     </span>
-                    <span class="text"><?php
+                <span class="text"><?php
                         echo
                             $similar['representative-surname'],
                             ' ',
@@ -272,9 +310,10 @@
                             ' ',
                             'орг.';
                     ?></span>
-                </div>
-                <?php endforeach; ?>
+            </div>
+            <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
-<?php endif; ?>
+    <?php endif; ?>
+</div>
