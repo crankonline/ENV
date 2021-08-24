@@ -509,7 +509,7 @@ if($common):
         $position      = $rep->position;
         $edsUsageModel = $rep->edsUsageModel;
         $phone         = $rep->phone;
-        $isValidSeries = preg_match('/^[A-Z0-9\-]+$/', $passport->series);
+        $isValidSeries = preg_match('/^[A-Z0-9\-\/]+$/', $passport->series);
         $isValidNumber = preg_match('/^[A-Z0-9\-]+$/', $passport->number);
 ?>
         <tr>

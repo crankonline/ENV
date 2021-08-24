@@ -53,6 +53,17 @@
         </pre>
         <form class="form" action="index.php?view=<?=$this::AK_SOCHI_EDIT_STI_REPORT?>&uin=<?=$_GET['uin']?>" method="POST">
 
+
+            <div class="field buttons">
+                <input type="submit" id="search" class="button" value="Сохранить"/>
+                <input
+                        type="button"
+                        class="button"
+                        value="Открыть данные об отчете"
+                        onclick="window.open('index.php?view=curator-sti&uin=<?php echo $_GET['uin'] ?>')"
+                />
+            </div>
+
             <textarea name="xml" style="width: 100%; height: 800px;"><?php echo htmlspecialchars($report) ; ?></textarea>
 
             <div class="field buttons">

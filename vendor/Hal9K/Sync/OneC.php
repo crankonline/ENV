@@ -112,6 +112,7 @@ class OneC extends Trigger {
             'position'        => $chief->position->name,
             'leadertelephone' => $chief->phone,
             'leadermail'      => $common->eMail,
+            'fullname' => $common->fullName
         ];
 
         if($accountant){
