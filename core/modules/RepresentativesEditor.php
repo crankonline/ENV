@@ -226,7 +226,7 @@ SQL;
 		$record['passport-issuing-date'] = date( 'Y-m-d', $record['passport-issuing-date'] );
 		
 		$result_passport = $this->searchPassport($record['passport-series'], $record['passport-number']);
-		if (count($result_passport) > 0){
+		if ($result_passport){
 			if($result_passport['IDPassport'] != $record['passport-id']){
 				$e['passport-number'] = 'Представитель с введенным паспортом уже зарегистрирован.';
 			}
