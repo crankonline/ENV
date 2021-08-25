@@ -31,6 +31,28 @@ class RepresentativesEditor extends \Environment\Core\Module {
 		return true;
 	}
 
+	protected  function searchPassport($series, $number){
+		$sql = <<<SQL
+SELECT 
+    "p"."Series",
+    "p"."Number"
+FROM "Common"."Passport" as "p"
+WHERE 
+    "p"."Series" = :pSeries
+    AND
+    "p"."Number" = :pNumber
+SQL;
+        $stmt = Connections::getConnection( 'Requisites' )->prepare( $sql );
+
+        $stmt->execute( [
+            'pSeries' => $series,
+            'pNumber' => $number
+        ] );
+
+        return $stmt->fetch();
+
+	}
+
 	protected function searchRepresentative( $series, $number ) {
 		$sql = <<<SQL
 SELECT
@@ -158,7 +180,8 @@ SQL;
 		return $stmt->fetchAll();
 	}
 
-	protected function validatePassport( array $record ) {
+	protected function validatePassport( array $record ): array
+    {
 		$e = [];
 
 		if ( empty( $record['passport-id'] ) ) {
@@ -200,6 +223,10 @@ SQL;
 		}
 
 		$record['passport-issuing-date'] = date( 'Y-m-d', $record['passport-issuing-date'] );
+
+		if (count($this->searchPassport($record['passport-series'], $record['passport-number'])) > 0){
+		    $e['passport-number'] = 'Представитель с введенным паспортом уже зарегистрирован.';
+        };
 
 		return $e;
 	}
