@@ -34,6 +34,7 @@ class RepresentativesEditor extends \Environment\Core\Module {
 	protected  function searchPassport($series, $number){
 		$sql = <<<SQL
 SELECT 
+    "p"."IDPassport",
     "p"."Series",
     "p"."Number"
 FROM "Common"."Passport" as "p"
@@ -223,10 +224,13 @@ SQL;
 		}
 
 		$record['passport-issuing-date'] = date( 'Y-m-d', $record['passport-issuing-date'] );
-
-		if (count($this->searchPassport($record['passport-series'], $record['passport-number'])) > 0){
-		    $e['passport-number'] = 'Представитель с введенным паспортом уже зарегистрирован.';
-        };
+		
+		$result_passport = $this->searchPassport($record['passport-series'], $record['passport-number']);
+		if (count($result_passport) > 0){
+			if($result_passport['IDPassport'] != $record['passport-id']){
+				$e['passport-number'] = 'Представитель с введенным паспортом уже зарегистрирован.';
+			}
+        }
 
 		return $e;
 	}
