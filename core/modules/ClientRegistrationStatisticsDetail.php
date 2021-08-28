@@ -90,13 +90,8 @@ SQL;
 
         $this->variables->errors = [];
 
-        $periodFrom = isset( $_GET['period-from'] )
-            ? $_GET['period-from']
-            : null;
-
-        $periodTo = isset( $_GET['period-to'] )
-            ? $_GET['period-to']
-            : date( 'Y-m-d' );
+        $periodFrom = $_GET['period-from'] ?? null;
+        $periodTo = $_GET['period-to'] ?? date('Y-m-d');
 
         if( isset( $_GET['ip'] ) ) {
             $ip = $_GET['ip'];
@@ -115,6 +110,7 @@ SQL;
 
         $this->variables->periodFrom = $periodFrom;
         $this->variables->periodTo = $periodTo;
+        $this->variables->userId = $userId ?? null;
         $this->variables->t = $t;
 
         if (isset( $_GET['ip'])) {
