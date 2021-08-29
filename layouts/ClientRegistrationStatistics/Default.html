@@ -1,3 +1,10 @@
+<?php
+    /** @var $periodFrom */
+    /** @var $periodTo */
+    $periodFromUrl = $periodFrom ? '&period-from=' . htmlspecialchars($periodFrom) : '';
+    $periodToUrl = $periodTo ? '&period-to=' . htmlspecialchars($periodTo) : '';
+?>
+
 <form class="form" action="index.php" method="GET">
 
     <input type="hidden" name="view" value="<?php echo $this::AK_CLIENT_REGISTRATION_STATISTICS; ?>" />
@@ -16,7 +23,7 @@
     </div>
 
 </form>
-
+<?php /** @var $errors */ ?>
 <?php if($errors): ?>
     <?php foreach($errors as $error): ?>
     <div class="failure"><?php echo $error; ?></div>
@@ -63,7 +70,7 @@
         if ($operName == "-") {?>
         <td class="center">-</td><?php } else {?>
         <td class="center"><a href="/index.php?view=client-registration-statistics-detail&userId=<?php
-            echo $action['userId']?>"><?php echo $operName;?></a></td>
+            echo $action['userId']?><?php echo $periodFromUrl; ?><?php echo $periodToUrl; ?>"><?php echo $operName;?></a></td>
         <td class="center"><?php
             echo $action['register-count'];
         ?></td>
@@ -80,7 +87,7 @@
         endforeach;
     ?>
     <tr>
-        <th colspan="4">Итого:</td>
+        <th colspan="4">Итого:</th>
         <td class="center"><b><?php
             echo $totals['register-count'];
         ?></b></td>
