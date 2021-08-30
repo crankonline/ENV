@@ -52,6 +52,19 @@
     <?php return; ?>
 <?php endif; ?>
 
+<?php if(!empty($counts)): ?>
+<table class="data" style="width: 500px; margin-left: auto; margin-right: auto;">
+    <tr>
+        <th>Количество рекистраций</th>
+        <th>Количество корректировок</th>
+    </tr>
+    <tr>
+        <td style="text-align: center"><?php echo $counts['register-count']; ?></td>
+        <td style="text-align: center"><?php echo $counts['update-count']; ?></td>
+    </tr>
+</table>
+<?php endif; ?>
+
 <table class="data">
     <tr>
         <th>#</th>

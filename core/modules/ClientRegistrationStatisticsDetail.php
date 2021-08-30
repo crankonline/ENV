@@ -82,6 +82,25 @@ SQL;
         }
     }
 
+    private function getCountsByUserIdAndDates(int $userId, string $from, string $to):array {
+        $sql = <<<SQL
+            SELECT
+                SUM(("s-at"."Name" = 'register')::INT) as "register-count",
+                SUM(("s-at"."Name" = 'update')::INT) as "update-count"
+            FROM
+                "Statistics"."Action" as "s-a"
+                    INNER JOIN "Statistics"."ActionType" as "s-at"
+                        ON "s-a"."ActionTypeID" = "s-at"."IDActionType"
+            WHERE
+                ("s-a"."DateTime"::DATE BETWEEN ? AND ?)
+                    AND "s-a"."UserID" = ?;
+SQL;
+
+        $stmt = Connections::getConnection( 'Reregister' )->prepare( $sql );
+        $stmt->execute([ $from, $to, $userId ]);
+        return $stmt->fetch();
+    }
+
     protected function main() {
 
         $t = new ClRSt();
@@ -106,6 +125,10 @@ SQL;
 
         if (!strtotime($periodTo)) {
             $periodTo = date('Y-m-d');
+        }
+
+        if(!empty($userId)) {
+            $this->variables->counts = $this->getCountsByUserIdAndDates($userId, $periodFrom, $periodTo);
         }
 
         $this->variables->periodFrom = $periodFrom;
