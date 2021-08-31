@@ -55,7 +55,7 @@
 <?php if(!empty($counts)): ?>
 <table class="data" style="width: 500px; margin-left: auto; margin-right: auto;">
     <tr>
-        <th>Количество рекистраций</th>
+        <th>Количество регистраций</th>
         <th>Количество корректировок</th>
     </tr>
     <tr>
