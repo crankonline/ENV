@@ -97,7 +97,7 @@
 <!--        <td class="center"><a href="index.php?view=requisites&inn=02307201910148&uid=&date=2019-12-23 12:51:19.61176"/></td>-->
         <td class="center">
             <a href="index.php?view=client-registration-statistics-detail&ip=<?php
-            echo $_GET['ip'] ?? ''?>&action=getRequisites&req=<?php echo $action['reqId'];
+            echo $_GET['ip'] ?? ''; ?>&action=getRequisites&req=<?php echo $action['reqId'];
         ?>"><?php echo $action['reqId']; ?>
             </a>
         </td>
