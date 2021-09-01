@@ -31,6 +31,7 @@ abstract class Module extends \Unikum\Core\Module {
         AK_AGGREGATE_ACTIVITY_DETAILS     = 'aggregate-activity-details',
         AK_AGGREGATE_REPORTS              = 'aggregate-reports',
         AK_CLIENT_REGISTRATION_STATISTICS = 'client-registration-statistics',
+        AK_CLIENT_REGISTRATION_STATISTICS_DETAIL = 'client-registration-statistics-detail',
         AK_AGGREGATE_REGIONS_STI          = 'aggregate-regions-sti',
         AK_AGGREGATE_REGION_STI_DETAILS   = 'aggregate-region-sti-details',
 

@@ -32,6 +32,12 @@
     </table>
     <input type="button" id="btnSearch" class="button" value="Поиск">
     <input type="reset" class="button" id="btnReset" value="Очистить">
+    <input
+        type="button"
+        class="button"
+        value="Перейти в реквизиты"
+        onclick="window.open('/index.php?view=requisites&inn=' + $(`[name='common-inn']`).val())"
+    >
     <table class="requisites">
         <tbody>
             <tr>
