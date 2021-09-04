@@ -57,7 +57,6 @@ class SochiEditStiReport extends \Environment\Core\Module {
 
         $uin = $_GET['uin'] ?? null;
 
-
         if ( ! $uin ) {
             return;
         }
@@ -65,14 +64,18 @@ class SochiEditStiReport extends \Environment\Core\Module {
         $this->variables->errors = [];
         $this->variables->success = [];
 
-        $xml_save = $_POST['xml'] ?? null;
+        if(!empty($_FILES['file'])) {
+            $fileContent = file_get_contents($_FILES['file']['tmp_name']);
+        }
+
+        $xml_save = $fileContent ?? $_POST['xml'] ?? null;
         if( $xml_save ) {
             $this->updateData($uin,$xml_save);
             $this->variables->success[] = "Отчет сохранен в кураторское приложение";
         }
 
         $report = $this->getData($uin);
-        if (strpos($report, "Не найдено оточета для данного uin") !== false) {
+        if (strpos($report, "Не найдено отчета для данного uin") !== false) {
             $this->variables->errors [] = $report;
             return;
 
