@@ -78,4 +78,27 @@
 
         </form>
     <?php endif; ?>
+
+    <form
+        class="form"
+        action="index.php?view=<?php echo $this::AK_SOCHI_EDIT_STI_REPORT ?>&uin=<?php echo $_GET['uin'] ?>"
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+        <div class="caption">Загрузка отчета из файла</div>
+        <div class="field buttons">
+            <input
+                type="file"
+                name="file"
+            />
+            <input
+                type="submit"
+                class="button"
+                value="Загрузить"
+            />
+        </div>
+
+    </form>
+
 <?php endif; ?>
