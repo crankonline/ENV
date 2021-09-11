@@ -171,15 +171,15 @@ SQL;
         $this->context->js[] = '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js';
 
 
-        $type = isset( $_GET['type'] ) ? $_GET['type'] : null;
-		$uin = isset( $_GET['uin'] ) ? $_GET['uin'] : null;
-		$download = isset( $_GET['download'] ) ? $_GET['download'] : null;
+        $type = $_GET['type'] ?? null;
+		$uin = $_GET['uin'] ?? null;
+		$download = $_GET['download'] ?? null;
 
 		if ( ! ( $type || $uin ) ) {
 			return;
 		}
 
-		if ( $uin && ! preg_match( '/^\d{49,49}$/', $uin ) ) {
+		if ( $uin && ! preg_match( '/^\d{49}$/', $uin ) ) {
 			$this->variables->errors[] = 'UIN должен состоять из 49 цифр';
 
 			return;
@@ -191,14 +191,16 @@ SQL;
 		    $report = null;
 		    $length = array();
             if ($type == 'sf') {
-                echo "sf ";
+                if ($download === null)
+                    echo "sf ";
                 $data = $this->decodeSfReport($uin);
                 $length ['dtg_cont_length'] = strlen($data['xml']);
                 $report = $this->parseXml($data['xml']);
 
             }
             if ($type == 'sti') {
-                echo "sti ";
+                if ($download === null)
+                    echo "sti ";
                 $form_sys_name = $_GET['sys-name'] ?? null;
                 $data = $this->decodeStiReport($uin, lcfirst($form_sys_name));
                 $length ['dtg_cont_length']= strlen($data['form_data']);
@@ -206,7 +208,8 @@ SQL;
 
             }
             if ($type == 'nsc') {
-                echo "nsc ";
+                if ($download === null)
+                    echo "nsc ";
 /*                $form_sys_name = $_GET['sys-name'] ?? null;
                 if($form_sys_name == "Form1Tv1") {
                     $form_sys_name = "Form1tv1";
