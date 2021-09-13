@@ -71,9 +71,6 @@ class Profile extends Module {
 		return $record;
 	}
 
-	/**
-	 *
-	 */
 	public function changePassword() {
 		$mapping = [
 			'password',
@@ -155,9 +152,6 @@ class Profile extends Module {
 		return $records;
 	}
 
-	/**
-	 *
-	 */
 	public function keep() {
 	    exit;
     }
