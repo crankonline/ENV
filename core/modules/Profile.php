@@ -110,9 +110,6 @@ class Profile extends Module {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public function changeModule() {
 		$moduleId = null;
 
