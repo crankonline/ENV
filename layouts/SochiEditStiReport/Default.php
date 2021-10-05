@@ -43,7 +43,7 @@
     <?php /** @var $available_size int|string */ ?>
     <?php if ($length['rep_xml_length'] > (int)$available_size) : ?>
         Превышен размер для отображения - <a
-                href="index.php?view=<?php echo $this::AK_SOCHI_EDIT_STI_REPORT; ?>&type=<?php echo $_GET['type']; ?>&uin=<?php echo $_GET['uin']; ?>&sys-name=<?php echo $_GET['sys-name']; ?>&download=true">скачать</a>
+                href="index.php?view=<?php echo $this::AK_SOCHI_EDIT_STI_REPORT; ?>&uin=<?php echo $_GET['uin']; ?>&action=download" target="_blank">скачать</a>
     <?php else : ?>
         <pre style="text-align: left; display: none;">
             <code class="xml hljs">
@@ -78,4 +78,27 @@
 
         </form>
     <?php endif; ?>
+
+    <form
+        class="form"
+        action="index.php?view=<?php echo $this::AK_SOCHI_EDIT_STI_REPORT ?>&uin=<?php echo $_GET['uin'] ?>"
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+        <div class="caption">Загрузка отчета из файла</div>
+        <div class="field buttons">
+            <input
+                type="file"
+                name="file"
+            />
+            <input
+                type="submit"
+                class="button"
+                value="Загрузить"
+            />
+        </div>
+
+    </form>
+
 <?php endif; ?>

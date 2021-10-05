@@ -3,14 +3,24 @@
 namespace Environment\Modules;
 
 use Environment\DataLayers\Environment\Core as CoreSchema;
+use PDOException;
+use Unikum\Core\Module;
+use function Sentry\captureException;
 
-class Profile extends \Unikum\Core\Module {
+class Profile extends Module {
+	/**
+	 * @var string[]
+	 */
 	protected $config = [
 		'template' => 'layouts/Profile/Default.html',
 		'listen'   => 'action'
 	];
 
-	protected function validatePassword( array &$record ) {
+	/**
+	 * @param array $record
+	 * @return array
+	 */
+	protected function validatePassword(array &$record ): array {
 		$e = [];
 
 		$e['password'] = [];
@@ -33,7 +43,11 @@ class Profile extends \Unikum\Core\Module {
 		return $e;
 	}
 
-	protected function canProceed( array &$result ) {
+	/**
+	 * @param array $result
+	 * @return bool
+	 */
+	protected function canProceed(array &$result ): bool {
 		foreach ( $result as &$section ) {
 			if ( $section ) {
 				return false;
@@ -43,11 +57,15 @@ class Profile extends \Unikum\Core\Module {
 		return true;
 	}
 
-	protected function readPostData( array $mapping ) {
+	/**
+	 * @param array $mapping
+	 * @return array
+	 */
+	protected function readPostData(array $mapping ): array {
 		$record = [];
 
 		foreach ( $mapping as $key ) {
-			$record[ $key ] = isset( $_POST[ $key ] ) ? $_POST[ $key ] : null;
+			$record[ $key ] = $_POST[$key] ?? null;
 		}
 
 		return $record;
@@ -76,8 +94,8 @@ class Profile extends \Unikum\Core\Module {
 				$updated = $dlUsers->getById( $user['id'] );
 
 				$user['is-password-expired'] = $updated['is-password-expired'];
-			} catch ( \PDOException $e ) {
-				\Sentry\captureException( $e );
+			} catch ( PDOException $e ) {
+				captureException( $e );
 				$this->variables->result = false;
 				$this->variables->status = 'При изменении пароля учетной записи произошла ошибка.';
 			}
@@ -107,14 +125,18 @@ class Profile extends \Unikum\Core\Module {
 
 			$this->variables->result = true;
 			$this->variables->status = 'Стартовый модуль установлен.';
-		} catch ( \PDOException $e ) {
-			\Sentry\captureException( $e );
+		} catch ( PDOException $e ) {
+			captureException( $e );
 			$this->variables->result = false;
 			$this->variables->status = 'При назначении стартового модуля произошла ошибка.';
 		}
 	}
 
-	protected function groupModules( array $records ) {
+	/**
+	 * @param array $records
+	 * @return array
+	 */
+	protected function groupModules(array $records ): array {
 		foreach ( $records as $key => $record ) {
 			$group = $record['module-group-name'] ?: 'Прочие';
 
@@ -130,6 +152,13 @@ class Profile extends \Unikum\Core\Module {
 		return $records;
 	}
 
+	public function keep() {
+	    exit;
+    }
+
+	/**
+	 * @return void|null
+	 */
 	protected function main() {
 		$this->context->css[] = 'resources/css/ui-profile.css';
 		$this->context->css[] = 'resources/css/ui-misc-form.css';
@@ -147,8 +176,8 @@ class Profile extends \Unikum\Core\Module {
 			$dlVisits = new CoreSchema\Visits();
 
 			$this->variables->visits = $dlVisits->getByUser( $user['id'], 10 );
-		} catch ( \PDOException $e ) {
-			\Sentry\captureException( $e );
+		} catch ( PDOException $e ) {
+			captureException( $e );
 			$this->variables->errors[] = 'Произошла ошибка при получении сведений о посещениях.';
 
 			return;
@@ -167,11 +196,9 @@ class Profile extends \Unikum\Core\Module {
 			}
 
 			$this->variables->moduleGroups = &$moduleGroups;
-		} catch ( \PDOException $e ) {
-			\Sentry\captureException( $e );
+		} catch ( PDOException $e ) {
+			captureException( $e );
 			$this->variables->errors[] = 'Произошла ошибка при получении сведений о доступных модулях.';
 		}
 	}
 }
-
-?>
